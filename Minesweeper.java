@@ -147,46 +147,40 @@ public class Minesweeper extends GridPane {
             getChildren().add(background);
             getChildren().add(foreground);
 
-            setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    didDoubleClick = true;
-                    if (!isCleared) {
-                        if (!flagged) {
-                            getChildren().add(new Flag());
-                            flagsRemaining--;
-                            flagLabel.setText(String.format("%d", flagsRemaining));
+            setOnContextMenuRequested(e -> {
+                didDoubleClick = true;
+                if (!isCleared) {
+                    if (!flagged) {
+                        getChildren().add(new Flag());
+                        flagsRemaining--;
+                        flagLabel.setText(String.format("%d", flagsRemaining));
 
-                            flagged = true;
-                        } else {
-                            getChildren().remove(getChildren().size() - 1);
-                            flagsRemaining++;
-                            flagLabel.setText(String.format("%d", flagsRemaining));
-                            flagged = false;
-                        }
+                        flagged = true;
+                    } else {
+                        getChildren().remove(getChildren().size() - 1);
+                        flagsRemaining++;
+                        flagLabel.setText(String.format("%d", flagsRemaining));
+                        flagged = false;
                     }
                 }
             });
 
-            setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (didDoubleClick) {
-                        didDoubleClick = false;
-                    } else {
-                        if (!isCleared && !flagged) {
-                            if (numCleared == 0) {
-                                startingRow = row;
-                                startingColumn = column;
-                                Minesweeper.this.generate();
-                            }
-                            boolean result = clearTiles();
-                            System.out.println(numCleared);
-                            if (!result) {
-                                System.out.println("You Lost!");
-                            } else if (numCleared == rows * columns - numBombs) {
-                                System.out.println("You win!");
-                            }
+            setOnMouseClicked(e -> {
+                if (didDoubleClick) {
+                    didDoubleClick = false;
+                } else {
+                    if (!isCleared && !flagged) {
+                        if (numCleared == 0) {
+                            startingRow = row;
+                            startingColumn = column;
+                            Minesweeper.this.generate();
+                        }
+                        boolean result = clearTiles();
+                        System.out.println(numCleared);
+                        if (!result) {
+                            System.out.println("You Lost!");
+                        } else if (numCleared == rows * columns - numBombs) {
+                            System.out.println("You win!");
                         }
                     }
                 }
