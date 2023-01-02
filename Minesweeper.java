@@ -2,9 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
@@ -46,8 +44,7 @@ public class Minesweeper extends GridPane {
 
     // if the game is currently in play
     private boolean playing;
-    // cleared tiles
-    private Set<Tile> clearedSet;
+    private int numCleared;
 
     private Stage gameStage;
 
@@ -60,12 +57,12 @@ public class Minesweeper extends GridPane {
      */
     public Minesweeper(int rows, int columns, int numMines, Stage gameStage) {
         setAlignment(Pos.CENTER);
-        clearedSet = new HashSet<Tile>();
         playing = true;
         this.rows = rows;
         this.columns = columns;
         this.numMines = numMines;
         this.gameStage = gameStage;
+        numCleared = 0;
         flagsRemaining = numMines;
         flagLabel = new Label(String.format("Flags remainging:\n%d", flagsRemaining));
         flagLabel.setAlignment(Pos.CENTER);
@@ -163,8 +160,8 @@ public class Minesweeper extends GridPane {
     public void clear(int row, int column) {
         Tile currentTile = tiles[row][column];
         if (playing) {
-            if (!clearedSet.contains(currentTile) && !currentTile.hasFlag) {
-                if (clearedSet.size() == 0) {
+            if (!currentTile.isCleared && !currentTile.hasFlag) {
+                if (numCleared == 0) {
                     startingRow = row;
                     startingColumn = column;
                     Minesweeper.this.startGame();
@@ -204,7 +201,7 @@ public class Minesweeper extends GridPane {
                     losingStage.setScene(scene);
                     losingStage.setWidth(200);
                     losingStage.show();
-                } else if (clearedSet.size() == rows * columns - numMines) {
+                } else if (numCleared == rows * columns - numMines) {
                     timer.stop();
                     playing = false;
 
@@ -268,7 +265,7 @@ public class Minesweeper extends GridPane {
     public void flag(int row, int column) {
         Tile currentTile = tiles[row][column];
         if (playing) {
-            if (!clearedSet.contains(currentTile)) {
+            if (!currentTile.isCleared) {
                 if (!currentTile.hasFlag) {
                     currentTile.getChildren().add(new Flag());
                     flagsRemaining--;
@@ -278,7 +275,7 @@ public class Minesweeper extends GridPane {
                     flagsRemaining++;
                     currentTile.hasFlag = false;
                 }
-                flagLabel.setText(String.format("Flags remainging:\n%ds", flagsRemaining));
+                flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
             }
         }
     }
@@ -292,6 +289,7 @@ public class Minesweeper extends GridPane {
         private int neighboringMines;
         private boolean hasMine;
         private boolean hasFlag;
+        private boolean isCleared;
         private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
         private Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
 
@@ -305,6 +303,7 @@ public class Minesweeper extends GridPane {
             this.row = row;
             this.column = column;
             hasMine = false;
+            isCleared = false;
             getChildren().add(background);
             getChildren().add(foreground);
 
@@ -341,8 +340,9 @@ public class Minesweeper extends GridPane {
          * @param curr the current tile we are clearing
          */
         private void clearTiles(Tile curr) {
-            if (!clearedSet.contains(curr) && !curr.hasFlag) {
-                clearedSet.add(curr);
+            if (!curr.isCleared && !curr.hasFlag) {
+                curr.isCleared = true;
+                numCleared++;
                 curr.foreground.setFill(Color.GREENYELLOW);
                 curr.getChildren().add(
                     new Label(String.format("%s", curr.neighboringMines == 0 ? " " : curr.neighboringMines))
