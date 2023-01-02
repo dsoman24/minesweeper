@@ -77,8 +77,9 @@ public class Minesweeper extends GridPane {
                 add(tile, j, i);
             }
         }
-        secondsLabel = new Label("Time:\n0.0");
+        secondsLabel = new Label("0 s");
         secondsLabel.setAlignment(Pos.CENTER);
+        secondsLabel.setMinWidth(70);
         timer = new Timer();
     }
 
@@ -153,7 +154,9 @@ public class Minesweeper extends GridPane {
     }
 
     /**
-     * Method to clear a tile
+     * Method to clear a tile from the board.
+     * Utilized in tile clicking functionality.
+     * TO-DO use in bot functionality
      * @param row the row of the tile to clear
      * @param column the column of the tile to clear
      */
@@ -218,7 +221,7 @@ public class Minesweeper extends GridPane {
                     nameField.setPromptText("Enter your name");
 
                     Button saveToLeaderboard = new Button("Submit");
-                    saveToLeaderboard.setOnAction(a -> {
+                    saveToLeaderboard.setOnAction(e -> {
                         String name = nameField.getText();
                         double time = Double.parseDouble(
                             String.format("%d.%d", timer.elapsedSeconds, timer.milliseconds)
@@ -256,24 +259,26 @@ public class Minesweeper extends GridPane {
 
     /**
      * Method to flag a tile
+     * Utilized in tile clicking functionality.
+     * TO-DO use in bot functionality
      * @param row the row of the tile to flag
      * @param column the column of the tile to flag
      */
 
     public void flag(int row, int column) {
+        Tile currentTile = tiles[row][column];
         if (playing) {
-            Tile currentTile = tiles[row][column];
             if (!clearedSet.contains(currentTile)) {
                 if (!currentTile.hasFlag) {
-                    getChildren().add(new Flag());
+                    currentTile.getChildren().add(new Flag());
                     flagsRemaining--;
                     currentTile.hasFlag = true;
                 } else {
-                    getChildren().remove(getChildren().size() - 1);
+                    currentTile.getChildren().remove(currentTile.getChildren().size() - 1);
                     flagsRemaining++;
                     currentTile.hasFlag = false;
                 }
-                flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
+                flagLabel.setText(String.format("Flags remainging:\n%ds", flagsRemaining));
             }
         }
     }
@@ -402,7 +407,7 @@ public class Minesweeper extends GridPane {
             elapsedNanos = now - startTime;
             elapsedSeconds = elapsedNanos / 1000000000;
             milliseconds = (elapsedNanos / 1000000) % 1000;
-            secondsLabel.setText(String.format("Time:\n%d.%d", elapsedSeconds, milliseconds));
+            secondsLabel.setText(String.format("%d s", elapsedSeconds));
         }
     };
 }
