@@ -1,5 +1,4 @@
 {
-    "java.checkstyle.configuration": "/Users/danieloman1/Checkstyle/CS1332-checkstyle.xml",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "/Users/danieloman1/javafx-sdk-11.0.2/**/*.jar"
