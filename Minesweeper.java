@@ -153,6 +153,132 @@ public class Minesweeper extends GridPane {
     }
 
     /**
+     * Method to clear a tile
+     * @param row the row of the tile to clear
+     * @param column the column of the tile to clear
+     */
+    public void clear(int row, int column) {
+        Tile currentTile = tiles[row][column];
+        if (playing) {
+            if (!clearedSet.contains(currentTile) && !currentTile.hasFlag) {
+                if (clearedSet.size() == 0) {
+                    startingRow = row;
+                    startingColumn = column;
+                    Minesweeper.this.startGame();
+                    timer.start();
+                }
+                playing = currentTile.clearTiles();
+                if (!playing) {
+                    timer.stop();
+                    // reveal all bombs upon losing
+                    for (int i = 0; i < rows; i++) {
+                        for (int j = 0; j < columns; j++) {
+                            if (tiles[i][j].hasMine && !tiles[i][j].hasFlag) {
+                                tiles[i][j].clearTiles();
+                            } else if (!tiles[i][j].hasMine && tiles[i][j].hasFlag) {
+                                tiles[i][j].getChildren().add(new Label("X"));
+                            }
+                        }
+                    }
+                    Stage losingStage = new Stage();
+                    losingStage.setTitle("You Lose");
+                    VBox root = new VBox();
+
+                    Label loseLabel = new Label("You Lose");
+
+                    Button loseButton = new Button("Exit");
+
+                    loseButton.setOnAction(a -> {
+                        losingStage.close();
+                        gameStage.close();
+                    });
+
+                    root.getChildren().addAll(loseLabel, loseButton);
+                    root.setAlignment(Pos.CENTER);
+                    root.setPadding(new Insets(10));
+                    root.setSpacing(10);
+                    Scene scene = new Scene(root);
+                    losingStage.setScene(scene);
+                    losingStage.setWidth(200);
+                    losingStage.show();
+                } else if (clearedSet.size() == rows * columns - numMines) {
+                    timer.stop();
+                    playing = false;
+
+                    Stage winningStage = new Stage();
+                    winningStage.setTitle("You Win!");
+
+                    VBox root = new VBox();
+
+                    Label winLabel = new Label(
+                        String.format("[%d.%d s] Enter your name to enter the leaderboard",
+                        timer.elapsedSeconds, timer.milliseconds)
+                    );
+                    TextField nameField = new TextField();
+                    nameField.setPromptText("Enter your name");
+
+                    Button saveToLeaderboard = new Button("Submit");
+                    saveToLeaderboard.setOnAction(a -> {
+                        String name = nameField.getText();
+                        double time = Double.parseDouble(
+                            String.format("%d.%d", timer.elapsedSeconds, timer.milliseconds)
+                        );
+                        File leaderboard = new File("leaderboard.csv");
+                        PrintWriter writer;
+                        try {
+                            boolean newFile = !leaderboard.exists();
+                            writer = new PrintWriter(
+                                new FileOutputStream(leaderboard, true)
+                            );
+                            if (newFile) {
+                                writer.println("date,name,rows,columns,numMines,time");
+                            }
+                            writer.println(new LeaderboardEntry(name, rows, columns, numMines, time));
+                            writer.close();
+                        } catch (FileNotFoundException fnfe) {
+                            System.out.println("File not found");
+                        }
+                        winningStage.close();
+                        gameStage.close();
+                    });
+
+                    root.getChildren().addAll(winLabel, nameField, saveToLeaderboard);
+                    root.setAlignment(Pos.CENTER);
+                    root.setPadding(new Insets(10));
+                    root.setSpacing(10);
+                    Scene scene = new Scene(root);
+                    winningStage.setScene(scene);
+                    winningStage.show();
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to flag a tile
+     * @param row the row of the tile to flag
+     * @param column the column of the tile to flag
+     */
+
+    public void flag(int row, int column) {
+        if (playing) {
+            Tile currentTile = tiles[row][column];
+            if (!clearedSet.contains(currentTile)) {
+                if (!currentTile.hasFlag) {
+                    getChildren().add(new Flag());
+                    flagsRemaining--;
+                    currentTile.hasFlag = true;
+                } else {
+                    getChildren().remove(getChildren().size() - 1);
+                    flagsRemaining++;
+                    currentTile.hasFlag = false;
+                }
+                flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
+            }
+        }
+    }
+
+    /**
      * Inner class to represent a tile on the minefield.
      */
     private class Tile extends StackPane {
@@ -181,112 +307,9 @@ public class Minesweeper extends GridPane {
             setOnMouseClicked(e -> {
                 if (playing) {
                     if (e.getButton() == MouseButton.SECONDARY) {
-                        if (!clearedSet.contains(this)) {
-                            if (!hasFlag) {
-                                getChildren().add(new Flag());
-                                flagsRemaining--;
-                                hasFlag = true;
-                            } else {
-                                getChildren().remove(getChildren().size() - 1);
-                                flagsRemaining++;
-                                hasFlag = false;
-                            }
-                            flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
-                        }
+                        flag(row, column);
                     } else {
-                        if (!clearedSet.contains(this) && !hasFlag) {
-                            if (clearedSet.size() == 0) {
-                                startingRow = row;
-                                startingColumn = column;
-                                Minesweeper.this.startGame();
-                                timer.start();
-                            }
-                            playing = clearTiles();
-                            if (!playing) {
-                                timer.stop();
-                                // reveal all bombs upon losing
-                                for (int i = 0; i < rows; i++) {
-                                    for (int j = 0; j < columns; j++) {
-                                        if (tiles[i][j].hasMine && !tiles[i][j].hasFlag) {
-                                            tiles[i][j].clearTiles();
-                                        } else if (!tiles[i][j].hasMine && tiles[i][j].hasFlag) {
-                                            tiles[i][j].getChildren().add(new Label("X"));
-                                        }
-                                    }
-                                }
-                                Stage losingStage = new Stage();
-                                losingStage.setTitle("You Lose");
-                                VBox root = new VBox();
-
-                                Label loseLabel = new Label("You Lose");
-
-                                Button loseButton = new Button("Exit");
-
-                                loseButton.setOnAction(a -> {
-                                    losingStage.close();
-                                    gameStage.close();
-                                });
-
-                                root.getChildren().addAll(loseLabel, loseButton);
-                                root.setAlignment(Pos.CENTER);
-                                root.setPadding(new Insets(10));
-                                root.setSpacing(10);
-                                Scene scene = new Scene(root);
-                                losingStage.setScene(scene);
-                                losingStage.setWidth(200);
-                                losingStage.show();
-
-
-                            } else if (clearedSet.size() == rows * columns - numMines) {
-                                timer.stop();
-                                playing = false;
-
-                                Stage winningStage = new Stage();
-                                winningStage.setTitle("You Win!");
-
-                                VBox root = new VBox();
-
-                                Label winLabel = new Label(
-                                    String.format("[%d.%d s] Enter your name to enter the leaderboard",
-                                    timer.elapsedSeconds, timer.milliseconds)
-                                );
-                                TextField nameField = new TextField();
-                                nameField.setPromptText("Enter your name");
-
-                                Button saveToLeaderboard = new Button("Submit");
-                                saveToLeaderboard.setOnAction(a -> {
-                                    String name = nameField.getText();
-                                    double time = Double.parseDouble(
-                                        String.format("%d.%d", timer.elapsedSeconds, timer.milliseconds)
-                                    );
-                                    File leaderboard = new File("leaderboard.csv");
-                                    PrintWriter writer;
-                                    try {
-                                        boolean newFile = !leaderboard.exists();
-                                        writer = new PrintWriter(
-                                            new FileOutputStream(leaderboard, true)
-                                        );
-                                        if (newFile) {
-                                            writer.println("date,name,rows,columns,numMines,time");
-                                        }
-                                        writer.println(new LeaderboardEntry(name, rows, columns, numMines, time));
-                                        writer.close();
-                                    } catch (FileNotFoundException fnfe) {
-                                        System.out.println("File not found");
-                                    }
-                                    winningStage.close();
-                                    gameStage.close();
-                                });
-
-                                root.getChildren().addAll(winLabel, nameField, saveToLeaderboard);
-                                root.setAlignment(Pos.CENTER);
-                                root.setPadding(new Insets(10));
-                                root.setSpacing(10);
-                                Scene scene = new Scene(root);
-                                winningStage.setScene(scene);
-                                winningStage.show();
-                            }
-                        }
+                        clear(row, column);
                     }
                 }
             });

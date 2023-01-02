@@ -9,7 +9,6 @@ public class LeaderboardEntry {
     private double time;
     private String date;
 
-
     /**
      * 6-arg constructor.
      * @param date the date of this entry
