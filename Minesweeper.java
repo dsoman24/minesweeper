@@ -307,7 +307,6 @@ public class Minesweeper extends GridPane {
             getChildren().add(background);
             getChildren().add(foreground);
 
-
             setOnMouseClicked(e -> {
                 if (playing) {
                     if (e.getButton() == MouseButton.SECONDARY) {

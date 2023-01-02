@@ -11,7 +11,6 @@ import javafx.geometry.Insets;
 
 public class Game extends Application {
 
-
     private Minesweeper minesweeper;
 
     @Override
@@ -19,8 +18,8 @@ public class Game extends Application {
         primaryStage.setTitle("Minesweeper");
         primaryStage.setMinHeight(100);
         primaryStage.setMaxHeight(100);
-        primaryStage.setMaxWidth(250);
-        primaryStage.setMinWidth(250);
+        primaryStage.setMaxWidth(300);
+        primaryStage.setMinWidth(300);
 
         VBox root = new VBox();
         HBox inputPane = new HBox();
@@ -32,9 +31,11 @@ public class Game extends Application {
 
         Label difficultyLabel = new Label("Difficulty: ");
         ComboBox<String> difficultyInput = new ComboBox<>();
-        difficultyInput.getItems().addAll("Easy", "Medium", "Hard", "Expert");
-        Button startButton = new Button("Start Game");
-        startButton.setPrefHeight(50);
+        difficultyInput.getItems().addAll(
+            "Easy (9x9, 10 mines)", "Medium (16x16, 40 mines)", "Hard (16x30, 99 mines)", "Expert (24x30, 180 mines)"
+        );
+        Button startButton = new Button("Start");
+        startButton.setPrefHeight(45);
 
         difficultyVBox.getChildren().addAll(difficultyLabel, difficultyInput);
 
@@ -53,13 +54,13 @@ public class Game extends Application {
                 minesweeper = new Minesweeper(9, 9, 10, gameStage);
                 gameStage.setTitle("Minesweeper Easy (9x9, 10 mines)");
                 setStageSize(gameStage, 9, 9);
-            } else if (difficulty == "Medium (16x16, 40 mines") {
+            } else if (difficulty == "Medium (16x16, 40 mines)") {
                 minesweeper = new Minesweeper(16, 16, 40, gameStage);
                 gameStage.setTitle("Minesweeper Medium (16x16, 40 mines");
                 setStageSize(gameStage, 16, 16);
-            } else if (difficulty == "Hard (16x30, 99 mines") {
+            } else if (difficulty == "Hard (16x30, 99 mines)") {
                 minesweeper = new Minesweeper(16, 30, 99, gameStage);
-                gameStage.setTitle("Minesweeper Hard (16x30, 99 mines");
+                gameStage.setTitle("Minesweeper Hard (16x30, 99 mines)");
                 setStageSize(gameStage, 16, 30);
             } else if (difficulty == "Expert (24x30, 180 mines)") {
                 minesweeper = new Minesweeper(24, 30, 180, gameStage);
