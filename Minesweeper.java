@@ -1,17 +1,26 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import javafx.event.EventHandler;
+import javafx.animation.AnimationTimer;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 /**
  * Minesweeper game implementation.
@@ -24,28 +33,42 @@ public class Minesweeper extends GridPane {
     private Tile[][] tiles;
     private int rows;
     private int columns;
-    private int numBombs;
-    /** Number of cleared tiles. If this number reaches rows * columns - numBombs, the game is won. */
-    private int numCleared = 0;
+    private int numMines;
+
     private int startingRow;
     private int startingColumn;
 
     private int flagsRemaining;
     private Label flagLabel;
 
+    private Timer timer;
+    private Label secondsLabel;
+
+    // if the game is currently in play
+    private boolean playing;
+    // cleared tiles
+    private Set<Tile> clearedSet;
+
+    private Stage gameStage;
+
     /**
      * 3-args constructor
      * @param rows the number of rows
      * @param columns the number of columns
-     * @param numBombs the number of bombs
+     * @param numMines the number of mines
+     * @param gameStage the stage that this game is played on
      */
-    public Minesweeper(int rows, int columns, int numBombs) {
+    public Minesweeper(int rows, int columns, int numMines, Stage gameStage) {
         setAlignment(Pos.CENTER);
+        clearedSet = new HashSet<Tile>();
+        playing = true;
         this.rows = rows;
         this.columns = columns;
-        this.numBombs = numBombs;
-        flagsRemaining = numBombs;
-        flagLabel = new Label(String.format("%d", flagsRemaining));
+        this.numMines = numMines;
+        this.gameStage = gameStage;
+        flagsRemaining = numMines;
+        flagLabel = new Label(String.format("Flags remainging:\n%d", flagsRemaining));
+        flagLabel.setAlignment(Pos.CENTER);
         tiles = new Tile[rows][columns];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -54,8 +77,10 @@ public class Minesweeper extends GridPane {
                 add(tile, j, i);
             }
         }
+        secondsLabel = new Label("Time:\n0.0");
+        secondsLabel.setAlignment(Pos.CENTER);
+        timer = new Timer();
     }
-
 
     @Override
     public String toString() {
@@ -82,17 +107,16 @@ public class Minesweeper extends GridPane {
     }
 
     /**
-     * Begin the game based on the first tile click
+     * Generate the game state on the first click. Will guarantee a 0 on start.
      */
-    private void generate() {
-
-        // Begin by randomly generating bombs
+    private void startGame() {
+        // Begin by randomly generating mines
         Random rand = new Random();
-        for (int i = 0; i < numBombs; i++) {
+        for (int i = 0; i < numMines; i++) {
             int row = rand.nextInt(rows);
             int column = rand.nextInt(columns);
 
-            while (tiles[row][column].hasBomb
+            while (tiles[row][column].hasMine
                 || (row >= startingRow - 1
                 && row <= startingRow + 1
                 && column >= startingColumn - 1
@@ -100,12 +124,12 @@ public class Minesweeper extends GridPane {
                 row = rand.nextInt(rows);
                 column = rand.nextInt(columns);
             }
-            tiles[row][column].hasBomb = true;
+            tiles[row][column].hasMine = true;
             // now go around and increment the tiles immediately around it
             for (int x = row - 1; x < row + 2; x++) {
                 for (int y = column - 1; y < column + 2; y++) {
                     if (!(x == row && y == column) && isInBounds(x, y)) {
-                        tiles[x][y].numAdjacent += 1;
+                        tiles[x][y].neighboringMines += 1;
                     }
                 }
             }
@@ -121,111 +145,185 @@ public class Minesweeper extends GridPane {
     }
 
     /**
+     * Seconds label getter method
+     * @return this game's seconds label
+     */
+    public Label getSecondsLabel() {
+        return secondsLabel;
+    }
+
+    /**
      * Inner class to represent a tile on the minefield.
      */
     private class Tile extends StackPane {
         private int row;
         private int column;
-        private int numAdjacent;
-        private boolean hasBomb;
-        private boolean isCleared;
-        private boolean flagged;
+        private int neighboringMines;
+        private boolean hasMine;
+        private boolean hasFlag;
         private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
         private Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
-        private boolean didDoubleClick;
 
         /**
          * Constructor for a tile.
-         * This constructor is most accurately used after populating bombs set.
+         * This constructor is most accurately used after populating mines set.
          * @param row the row the tile is on
          * @param column the column the tile is on
          */
         public Tile(int row, int column) {
-            isCleared = false;
-            hasBomb = false;
-            didDoubleClick = false;
+            this.row = row;
+            this.column = column;
+            hasMine = false;
             getChildren().add(background);
             getChildren().add(foreground);
 
-            setOnContextMenuRequested(e -> {
-                didDoubleClick = true;
-                if (!isCleared) {
-                    if (!flagged) {
-                        getChildren().add(new Flag());
-                        flagsRemaining--;
-                        flagLabel.setText(String.format("%d", flagsRemaining));
-
-                        flagged = true;
-                    } else {
-                        getChildren().remove(getChildren().size() - 1);
-                        flagsRemaining++;
-                        flagLabel.setText(String.format("%d", flagsRemaining));
-                        flagged = false;
-                    }
-                }
-            });
 
             setOnMouseClicked(e -> {
-                if (didDoubleClick) {
-                    didDoubleClick = false;
-                } else {
-                    if (!isCleared && !flagged) {
-                        if (numCleared == 0) {
-                            startingRow = row;
-                            startingColumn = column;
-                            Minesweeper.this.generate();
+                if (playing) {
+                    if (e.getButton() == MouseButton.SECONDARY) {
+                        if (!clearedSet.contains(this)) {
+                            if (!hasFlag) {
+                                getChildren().add(new Flag());
+                                flagsRemaining--;
+                                hasFlag = true;
+                            } else {
+                                getChildren().remove(getChildren().size() - 1);
+                                flagsRemaining++;
+                                hasFlag = false;
+                            }
+                            flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
                         }
-                        boolean result = clearTiles();
-                        System.out.println(numCleared);
-                        if (!result) {
-                            System.out.println("You Lost!");
-                        } else if (numCleared == rows * columns - numBombs) {
-                            System.out.println("You win!");
+                    } else {
+                        if (!clearedSet.contains(this) && !hasFlag) {
+                            if (clearedSet.size() == 0) {
+                                startingRow = row;
+                                startingColumn = column;
+                                Minesweeper.this.startGame();
+                                timer.start();
+                            }
+                            playing = clearTiles();
+                            if (!playing) {
+                                timer.stop();
+                                // reveal all bombs upon losing
+                                for (int i = 0; i < rows; i++) {
+                                    for (int j = 0; j < columns; j++) {
+                                        if (tiles[i][j].hasMine && !tiles[i][j].hasFlag) {
+                                            tiles[i][j].clearTiles();
+                                        } else if (!tiles[i][j].hasMine && tiles[i][j].hasFlag) {
+                                            tiles[i][j].getChildren().add(new Label("X"));
+                                        }
+                                    }
+                                }
+                                Stage losingStage = new Stage();
+                                losingStage.setTitle("You Lose");
+                                VBox root = new VBox();
+
+                                Label loseLabel = new Label("You Lose");
+
+                                Button loseButton = new Button("Exit");
+
+                                loseButton.setOnAction(a -> {
+                                    losingStage.close();
+                                    gameStage.close();
+                                });
+
+                                root.getChildren().addAll(loseLabel, loseButton);
+                                root.setAlignment(Pos.CENTER);
+                                root.setPadding(new Insets(10));
+                                root.setSpacing(10);
+                                Scene scene = new Scene(root);
+                                losingStage.setScene(scene);
+                                losingStage.setWidth(200);
+                                losingStage.show();
+
+
+                            } else if (clearedSet.size() == rows * columns - numMines) {
+                                timer.stop();
+                                playing = false;
+
+                                Stage winningStage = new Stage();
+                                winningStage.setTitle("You Win!");
+
+                                VBox root = new VBox();
+
+                                Label winLabel = new Label(
+                                    String.format("[%d.%d s] Enter your name to enter the leaderboard",
+                                    timer.elapsedSeconds, timer.milliseconds)
+                                );
+                                TextField nameField = new TextField();
+                                nameField.setPromptText("Enter your name");
+
+                                Button saveToLeaderboard = new Button("Submit");
+                                saveToLeaderboard.setOnAction(a -> {
+                                    String name = nameField.getText();
+                                    double time = Double.parseDouble(
+                                        String.format("%d.%d", timer.elapsedSeconds, timer.milliseconds)
+                                    );
+                                    File leaderboard = new File("leaderboard.csv");
+                                    PrintWriter writer;
+                                    try {
+                                        boolean newFile = !leaderboard.exists();
+                                        writer = new PrintWriter(
+                                            new FileOutputStream(leaderboard, true)
+                                        );
+                                        if (newFile) {
+                                            writer.println("date,name,rows,columns,numMines,time");
+                                        }
+                                        writer.println(new LeaderboardEntry(name, rows, columns, numMines, time));
+                                        writer.close();
+                                    } catch (FileNotFoundException fnfe) {
+                                        System.out.println("File not found");
+                                    }
+                                    winningStage.close();
+                                    gameStage.close();
+                                });
+
+                                root.getChildren().addAll(winLabel, nameField, saveToLeaderboard);
+                                root.setAlignment(Pos.CENTER);
+                                root.setPadding(new Insets(10));
+                                root.setSpacing(10);
+                                Scene scene = new Scene(root);
+                                winningStage.setScene(scene);
+                                winningStage.show();
+                            }
                         }
                     }
                 }
             });
-            this.row = row;
-            this.column = column;
         }
 
         /**
          * Method to clear a tile.
          * Calls a recursive helper.
-         * @return true if clear was successful (not a bomb), false otherwise
+         * @return true if clear was successful (not a mine), false otherwise
          */
         public boolean clearTiles() {
-            if (hasBomb) {
-                numCleared++;
-                isCleared = true;
+            if (hasMine) {
                 foreground.setFill(Color.DARKGOLDENROD);
-                getChildren().add(new Label("B"));
+                getChildren().add(new Label("M"));
                 return false;
             }
-            Set<Tile> visited = new HashSet<Tile>();
-            clearTiles(this, visited);
+            clearTiles(this);
             return true;
         }
 
         /**
-         * Recursive helper method to clear the tiles using DFS
+         * Recursive helper method to clear the tiles using DFS.
+         * Clears all adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
          * @param curr the current tile we are clearing
-         * @param visited the set of visited tiles
          */
-        private void clearTiles(Tile curr, Set<Tile> visited) {
-            if (!visited.contains(curr) && !curr.flagged) {
-                visited.add(curr);
-                curr.isCleared = true;
+        private void clearTiles(Tile curr) {
+            if (!clearedSet.contains(curr) && !curr.hasFlag) {
+                clearedSet.add(curr);
                 curr.foreground.setFill(Color.GREENYELLOW);
                 curr.getChildren().add(
-                    new Label(String.format("%s", curr.numAdjacent == 0 ? " " : curr.numAdjacent))
+                    new Label(String.format("%s", curr.neighboringMines == 0 ? " " : curr.neighboringMines))
                 );
-                numCleared++;
-                if (curr.numAdjacent == 0) {
+                if (curr.neighboringMines == 0) {
                     for (int i = curr.row - 1; i < curr.row + 2; i++) {
                         for (int j = curr.column - 1; j < curr.column + 2; j++) {
                             if (!(i == curr.row && j == curr.column) && isInBounds(i, j)) {
-                                clearTiles(tiles[i][j], visited);
+                                clearTiles(tiles[i][j]);
                             }
                         }
                     }
@@ -234,7 +332,24 @@ public class Minesweeper extends GridPane {
         }
         @Override
         public String toString() {
-            return hasBomb ? "B" : String.format("%d", numAdjacent);
+            return hasMine ? "B" : String.format("%d", neighboringMines);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Tile) {
+                Tile other = (Tile) o;
+                return this.row == other.row
+                    && this.column == other.column
+                    && this.neighboringMines == other.neighboringMines
+                    && this.hasMine == other.hasMine;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return row + column + neighboringMines;
         }
     }
 
@@ -246,4 +361,25 @@ public class Minesweeper extends GridPane {
             getChildren().add(new Circle(10, Color.RED));
         }
     }
+
+    private class Timer extends AnimationTimer {
+        private long startTime;
+        private long elapsedNanos;
+        private long elapsedSeconds;
+        private long milliseconds;
+
+        @Override
+        public void start() {
+            startTime = System.nanoTime();
+            super.start();
+        }
+
+        @Override
+        public void handle(long now) {
+            elapsedNanos = now - startTime;
+            elapsedSeconds = elapsedNanos / 1000000000;
+            milliseconds = (elapsedNanos / 1000000) % 1000;
+            secondsLabel.setText(String.format("Time:\n%d.%d", elapsedSeconds, milliseconds));
+        }
+    };
 }
