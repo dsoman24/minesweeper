@@ -87,26 +87,18 @@ public class MinesweeperPane extends GridPane {
         nameField.setPromptText("Enter your name");
 
         Button saveToLeaderboard = new Button("Submit");
+
         saveToLeaderboard.setOnAction(e -> {
             String name = nameField.getText();
             double time = Double.parseDouble(
                 String.format("%d.%d", timer.elapsedSeconds, timer.elapsedMilliseconds)
             );
-            File leaderboard = new File("leaderboard.csv");
-            PrintWriter writer;
-            try {
-                boolean newFile = !leaderboard.exists();
-                writer = new PrintWriter(
-                    new FileOutputStream(leaderboard, true)
-                );
-                if (newFile) {
-                    writer.println("date,name,rows,columns,numMines,time");
-                }
-                writer.println(new LeaderboardEntry(name, minesweeper.getNumRows(), minesweeper.getNumColumns(), minesweeper.getNumMines(), time));
-                writer.close();
-            } catch (FileNotFoundException fnfe) {
-                System.out.println("File not found");
-            }
+
+            LeaderboardEntry entry = new LeaderboardEntry(name, minesweeper.getNumRows(), minesweeper.getNumColumns(), minesweeper.getNumMines(), time);
+
+            LeaderboardWriter leaderBoardWriter = new LeaderboardWriter();
+            leaderBoardWriter.write(entry);
+
             winningStage.close();
             gameStage.close();
         });
