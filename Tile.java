@@ -27,7 +27,7 @@ public class Tile {
         /**
          * Method to clear a tile.
          * Calls a recursive helper.
-         * @return true if clear was successful (not a mine), false otherwise
+         * @return true if clear was successful (not a mine), false otherwise (lose condition)
          */
         public boolean clearSurroundingTiles() {
             if (mine) {
@@ -45,7 +45,7 @@ public class Tile {
         private void clearSurroundingTilesHelper(Tile curr) {
             if (!curr.cleared && !curr.flag) {
                 curr.cleared = true;
-                minesweeper.incrementNumCleared();
+                minesweeper.incrementNumTilesCleared();
                 if (curr.neighboringMines == 0) {
                     for (int i = curr.row - 1; i < curr.row + 2; i++) {
                         for (int j = curr.column - 1; j < curr.column + 2; j++) {

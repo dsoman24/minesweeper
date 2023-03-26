@@ -45,10 +45,10 @@ public class Game extends Application {
         root.setAlignment(Pos.CENTER);
 
         Label difficultyLabel = new Label("Difficulty: ");
-        ComboBox<String> difficultyInput = new ComboBox<>();
-        difficultyInput.getItems().addAll(
-            "Easy (9x9, 10 mines)", "Medium (16x16, 40 mines)", "Hard (16x30, 99 mines)", "Expert (24x30, 180 mines)"
-        );
+        ComboBox<Difficulty> difficultyInput = new ComboBox<>();
+        for (Difficulty difficulty : Difficulty.values()) {
+            difficultyInput.getItems().add(difficulty);
+        }
         Button startButton = new Button("Start");
         startButton.setPrefHeight(45);
 
@@ -63,24 +63,11 @@ public class Game extends Application {
             VBox subroot = new VBox();
             HBox gameDetails = new HBox();
 
-            String difficulty = difficultyInput.getValue();
-            if (difficulty == null || difficulty.equals("Easy (9x9, 10 mines)")) {
-                minesweeperPane = new MinesweeperPane(9, 9, 10, gameStage);
-                gameStage.setTitle("Minesweeper Easy (9x9, 10 mines)");
-                setStageSize(gameStage, 9, 9);
-            } else if (difficulty == "Medium (16x16, 40 mines)") {
-                minesweeperPane = new MinesweeperPane(16, 16, 40, gameStage);
-                gameStage.setTitle("Minesweeper Medium (16x16, 40 mines");
-                setStageSize(gameStage, 16, 16);
-            } else if (difficulty == "Hard (16x30, 99 mines)") {
-                minesweeperPane = new MinesweeperPane(16, 30, 99, gameStage);
-                gameStage.setTitle("Minesweeper Hard (16x30, 99 mines)");
-                setStageSize(gameStage, 16, 30);
-            } else if (difficulty == "Expert (24x30, 180 mines)") {
-                minesweeperPane = new MinesweeperPane(24, 30, 180, gameStage);
-                gameStage.setTitle("Minesweeper Expert (24x30, 180 mines)");
-                setStageSize(gameStage, 24, 30);
+            Difficulty difficulty = difficultyInput.getValue();
+            if (difficulty == null) {
+                difficulty = Difficulty.EASY;
             }
+            minesweeperPane = new MinesweeperPane(difficulty, gameStage);
 
             minesweeperPane.setAlignment(Pos.CENTER);
             gameDetails.setAlignment(Pos.CENTER);
@@ -106,9 +93,9 @@ public class Game extends Application {
             Stage leaderboardStage = new Stage();
             VBox leaderboardRoot = new VBox();
             leaderboardRoot.setAlignment(Pos.CENTER);
-            String difficulty = difficultyInput.getValue();
+            Difficulty difficulty = difficultyInput.getValue();
             if (difficulty == null) {
-                difficulty = "Easy (9x9, 10 mines)";
+                difficulty = Difficulty.EASY;
             }
 
             Label leaderboardLabel = new Label(String.format("%s | Leaderboard", difficulty));
@@ -118,10 +105,12 @@ public class Game extends Application {
             dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
             TableColumn<LeaderboardEntry, String> nameColumn = new TableColumn<>("Name");
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            TableColumn<LeaderboardEntry, String> diffColumn = new TableColumn<>("Difficulty");
+            diffColumn.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
             TableColumn<LeaderboardEntry, Double> timeColumn = new TableColumn<>("Time");
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
 
-            table.getColumns().addAll(dateColumn, nameColumn, timeColumn);
+            table.getColumns().addAll(dateColumn, nameColumn, diffColumn, timeColumn);
 
             File file = new File("leaderboard.csv");
             List<LeaderboardEntry> entries = new ArrayList<>();
@@ -153,16 +142,5 @@ public class Game extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    /**
-     * primaryStage size setter helper method.
-     * @param primaryStage the primary stage to set the size of
-     * @param rows the number of rows
-     * @param columns the number of columns
-     */
-    private static void setStageSize(Stage primaryStage, int rows, int columns) {
-        primaryStage.setHeight(30 * rows + 120);
-        primaryStage.setWidth(30 * columns + 100);
     }
 }

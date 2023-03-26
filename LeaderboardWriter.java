@@ -14,7 +14,7 @@ public class LeaderboardWriter {
                 new FileOutputStream(leaderboard, true)
             );
             if (newFile) {
-                writer.println("date,name,rows,columns,numMines,time");
+                writer.println("date,name,difficulty,time");
             }
             writer.println(entry);
             writer.close();

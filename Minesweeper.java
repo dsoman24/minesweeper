@@ -17,10 +17,10 @@ public class Minesweeper {
 
     private int flagsRemaining;
 
-
     // if the game is currently in play
     private boolean playing;
-    private int numCleared;
+    private boolean won;
+    private int numTilesCleared;
 
     /**
      * 3-args constructor
@@ -28,12 +28,12 @@ public class Minesweeper {
      * @param columns the number of columns
      * @param numMines the number of mines
      */
-    public Minesweeper(int rows, int columns, int numMines) {
+    public Minesweeper(Difficulty difficulty) {
+        rows = difficulty.getRows();
+        columns = difficulty.getColumns();
+        numMines = difficulty.getNumMines();
         playing = true;
-        this.rows = rows;
-        this.columns = columns;
-        this.numMines = numMines;
-        numCleared = 0;
+        numTilesCleared = 0;
         flagsRemaining = numMines;
         tiles = new Tile[rows][columns];
         for (int i = 0; i < rows; i++) {
@@ -43,6 +43,7 @@ public class Minesweeper {
             }
         }
     }
+
 
     @Override
     public String toString() {
@@ -118,14 +119,14 @@ public class Minesweeper {
         if (playing) {
             Tile currentTile = tiles[row][column];
             if (!currentTile.isCleared() && !currentTile.isFlagged()) {
-                if (numCleared == 0) {
+                if (numTilesCleared == 0) {
                     startingRow = row;
                     startingColumn = column;
                     startGame();
                 }
                 playing = currentTile.clearSurroundingTiles();
-                if (!playing) {
-                } else if (numCleared == rows * columns - numMines) {
+                if (numTilesCleared == rows * columns - numMines) {
+                    won = true;
                     playing = false;
                 }
             }
@@ -154,8 +155,26 @@ public class Minesweeper {
         }
     }
 
-    public int getNumCleared() {
-        return numCleared;
+    private boolean hasWon() {
+        return !playing && won;
+    }
+
+    private boolean hasLost() {
+        return !playing && !won;
+    }
+
+    public Status status() {
+        if (hasWon()) {
+            return Status.WIN;
+        } else if (hasLost()) {
+            return Status.LOSE;
+        } else {
+            return Status.PLAYING;
+        }
+    }
+
+    public int getNumTilesCleared() {
+        return numTilesCleared;
     }
 
     public int getNumMines() {
@@ -174,7 +193,7 @@ public class Minesweeper {
         return playing;
     }
 
-    public void incrementNumCleared() {
-        numCleared++;
+    public void incrementNumTilesCleared() {
+        numTilesCleared++;
     }
 }

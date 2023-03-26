@@ -1,8 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,21 +20,25 @@ public class MinesweeperPane extends GridPane {
 
     private Stage gameStage;
 
+    private Difficulty difficulty;
 
-    public MinesweeperPane(int rows, int columns, int numMines, Stage gameStage) {
+    public MinesweeperPane(Difficulty difficulty, Stage gameStage) {
         setAlignment(Pos.CENTER);
+        this.difficulty = difficulty;
         this.gameStage = gameStage;
-        this.minesweeper = new Minesweeper(rows, columns, numMines);
-        flagLabel = new Label(String.format("Flags remainging:\n%d", minesweeper.getFlagsRemaining()));
+        this.minesweeper = new Minesweeper(difficulty);
+        flagLabel = new Label(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
         flagLabel.setAlignment(Pos.CENTER);
         secondsLabel = new Label("0 s");
         secondsLabel.setAlignment(Pos.CENTER);
         secondsLabel.setMinWidth(70);
+        gameStage.setTitle(String.format("Minesweeper %s", difficulty.toString()));
+        setStageSize();
         timer = new Timer();
-        tilePanes = new TilePane[rows][columns];
+        tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumColumns()];
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < minesweeper.getNumRows(); i++) {
+            for (int j = 0; j < minesweeper.getNumColumns(); j++) {
                 TilePane tilePane = new TilePane(i, j, this);
                 tilePanes[i][j] = tilePane;
                 add(tilePane, j, i); // this adds to gridpane
@@ -47,15 +46,20 @@ public class MinesweeperPane extends GridPane {
         }
     }
 
+    private void setStageSize() {
+        gameStage.setHeight(30 * minesweeper.getNumRows() + 120);
+        gameStage.setWidth(30 * minesweeper.getNumColumns() + 100);
+    }
+
     public void clear(int row, int column) {
         if (minesweeper.isPlaying()) {
-            if (minesweeper.getNumCleared() == 0) {
+            if (minesweeper.getNumTilesCleared() == 0) {
                 timer.start();
             }
             minesweeper.clear(row, column);
             update();
             if (!minesweeper.isPlaying()) {
-                if (minesweeper.getNumCleared() == minesweeper.getNumRows() * minesweeper.getNumColumns() - minesweeper.getNumMines()) {
+                if (minesweeper.getNumTilesCleared() == minesweeper.getNumRows() * minesweeper.getNumColumns() - minesweeper.getNumMines()) {
                     winAction();
                 } else {
                     loseAction();
@@ -67,6 +71,7 @@ public class MinesweeperPane extends GridPane {
     public void flag(int row, int column) {
         if (minesweeper.isPlaying()) { // can only flag if we are playing
             minesweeper.flag(row, column);
+            flagLabel.setText(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
             tilePanes[row][column].update(); // only need to update individual tile
         }
 
@@ -94,7 +99,7 @@ public class MinesweeperPane extends GridPane {
                 String.format("%d.%d", timer.elapsedSeconds, timer.elapsedMilliseconds)
             );
 
-            LeaderboardEntry entry = new LeaderboardEntry(name, minesweeper.getNumRows(), minesweeper.getNumColumns(), minesweeper.getNumMines(), time);
+            LeaderboardEntry entry = new LeaderboardEntry(name, difficulty, time);
 
             LeaderboardWriter leaderBoardWriter = new LeaderboardWriter();
             leaderBoardWriter.write(entry);
