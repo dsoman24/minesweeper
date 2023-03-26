@@ -114,7 +114,7 @@ public class Minesweeper extends GridPane {
             int row = rand.nextInt(rows);
             int column = rand.nextInt(columns);
 
-            while (tiles[row][column].hasMine
+            while (tiles[row][column].mine
                 || (row >= startingRow - 1
                 && row <= startingRow + 1
                 && column >= startingColumn - 1
@@ -122,7 +122,7 @@ public class Minesweeper extends GridPane {
                 row = rand.nextInt(rows);
                 column = rand.nextInt(columns);
             }
-            tiles[row][column].hasMine = true;
+            tiles[row][column].mine = true;
             // now go around and increment the tiles immediately around it
             for (int x = row - 1; x < row + 2; x++) {
                 for (int y = column - 1; y < column + 2; y++) {
@@ -151,7 +151,7 @@ public class Minesweeper extends GridPane {
     }
 
     /**
-     * Method to clear a tile from the board.
+     * Method to clear a single tile from the board.
      * Utilized in tile clicking functionality.
      * TO-DO use in bot functionality
      * @param row the row of the tile to clear
@@ -160,14 +160,14 @@ public class Minesweeper extends GridPane {
     public void clear(int row, int column) {
         Tile currentTile = tiles[row][column];
         if (playing) {
-            if (!currentTile.isCleared && !currentTile.hasFlag) {
+            if (!currentTile.isCleared && !currentTile.flag) {
                 if (numCleared == 0) {
                     startingRow = row;
                     startingColumn = column;
                     Minesweeper.this.startGame();
                     timer.start();
                 }
-                playing = currentTile.clearTiles();
+                playing = currentTile.clearSurroundingTiles();
                 if (!playing) {
                     loseAction();
                 } else if (numCleared == rows * columns - numMines) {
@@ -185,9 +185,9 @@ public class Minesweeper extends GridPane {
         // reveal all bombs upon losing
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (tiles[i][j].hasMine && !tiles[i][j].hasFlag) {
-                    tiles[i][j].clearTiles();
-                } else if (!tiles[i][j].hasMine && tiles[i][j].hasFlag) {
+                if (tiles[i][j].mine && !tiles[i][j].flag) {
+                    tiles[i][j].clearSurroundingTiles();
+                } else if (!tiles[i][j].mine && tiles[i][j].flag) {
                     tiles[i][j].getChildren().add(new Label("X"));
                 }
             }
@@ -281,14 +281,14 @@ public class Minesweeper extends GridPane {
         Tile currentTile = tiles[row][column];
         if (playing) {
             if (!currentTile.isCleared) {
-                if (!currentTile.hasFlag) {
+                if (!currentTile.flag) {
                     currentTile.getChildren().add(new Flag());
                     flagsRemaining--;
-                    currentTile.hasFlag = true;
+                    currentTile.flag = true;
                 } else {
                     currentTile.getChildren().remove(currentTile.getChildren().size() - 1);
                     flagsRemaining++;
-                    currentTile.hasFlag = false;
+                    currentTile.flag = false;
                 }
                 flagLabel.setText(String.format("Flags remainging:\n%d", flagsRemaining));
             }
@@ -302,11 +302,11 @@ public class Minesweeper extends GridPane {
         private int row;
         private int column;
         private int neighboringMines;
-        private boolean hasMine;
-        private boolean hasFlag;
+        private boolean mine;
+        private boolean flag;
         private boolean isCleared;
         private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
-        private Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
+        private final Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
 
         /**
          * Constructor for a tile.
@@ -317,7 +317,7 @@ public class Minesweeper extends GridPane {
         public Tile(int row, int column) {
             this.row = row;
             this.column = column;
-            hasMine = false;
+            mine = false;
             isCleared = false;
             getChildren().add(background);
             getChildren().add(foreground);
@@ -338,26 +338,26 @@ public class Minesweeper extends GridPane {
          * Calls a recursive helper.
          * @return true if clear was successful (not a mine), false otherwise
          */
-        public boolean clearTiles() {
-            if (hasMine) {
+        public boolean clearSurroundingTiles() {
+            if (mine) {
                 foreground.setFill(Color.DARKGOLDENROD);
                 getChildren().add(new Label("M"));
                 return false;
             }
-            clearTiles(this);
+            clearSurroundingTilesHelper(this);
             return true;
         }
 
         /**
          * Recursive helper method to clear the tiles using DFS.
-         * Clears all adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
+         * Clears all this tile and adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
          * @param curr the current tile we are clearing
          */
-        private void clearTiles(Tile curr) {
-            if (!curr.isCleared && !curr.hasFlag) {
+        private void clearSurroundingTilesHelper(Tile curr) {
+            if (!curr.isCleared && !curr.flag) {
                 curr.isCleared = true;
                 numCleared++;
-                curr.foreground.setFill(Color.GREENYELLOW);
+                curr.foreground.setFill(Color.CORNFLOWERBLUE);
                 curr.getChildren().add(
                     new Label(String.format("%s", curr.neighboringMines == 0 ? " " : curr.neighboringMines))
                 );
@@ -365,16 +365,17 @@ public class Minesweeper extends GridPane {
                     for (int i = curr.row - 1; i < curr.row + 2; i++) {
                         for (int j = curr.column - 1; j < curr.column + 2; j++) {
                             if (!(i == curr.row && j == curr.column) && isInBounds(i, j)) {
-                                clearTiles(tiles[i][j]);
+                                clearSurroundingTilesHelper(tiles[i][j]);
                             }
                         }
                     }
                 }
             }
         }
+
         @Override
         public String toString() {
-            return hasMine ? "B" : String.format("%d", neighboringMines);
+            return mine ? "M" : String.format("%d", neighboringMines);
         }
 
         @Override
@@ -384,7 +385,7 @@ public class Minesweeper extends GridPane {
                 return this.row == other.row
                     && this.column == other.column
                     && this.neighboringMines == other.neighboringMines
-                    && this.hasMine == other.hasMine;
+                    && this.mine == other.mine;
             }
             return false;
         }
