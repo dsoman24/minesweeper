@@ -25,7 +25,7 @@ import javafx.geometry.Insets;
  */
 public class Game extends Application {
 
-    private Minesweeper minesweeper;
+    private MinesweeperPane minesweeperPane;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -65,32 +65,32 @@ public class Game extends Application {
 
             String difficulty = difficultyInput.getValue();
             if (difficulty == null || difficulty.equals("Easy (9x9, 10 mines)")) {
-                minesweeper = new Minesweeper(9, 9, 10, gameStage);
+                minesweeperPane = new MinesweeperPane(9, 9, 10, gameStage);
                 gameStage.setTitle("Minesweeper Easy (9x9, 10 mines)");
                 setStageSize(gameStage, 9, 9);
             } else if (difficulty == "Medium (16x16, 40 mines)") {
-                minesweeper = new Minesweeper(16, 16, 40, gameStage);
+                minesweeperPane = new MinesweeperPane(16, 16, 40, gameStage);
                 gameStage.setTitle("Minesweeper Medium (16x16, 40 mines");
                 setStageSize(gameStage, 16, 16);
             } else if (difficulty == "Hard (16x30, 99 mines)") {
-                minesweeper = new Minesweeper(16, 30, 99, gameStage);
+                minesweeperPane = new MinesweeperPane(16, 30, 99, gameStage);
                 gameStage.setTitle("Minesweeper Hard (16x30, 99 mines)");
                 setStageSize(gameStage, 16, 30);
             } else if (difficulty == "Expert (24x30, 180 mines)") {
-                minesweeper = new Minesweeper(24, 30, 180, gameStage);
+                minesweeperPane = new MinesweeperPane(24, 30, 180, gameStage);
                 gameStage.setTitle("Minesweeper Expert (24x30, 180 mines)");
                 setStageSize(gameStage, 24, 30);
             }
 
-            minesweeper.setAlignment(Pos.CENTER);
+            minesweeperPane.setAlignment(Pos.CENTER);
             gameDetails.setAlignment(Pos.CENTER);
             gameDetails.setSpacing(20);
             subroot.setPadding(new Insets(10));
             subroot.setSpacing(10);
-            gameDetails.getChildren().add(minesweeper.getFlagLabel());
-            gameDetails.getChildren().add(minesweeper.getSecondsLabel());
+            gameDetails.getChildren().add(minesweeperPane.getFlagLabel());
+            gameDetails.getChildren().add(minesweeperPane.getSecondsLabel());
             subroot.getChildren().add(gameDetails);
-            subroot.getChildren().add(minesweeper);
+            subroot.getChildren().add(minesweeperPane);
 
             Scene scene = new Scene(subroot);
             gameStage.setScene(scene);
