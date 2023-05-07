@@ -1,6 +1,7 @@
 import java.util.Random;
 /**
  * Minesweeper game implementation.
+ * Logic only, no UI elements.
  * @author Daniel Öman
  * @date 12/31/2022
  * @version 1.0
@@ -22,6 +23,8 @@ public class Minesweeper {
     private boolean won;
     private int numTilesCleared;
 
+    private int numMoves;
+
     /**
      * 3-args constructor
      * @param rows the number of rows
@@ -29,8 +32,8 @@ public class Minesweeper {
      * @param numMines the number of mines
      */
     public Minesweeper(Difficulty difficulty) {
-        rows = difficulty.getRows();
-        columns = difficulty.getColumns();
+        rows = difficulty.getNumRows();
+        columns = difficulty.getNumColumns();
         numMines = difficulty.getNumMines();
         playing = true;
         numTilesCleared = 0;
@@ -43,7 +46,6 @@ public class Minesweeper {
             }
         }
     }
-
 
     @Override
     public String toString() {
@@ -70,7 +72,7 @@ public class Minesweeper {
     }
 
     /**
-     * Generate the game state on the first click. Will guarantee a 0 on start.
+     * Generate the game state. Will guarantee a 0 on start.
      */
     private void startGame() {
         // Begin by randomly generating mines
@@ -110,7 +112,6 @@ public class Minesweeper {
 
     /**
      * Method to clear a single tile from the board.
-     * Utilized in tile clicking functionality.
      * TO-DO use in bot functionality
      * @param row the row of the tile to clear
      * @param column the column of the tile to clear
@@ -119,6 +120,7 @@ public class Minesweeper {
         if (playing) {
             Tile currentTile = tiles[row][column];
             if (!currentTile.isCleared() && !currentTile.isFlagged()) {
+                // Generate the tiles if no tiles have been cleared.
                 if (numTilesCleared == 0) {
                     startingRow = row;
                     startingColumn = column;
@@ -129,6 +131,7 @@ public class Minesweeper {
                     won = true;
                     playing = false;
                 }
+                numMoves++;
             }
         }
     }
@@ -136,7 +139,6 @@ public class Minesweeper {
     /**
      * Method to flag a tile
      * Utilized in tile clicking functionality.
-     * TO-DO use in bot functionality
      * @param row the row of the tile to flag
      * @param column the column of the tile to flag
      */
@@ -151,6 +153,7 @@ public class Minesweeper {
                     flagsRemaining++;
                     currentTile.setFlag(false);
                 }
+                numMoves++;
             }
         }
     }
@@ -163,6 +166,9 @@ public class Minesweeper {
         return !playing && !won;
     }
 
+    /**
+     * @return the status of the game (from Status enum)
+     */
     public Status status() {
         if (hasWon()) {
             return Status.WIN;
@@ -196,4 +202,20 @@ public class Minesweeper {
     public void incrementNumTilesCleared() {
         numTilesCleared++;
     }
+
+    public int getNumMoves() {
+        return numMoves;
+    }
+
+    public String gameStateSummary() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("******************\n");
+        sb.append(String.format("Status: %s\n", status().toString()));
+        sb.append(String.format("Moves: %d\n", numMoves));
+        sb.append(String.format("Tiles Cleared: %d/%d\n", numTilesCleared, rows * columns));
+        sb.append(String.format("Flags Remaining: %d/%d", flagsRemaining, numMines));
+        return sb.toString();
+    }
+
 }

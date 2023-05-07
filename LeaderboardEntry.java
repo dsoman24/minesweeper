@@ -11,23 +11,26 @@ public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
      * 6-arg constructor.
      * @param date the date of this entry
      * @param name the name of this entry
-     * @param rows the number of rows in this entry
-     * @param columns the number of columns of this entry
-     * @param numMines the number of mines of this entry
+     * @param difficulty the difficulty of this entry
      * @param time the time of this entry
      */
     public LeaderboardEntry(String date, String name, Difficulty difficulty, double time) {
         this.date = date;
-        this.name = name;
+        this.name = "";
+        for (int i = 0; i < name.length(); i++) { // replace all commas in name with spaces
+            if (name.charAt(i) == ',') {
+                this.name += " ";
+            } else {
+                this.name += name.charAt(i);
+            }
+        }
         this.time = time;
         this.difficulty = difficulty;
     }
 
-    public LeaderboardEntry(String date, String name, String difficulty, double time) {
-        this(date, name, Difficulty.EASY, time);
-
-    }
-
+    /**
+     * 3-arg constructor
+     */
     public LeaderboardEntry(String name, Difficulty difficulty, double time) {
         this(
             DateTimeFormatter.ofPattern("yyyy/MM/dd").format(LocalDateTime.now()),

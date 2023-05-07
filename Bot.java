@@ -1,52 +1,40 @@
 /**
- * Bot which will play Minesweeper
+ * Bot which will play one game of Minesweeper
  */
-
-import java.util.Random;
-
- public class Bot {
+public class Bot {
+    /** Minesweeper instance to play on */
     private Minesweeper minesweeper;
-    private int rows;
-    private int columns;
-    private int numMines;
-    private Random random;
-    private int turns;
-    // clear tile on GUI with MouseButton.PRIMARY on GUI
+    /** The strategy this bot uses */
+    private BotStrategy strategy;
 
-    public Bot(Difficulty difficulty) {
-        this.random = new Random();
-        this.minesweeper = new Minesweeper(difficulty);
-        this.rows = minesweeper.getNumRows();
-        this.columns = minesweeper.getNumColumns();
-        this.numMines = minesweeper.getNumMines();
+    public Bot(Minesweeper minesweeper, BotStrategy strategy) {
+        this.minesweeper = minesweeper;
+        this.strategy = strategy;
     }
 
-    public Bot() {
-        this(Difficulty.EASY);
+    public void setStrategy(BotStrategy strategy) {
+        this.strategy = strategy;
     }
 
+    public BotStrategy getStrategy() {
+        return strategy;
+    }
 
-    public void run() {
+    /**
+     * Perform one individual move based on the current minesweeper state.
+     */
+    public Status move() {
+        return strategy.move(minesweeper);
+    }
+
+    /**
+     * Runs all moves until completion.
+     */
+    public void runGame() {
         while (minesweeper.status() == Status.PLAYING) {
-            int row = random.nextInt(rows);
-            int column = random.nextInt(columns);
-            minesweeper.clear(row, column);
-            turns++;
+            System.out.println(minesweeper.gameStateSummary());
+            move();
         }
-        // System.out.println(minesweeper.status());
-        // System.out.println(turns);
+        System.out.println(minesweeper.gameStateSummary());
     }
-
-    public static void main(String[] args) {
-        int sum = 0;
-        int trials = 10;
-        for (int i = 0; i < trials; i++) {
-            Bot bot = new Bot();
-            bot.run();
-            sum += bot.turns;
-        }
-        System.out.println(String.format("Average number of turns until game end: %f", (double) sum / trials));
-    }
-
-
 }

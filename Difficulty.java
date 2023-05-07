@@ -1,3 +1,8 @@
+/**
+ * Difficulty Enum.
+ * Defines num rows, num columns, num mines of a minesweeper game.
+ * Also defines string format for menu selection
+ */
 public enum Difficulty {
     EASY(9, 9, 10),
     MEDIUM(16, 16, 40),
@@ -19,11 +24,11 @@ public enum Difficulty {
         return String.format("%s (%dx%d, %d mines)", name(), rows, columns, numMines);
     }
 
-    public int getRows() {
+    public int getNumRows() {
         return rows;
     }
 
-    public int getColumns() {
+    public int getNumColumns() {
         return columns;
     }
 

@@ -30,6 +30,8 @@ public class TilePane extends StackPane {
 
     /**
      * Method to trigger a tile.
+     * Secondary mouse button to flag
+     * Primary mouse button to clear
      */
     public void trigger(MouseEvent e) {
         if (minesweeper.isPlaying()) {

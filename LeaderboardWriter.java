@@ -3,6 +3,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
+/**
+ * Class to write entries to leaderboard
+ */
 public class LeaderboardWriter {
 
     public void write(LeaderboardEntry entry) {
