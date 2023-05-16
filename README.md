@@ -5,13 +5,18 @@
 Minesweeper game with GUI supported by JavaFX. Notable feature is different bot strategies:
 
 1. Linear
-    - Will always lose, clears tiles one by one and is guaranteed to hit a mine.
+    - Clears tiles one by one and is guaranteed to hit a mine. This will always lose.
 2. Random
-    - Picks a random tile to clear each turn
+    - Picks a random tile to clear each turn.
 3. Probabilistic
-    - Computes the probability that each tile in a game state has a mine
+    - On each turn, computes the probability that each tile in a game state has a mine, and clears the least likely tile.
 
-## Probabilistic Bot Algorithm:
+## TODO:
+- [] Better write up, with diagrams.
+- [] Write up how to describe computations.
+- [] Performance analysis.
+
+## Probabilistic Algorithm:
 
 1. The algorithm first groups uncleared tiles into TileSets. A TileSet is a set of Tiles such that each Tile within the set share the same common neighboring cleared (non-zero numbered) tiles.
     - Consequently, a minesweeper game state will have one unique partition into TileSets
@@ -39,6 +44,8 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
             - If the result of the simplification is valid, we recursively continue.
         4. If the supposed result is fully populated, that is, we know a value for each TileSet, we stop and add this to the known final results. At this point, we have reached a leaf node in the tree. Otherwise, we pick the next smallest unknown element and repeat from step 2.
 4. With the solution tree built, we can begin computing probabilities.
+    - <b>Write up how to do this</b>
+5. Pick the least likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. The game state is now updated, and we repeat from the start until the game ends (either a win or a loss).
 
 
 ## Some sources:

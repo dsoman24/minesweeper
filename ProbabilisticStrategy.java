@@ -23,10 +23,7 @@ public class ProbabilisticStrategy extends BotStrategy {
         minesweeper.removeAllFlags();
         RuleManager ruleManager = new RuleManager(minesweeper);
         int[] coordinates = ruleManager.solve(random);
-        // TileSet leastLikelySet = ruleManager.leastLikelyTileSet();
-        // Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
-        // System.out.println(String.format("Clearing (%d, %d) with probability %.4f", randomLeastLikelyTile.getRow(), randomLeastLikelyTile.getColumn(), leastLikelySet.getProbability()));
-        // minesweeper.clear(coordinates[0], coordinates[1]);
+        minesweeper.clear(coordinates[0], coordinates[1]);
         return minesweeper.status();
     }
 

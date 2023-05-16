@@ -191,7 +191,7 @@ public class RuleManager {
         Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
         coordinates[0] = randomLeastLikelyTile.getRow();
         coordinates[1] = randomLeastLikelyTile.getColumn();
-        // System.out.println(String.format("Clearing (%d, %d) with probability %.4f", coordinates[0], coordinates[1], leastLikelySet.getProbability()));
+        System.out.println(String.format("Clearing (%d, %d) with probability %.4f", coordinates[0], coordinates[1], leastLikelySet.getProbability()));
         return coordinates;
     }
 
