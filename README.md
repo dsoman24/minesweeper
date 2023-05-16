@@ -17,13 +17,13 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
         - HARD: ~33%
         - EXPERT:
 
-## TODO:
+## TODO
 - [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error.
 - [ ] Better write up, with diagrams.
 - [ ] Write up how to describe computations.
 - [ ] Performance analysis.
 
-## Probabilistic Algorithm:
+## Probabilistic Algorithm
 
 1. The algorithm first groups uncleared tiles into TileSets. A TileSet is a set of Tiles such that each Tile within the set share the same common neighboring cleared (non-zero numbered) tiles.
     - Consequently, a minesweeper game state will have one unique partition into TileSets
@@ -62,7 +62,7 @@ Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.co
 
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
-## Some sources:
+## Some sources
 
 Main algo inspriation: https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
 
