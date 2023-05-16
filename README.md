@@ -28,7 +28,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 
 ### Definitions and Terminology
 
-- We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \empty$.
+- We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \emptyset$.
     - A minesweeper board is rectangular with $h$ rows and $w$ columns, and with a set of tiles with mines $M$ such that $M \subseteq U$.
     - It follows that a minesweeper configuration is "solved" when $M = U$. That is, the only uncleared tiles remaining are those with mines.
 - Let $t_k$ be the $k^\text{th}$ **tile** located at row $x$ and column $y$, where $k = wx + y$. The top left corner of a minesweeper configuration is $(x = 0, y = 0)$, so $x = 0, \dots, h - 1$ and $y = 0, \dots, w - 1$. So, we see that $k = 0, 1, \dots, hw - 1$.
@@ -38,7 +38,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
     - The **minimum-likelihood tile** is a tile $t_\text{min} \in U$ which minimizes $p(t)$.
 - A minesweeper board configuration will have a **density**, which is the probability that a given unopened tile $t_k \in U$ has a mine for all $k = 0, 1, \dots, hw - 1$. This density is $\rho = |M|/|U|$.
     - For instance, an *easy* difficulty game has 10 mines, 9 rows, and 9 columns. So, an initial state without any cleared tiles will have $|M|$ = 10 and $|U| = 9 \cdot 9 = 81$, so it has a density of $\rho = 10/(9 \cdot 9) \approx 0.12346$.
-- A minesweeper board configuration $B$ can be separated into $n$ disjoint **TileSets**, notated by $S_i$, where $i = 0, \dots, n - 1$. So, $$B = \bigcup_{i = 0}^{n - 1} S_i$$ where $S_i \cap S_j = \empty$ for $i, j = 0, 1, \dots, n - 1$, $i \not = j$.
+- A minesweeper board configuration $B$ can be separated into $n$ disjoint **TileSets**, notated by $S_i$, where $i = 0, \dots, n - 1$. So, $$B = \bigcup_{i = 0}^{n - 1} S_i$$ where $S_i \cap S_j = \emptyset$ for $i, j = 0, 1, \dots, n - 1$, $i \not = j$.
     - A TileSet is a set of tiles $t_k$ such that each tile within the set share the same common neighboring cleared tiles. This is best illustrated in the following image:
 
     <div style="text-align:center;">
