@@ -153,7 +153,6 @@ You can also play this version of minesweeper! I built the GUI using JavaFX SDK 
 ### Gameplay:
 - Left click to clear a tile
 - Right click to toggle flags
-- 
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
 ## Some sources
