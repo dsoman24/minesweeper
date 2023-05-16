@@ -27,6 +27,8 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 ## Probabilistic Algorithm
 
 ### Definitions and Terminology
+**NOTE**: Set notation on GitHub markdown's latex is a little weird, so curly brackets are not shown
+
 
 - We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \emptyset$.
     - A minesweeper board is rectangular with $h$ rows and $w$ columns, and with a set of tiles with mines $M$ such that $M \subseteq U$.
