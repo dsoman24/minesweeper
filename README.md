@@ -150,7 +150,7 @@ You can also play this version of minesweeper! I built the GUI using JavaFX SDK 
 - Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
 - Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
 
-### Gameplay:
+#### Gameplay:
 - Left click to clear a tile
 - Right click to toggle flags
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
