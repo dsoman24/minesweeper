@@ -12,10 +12,11 @@ public abstract class BotStrategy {
     /**
      * Run moves until completion
      */
-    public void runGame() {
+    public Status runGame() {
         while (minesweeper.status() == Status.PLAYING) {
             move();
         }
+        return minesweeper.status();
     }
 
     public Minesweeper getMinesweeper() {

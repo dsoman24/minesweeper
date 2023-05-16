@@ -74,12 +74,14 @@ public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
         Difficulty difficulty = Difficulty.EASY;
         if (parts[2].equals("EASY")) {
             difficulty = Difficulty.EASY;
-        } else if (parts[2].equals("NORMAL")) {
+        } else if (parts[2].equals("MEDIUM")) {
             difficulty = Difficulty.MEDIUM;
         } else if (parts[2].equals("HARD")) {
             difficulty = Difficulty.HARD;
         } else if (parts[2].equals("EXPERT")) {
             difficulty = Difficulty.EXPERT;
+        } else if (parts[2].equals("MINI")) {
+            difficulty = Difficulty.MINI;
         }
         return new LeaderboardEntry(
             parts[0],

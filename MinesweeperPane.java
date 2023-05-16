@@ -26,7 +26,7 @@ public class MinesweeperPane extends GridPane {
 
     private boolean botActivated = false;
 
-    private static int botDelay = 0;
+    private static int botDelay = 100; // 1000 is one second, delay in milliseconds
 
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;

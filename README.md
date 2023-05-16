@@ -10,9 +10,15 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
     - Picks a random tile to clear each turn.
 3. Probabilistic
     - On each turn, computes the probability that each tile in a game state has a mine, and clears the least likely tile.
-    - It does not win 100% of the time!
+    - Approximate win rates:
+        - MINI: 70%
+        - EASY: 96%
+        - MEDIUM: 79%
+        - HARD: ~33%
+        - EXPERT:
 
 ## TODO:
+- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error.
 - [ ] Better write up, with diagrams.
 - [ ] Write up how to describe computations.
 - [ ] Performance analysis.

@@ -27,7 +27,7 @@ public class Bot {
     /**
      * Run a game until completion
      */
-    public void runGame() {
-        strategy.runGame();
+    public Status runGame() {
+        return strategy.runGame();
     }
 }

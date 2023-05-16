@@ -23,16 +23,16 @@ public class RuleManager {
         this.supposedResults = new SupposedResults();
     }
 
-    private void printTileSetsAndRules() {
-        System.out.println("TILESETS");
-        for (TileSet tileSet : tileSets) {
-            System.out.println(tileSet);
-        }
-        System.out.println("RULES");
-        for (TileSetRule rule : rules) {
-            System.out.println(rule);
-        }
-    }
+    // private void printTileSetsAndRules() {
+    //     System.out.println("TILESETS");
+    //     for (TileSet tileSet : tileSets) {
+    //         System.out.println(tileSet);
+    //     }
+    //     System.out.println("RULES");
+    //     for (TileSetRule rule : rules) {
+    //         System.out.println(rule);
+    //     }
+    // }
 
     /**
      * Create all TileSets (variables) for the given minesweeper gamestate.
@@ -97,7 +97,9 @@ public class RuleManager {
                 BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
                 probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
             }
-            probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL32);
+            if (probability.compareTo(BigDecimal.ZERO) != 0) {
+                probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL32);
+            }
             tileSet.setProbability(probability.doubleValue());
         }
     }
@@ -154,7 +156,7 @@ public class RuleManager {
         Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
         coordinates[0] = randomLeastLikelyTile.getRow();
         coordinates[1] = randomLeastLikelyTile.getColumn();
-        System.out.println(String.format("Clearing (%d, %d) with probability %.4f", coordinates[0], coordinates[1], leastLikelySet.getProbability()));
+        // System.out.println(String.format("Clearing (%d, %d) with probability %.4f", coordinates[0], coordinates[1], leastLikelySet.getProbability()));
         return coordinates;
     }
 
