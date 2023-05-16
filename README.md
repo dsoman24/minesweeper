@@ -12,9 +12,9 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
     - On each turn, computes the probability that each tile in a game state has a mine, and clears the least likely tile.
 
 ## TODO:
-- [] Better write up, with diagrams.
-- [] Write up how to describe computations.
-- [] Performance analysis.
+- [ ] Better write up, with diagrams.
+- [ ] Write up how to describe computations.
+- [ ] Performance analysis.
 
 ## Probabilistic Algorithm:
 
