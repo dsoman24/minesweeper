@@ -40,7 +40,7 @@ public class MinesweeperPane extends GridPane {
         tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumColumns()];
 
         ComboBox<String> botStrategySelector = new ComboBox<>();
-        botStrategySelector.getItems().addAll("Random");
+        botStrategySelector.getItems().addAll("Random", "Linear", "Probabilistic");
 
         Button toggleBot = new Button("Start Bot");
         toggleBot.setOnAction(e -> {
@@ -51,12 +51,14 @@ public class MinesweeperPane extends GridPane {
                 botActivated = true;
                 toggleBot.setText("Stop Bot");
 
-                Bot bot;
+                Bot bot = null;
 
-                if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Random")) {
-                    bot = new Bot(minesweeper, new RandomStrategy());
-                } else {
-                    bot = null;
+                if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Probabilistic")) {
+                    bot = new Bot(new ProbabilisticStrategy(minesweeper));
+                } else if (botStrategySelector.getValue().equals("Linear")){
+                    bot = new Bot(new LinearStrategy(minesweeper));
+                } else if (botStrategySelector.getValue().equals("Random")) {
+                    bot = new Bot(new RandomStrategy(minesweeper));
                 }
 
                 BotRunner botRunner = new BotRunner(bot);
@@ -81,7 +83,7 @@ public class MinesweeperPane extends GridPane {
      * Clear a tile
      */
     public void clear(int row, int column) {
-        if (minesweeper.isPlaying()) {
+        if (minesweeper.isPlaying() && !botActivated) {
             if (minesweeper.getNumTilesCleared() == 0) {
                 timer.start();
             }
@@ -98,10 +100,10 @@ public class MinesweeperPane extends GridPane {
     }
 
     /**
-     * Add flag at a row and column
+     * Toggle flag at a row and column
      */
     public void flag(int row, int column) {
-        if (minesweeper.isPlaying()) { // can only flag if we are playing
+        if (minesweeper.isPlaying() && !botActivated) { // can only flag if we are playing
             minesweeper.flag(row, column);
             flagLabel.setText(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
             tilePanes[row][column].update(); // only need to update individual tile
@@ -180,11 +182,6 @@ public class MinesweeperPane extends GridPane {
                 if (minesweeper.getNumTilesCleared() == 0) {
                     timer.start();
                 }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    System.out.println(e.getMessage());
-                }
                 bot.move();
                 Platform.runLater(() -> update()); // Update the UI on the UI thread
                 if (!minesweeper.isPlaying()) {
@@ -192,6 +189,12 @@ public class MinesweeperPane extends GridPane {
                         Platform.runLater(() -> winAction()); // Run the win action on the UI thread
                     } else {
                         Platform.runLater(() -> loseAction()); // Run the lose action on the UI thread
+                    }
+                } else {
+                    try {
+                        Thread.sleep(7000); // hardcoded delay
+                    } catch (InterruptedException e) {
+                        System.out.println(e.getMessage());
                     }
                 }
             }

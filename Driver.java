@@ -1,11 +1,12 @@
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Driver class to test bots.
  */
 public class Driver {
     public static void main(String[] args) {
-        Minesweeper minesweeper = new Minesweeper(Difficulty.EASY);
-        BotStrategy strategy = new RandomStrategy();
-        Bot bot = new Bot(minesweeper, strategy);
-        bot.runGame();
+        SimplifyResult result = SimplifyResult.TOO_BIG;
+        System.out.println(result.isFailure());
     }
 }

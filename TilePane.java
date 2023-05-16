@@ -75,6 +75,6 @@ public class TilePane extends StackPane {
     }
 
     public Tile getCorrespondingTile() {
-        return minesweeper.getTiles()[row][column];
+        return minesweeper.getTileAt(row, column);
     }
 }

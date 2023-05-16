@@ -4,20 +4,22 @@
  * Also defines string format for menu selection
  */
 public enum Difficulty {
-    EASY(9, 9, 10),
-    MEDIUM(16, 16, 40),
-    HARD(16, 30, 99),
-    EXPERT(24, 30, 180);
-
+    MINI(5, 5, 0.2),
+    EASY(9, 9, (10.0)/(9*9)),
+    MEDIUM(16, 16, (40.0)/(16*16)),
+    HARD(16, 30, (99.0)/(16*30)),
+    EXPERT(24, 30, (180.0)/(24*30));
 
     private int rows;
     private int columns;
     private int numMines;
+    private double density;
 
-    private Difficulty(int rows, int columns, int numMines) {
+    private Difficulty(int rows, int columns, double density) {
         this.rows = rows;
         this.columns = columns;
-        this.numMines = numMines;
+        this.density = density;
+        this.numMines = (int) (density * rows * columns);
     }
 
     public String toString() {
@@ -34,5 +36,9 @@ public enum Difficulty {
 
     public int getNumMines() {
         return numMines;
+    }
+
+    public double getDensity() {
+        return density;
     }
 }

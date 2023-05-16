@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Class to represent the tile
  */
@@ -47,12 +50,9 @@ public class Tile {
                 curr.cleared = true;
                 minesweeper.incrementNumTilesCleared();
                 if (curr.neighboringMines == 0) {
-                    for (int i = curr.row - 1; i < curr.row + 2; i++) {
-                        for (int j = curr.column - 1; j < curr.column + 2; j++) {
-                            if (!(i == curr.row && j == curr.column) && minesweeper.isInBounds(i, j)) {
-                                clearSurroundingTilesHelper(minesweeper.getTiles()[i][j]);
-                            }
-                        }
+                    Set<Tile> neighbors = getNeighbors(curr);
+                    for (Tile tile : neighbors) {
+                        clearSurroundingTilesHelper(tile);
                     }
                 }
             }
@@ -60,6 +60,42 @@ public class Tile {
 
         public int getNumNeighboringMines() {
             return neighboringMines;
+        }
+
+        /**
+         * Get neighbors of a given Tile instance.
+         */
+        public Set<Tile> getNeighbors(Tile tile) {
+            Set<Tile> neighbors = new HashSet<>();
+            for (int i = tile.row - 1; i < tile.row + 2; i++) {
+                for (int j = tile.column - 1; j < tile.column + 2; j++) {
+                    if (!(i == tile.row && j == tile.column) && minesweeper.isInBounds(i, j)) {
+                        neighbors.add(minesweeper.getTileAt(i, j));
+                    }
+                }
+            }
+            return neighbors;
+        }
+
+        /**
+         * Get neighbors of this Tile instance.
+         */
+        public Set<Tile> getNeighbors() {
+            return getNeighbors(this);
+        }
+
+        /**
+         * Get neighbors of this Tile instance that have been cleared.
+         */
+        public Set<Tile> getClearedAndNumberedNeighbors() {
+            Set<Tile> cleared = new HashSet<>();
+            Set<Tile> neighbors = getNeighbors();
+            for (Tile tile : neighbors) {
+                if (tile.isCleared()) {
+                    cleared.add(tile);
+                }
+            }
+            return cleared;
         }
 
         public void addNeighboringMine() {
@@ -93,7 +129,7 @@ public class Tile {
 
         @Override
         public int hashCode() {
-            return row + column + neighboringMines;
+            return column * minesweeper.getNumRows() + row;
         }
 
         public boolean isFlagged() {
@@ -106,5 +142,13 @@ public class Tile {
 
         public boolean isCleared() {
             return cleared;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getColumn() {
+            return column;
         }
 }

@@ -105,6 +105,10 @@ public class Minesweeper {
         return tiles;
     }
 
+    public Tile getTileAt(int row, int column) {
+        return tiles[row][column];
+    }
+
 
     public int getFlagsRemaining() {
         return flagsRemaining;
@@ -147,8 +151,10 @@ public class Minesweeper {
             Tile currentTile = tiles[row][column];
             if (!currentTile.isCleared()) {
                 if (!currentTile.isFlagged()) {
-                    flagsRemaining--;
-                    currentTile.setFlag(true);
+                    if (flagsRemaining > 0) {
+                        flagsRemaining--;
+                        currentTile.setFlag(true);
+                    }
                 } else {
                     flagsRemaining++;
                     currentTile.setFlag(false);
@@ -216,6 +222,16 @@ public class Minesweeper {
         sb.append(String.format("Tiles Cleared: %d/%d\n", numTilesCleared, rows * columns));
         sb.append(String.format("Flags Remaining: %d/%d", flagsRemaining, numMines));
         return sb.toString();
+    }
+
+    public void removeAllFlags() {
+        for (Tile[] row : tiles) {
+            for (Tile tile : row) {
+                if (tile.isFlagged()) {
+                    tile.setFlag(false);
+                }
+            }
+        }
     }
 
 }
