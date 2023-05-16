@@ -144,11 +144,15 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
 
 5. Pick the minimum likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. This approach works due to the property that for each $t \in s$, $p(t) = P(s)$, for each $s \in S$. The game configuration is now updated upon clearing, and we repeat from the start until the game ends (either a win or a loss).
 
-## JavaFX and GUI
+## JavaFX and Gameplay
 
-Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
+You can also play this version of minesweeper! I built the GUI using JavaFX SDK version 11.0.2. 
+- Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
+- Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
 
-Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
+#### Gameplay:
+- Left click to clear a tile
+- Right click to toggle flags
 
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
