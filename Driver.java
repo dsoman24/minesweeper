@@ -3,10 +3,10 @@
  */
 public class Driver {
     public static void main(String[] args) {
-        int trials = 100;
+        int trials = 10;
         int wins = 0;
         for (int i = 0; i < trials; i++) {
-            Minesweeper minesweeper = new Minesweeper(Difficulty.EXPERT);
+            Minesweeper minesweeper = new Minesweeper(Difficulty.HARD);
             Bot bot = new Bot(new ProbabilisticStrategy(minesweeper));
             Status status = bot.runGame();
             if (status == Status.WIN) {

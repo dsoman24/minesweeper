@@ -151,4 +151,8 @@ public class Tile {
         public int getColumn() {
             return column;
         }
+
+        public double density() {
+            return minesweeper.density();
+        }
 }

@@ -234,4 +234,7 @@ public class Minesweeper {
         }
     }
 
+    public double density() {
+        return (double) numMines / (rows * columns - numTilesCleared);
+    }
 }

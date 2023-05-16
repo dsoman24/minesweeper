@@ -18,7 +18,7 @@ public class TileSet implements Iterable<Tile>{
         set = new HashSet<>();
         set.add(tile);
         commonClearedNeighbors = tile.getClearedAndNumberedNeighbors();
-        probability = 1; // assume it has mine to begin
+        probability = tile.density(); // will have the same probability as the game density
     }
 
     /**

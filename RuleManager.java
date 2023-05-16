@@ -13,14 +13,14 @@ import java.util.Random;
 public class RuleManager {
     private List<TileSet> tileSets;
     private List<TileSetRule> rules; // map of ruleTile : TileSetRule
-    private SupposedResults supposedResults;
+    private SolutionSet solutionSet;
     private Minesweeper minesweeper;
 
     public RuleManager(Minesweeper minesweeper) {
         this.minesweeper = minesweeper;
         this.tileSets = new ArrayList<>();
         this.rules = new ArrayList<>();
-        this.supposedResults = new SupposedResults();
+        this.solutionSet = new SolutionSet();
     }
 
     // private void printTileSetsAndRules() {
@@ -88,12 +88,12 @@ public class RuleManager {
     }
 
     private void calculateAndAssignProbabilities() {
-        List<BigInteger> numCombinationsPerSolution = supposedResults.numCombinationsPerSolution();
-        BigInteger totalNumCombinations = supposedResults.totalNumCombinations();
+        List<BigInteger> numCombinationsPerSolution = solutionSet.numCombinationsPerSolution();
+        BigInteger totalNumCombinations = solutionSet.totalNumCombinations();
         for (TileSet tileSet : tileSets) {
             BigDecimal probability = BigDecimal.ZERO;
-            for (int i = 0; i < supposedResults.getNumberOfResultNodes(); i++) {
-                int numMines = supposedResults.getNumMinesAtSpecificResultNode(i, tileSet);
+            for (int i = 0; i < solutionSet.getNumberOfResultNodes(); i++) {
+                int numMines = solutionSet.getNumMinesAtSpecificResultNode(i, tileSet);
                 BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
                 probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
             }
@@ -106,7 +106,7 @@ public class RuleManager {
 
     /**
      * Calls recursive helper method.
-     * Fills out supposed results
+     * Fills out solution set
      */
     private void solveAllPossibilities() {
         Map<TileSet, Integer> rootResult = new HashMap<>();
@@ -124,7 +124,7 @@ public class RuleManager {
     private void solveHelper(ResultNode current) {
         // is a leaf if there are no null values in the map
         if (current.isLeaf()) {
-            supposedResults.addResultNode(current);
+            solutionSet.addResultNode(current);
             return;
         }
         // find smallest "unknown" node
@@ -171,8 +171,6 @@ public class RuleManager {
         // printTileSetsAndRules();
         // 3. Create all possible solutions
         solveAllPossibilities();
-        // System.out.println("supposed results");
-        // System.out.println(supposedResults);
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();
         // 5. Choose the least-likely tile

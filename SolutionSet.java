@@ -3,17 +3,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Stores a list of all supposed results.
+ * Stores a list of all solutions for a game state
  */
-public class SupposedResults {
+public class SolutionSet {
     private List<ResultNode> resultNodes;
 
-    public SupposedResults() {
+    public SolutionSet() {
         resultNodes = new ArrayList<>();
     }
 
     /**
-     * Add a new round of supposed results.
+     * Add a new round of solutions
      */
     public void addResultNode(ResultNode results) {
         resultNodes.add(results);
