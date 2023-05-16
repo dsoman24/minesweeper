@@ -54,6 +54,13 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
     - <b>Write up how to do this</b>
 5. Pick the least likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. The game state is now updated, and we repeat from the start until the game ends (either a win or a loss).
 
+## JavaFX and GUI
+
+Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
+
+Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
+
+Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
 ## Some sources:
 
@@ -71,11 +78,4 @@ https://web.mat.bham.ac.uk/R.W.Kaye/minesw/infmsw.pdf
 
 https://www.youtube.com/watch?v=G2kd745uYuo&ab_channel=CodingChannel
 
-## JavaFX and GUI
 
-
-Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
-
-Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
-
-Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
