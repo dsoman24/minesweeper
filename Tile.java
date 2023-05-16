@@ -129,7 +129,7 @@ public class Tile {
 
         @Override
         public int hashCode() {
-            return column * minesweeper.getNumRows() + row;
+            return row * minesweeper.getNumColumns() + column;
         }
 
         public boolean isFlagged() {

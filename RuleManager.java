@@ -108,22 +108,22 @@ public class RuleManager {
      * Calls recursive helper method.
      * Fills out solution set
      */
-    private void solveAllPossibilities() {
+    private void buildSolutionSet() {
         Map<TileSet, Integer> rootResult = new HashMap<>();
         for (TileSet tileSet : tileSets) {
             rootResult.put(tileSet, null);
         }
         ResultNode root = new ResultNode(rootResult, rules);
-        solveHelper(root);
+        buildSolutionSet(root);
     }
 
     /**
      * Recursive helper method to solve possibilities and fill out the solution set.
      * Pre-order traversal
      */
-    private void solveHelper(ResultNode current) {
+    private void buildSolutionSet(ResultNode current) {
         // is a leaf if there are no null values in the map
-        if (current.isLeaf()) {
+        if (current.isComplete()) {
             solutionSet.addResultNode(current);
             return;
         }
@@ -135,12 +135,12 @@ public class RuleManager {
             child.put(smallest, i);
             boolean validSimplification = child.simplifyAllRules();
             if (validSimplification) {
-                solveHelper(child);
+                buildSolutionSet(child);
             }
         }
     }
 
-    private TileSet leastLikelyTileSet() {
+    private TileSet minimumLikelihoodTileSet() {
         TileSet leastLikely = tileSets.get(0);
         for (TileSet tileSet : tileSets) {
             if (tileSet.getProbability() < leastLikely.getProbability()) {
@@ -150,9 +150,9 @@ public class RuleManager {
         return leastLikely;
     }
 
-    private int[] findLeastLikelyTile(Random random) {
+    private int[] findMinimumLikelihoodTile(Random random) {
         int[] coordinates = new int[2]; // [row, column]
-        TileSet leastLikelySet = leastLikelyTileSet();
+        TileSet leastLikelySet = minimumLikelihoodTileSet();
         Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
         coordinates[0] = randomLeastLikelyTile.getRow();
         coordinates[1] = randomLeastLikelyTile.getColumn();
@@ -170,11 +170,11 @@ public class RuleManager {
         createRules();
         // printTileSetsAndRules();
         // 3. Create all possible solutions
-        solveAllPossibilities();
+        buildSolutionSet();
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();
         // 5. Choose the least-likely tile
-        int[] tileToClear = findLeastLikelyTile(random);
+        int[] tileToClear = findMinimumLikelihoodTile(random);
         // System.out.println("--------------------");
         return tileToClear;
         // add probability calculation into this method

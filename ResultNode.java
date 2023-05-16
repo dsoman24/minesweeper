@@ -30,7 +30,7 @@ public class ResultNode {
         this.tileSetResults = newTileSetResults;
     }
 
-    public boolean isLeaf() {
+    public boolean isComplete() {
         for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
             if (entry.getValue() == null) {
                 return false;
