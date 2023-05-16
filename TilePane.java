@@ -13,6 +13,10 @@ public class TilePane extends StackPane {
     private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
     private final Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
 
+    private final Color[] numberLabelColors = new Color[]{
+        Color.BLUE, Color.GREEN, Color.RED, Color.PURPLE, Color.MAROON, Color.TEAL, Color.BLACK, Color.GRAY
+    };
+
     public TilePane(int row, int column, MinesweeperPane minesweeperPane) {
 
         this.row = row;
@@ -57,9 +61,12 @@ public class TilePane extends StackPane {
                 getChildren().add(new Label("M"));
             } else {
                 foreground.setFill(Color.CORNFLOWERBLUE);
-                getChildren().add(
-                    new Label(String.format("%s", currentTile.getNumNeighboringMines() == 0 ? " " : currentTile.getNumNeighboringMines()))
-                );
+                int number = currentTile.getNumNeighboringMines();
+                Label minesLabel = new Label(String.format("%s", number == 0 ? " " : number));
+                if (number > 0) {
+                    minesLabel.setTextFill(numberLabelColors[number - 1]);
+                }
+                getChildren().add(minesLabel);
             }
         }
     }
