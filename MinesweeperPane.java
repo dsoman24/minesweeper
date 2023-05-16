@@ -32,6 +32,7 @@ public class MinesweeperPane extends GridPane {
         this.gameStage = gameStage;
         setAlignment(Pos.CENTER);
         this.difficulty = difficulty;
+
         this.minesweeper = new Minesweeper(difficulty);
         flagLabel = new Label(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
         flagLabel.setAlignment(Pos.CENTER);

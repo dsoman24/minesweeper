@@ -25,13 +25,13 @@ public class Minesweeper {
 
     private int numMoves;
 
-    /**
-     * 3-args constructor
-     * @param rows the number of rows
-     * @param columns the number of columns
-     * @param numMines the number of mines
-     */
+    private Random random;
+
     public Minesweeper(Difficulty difficulty) {
+        this(difficulty, new Random());
+    }
+
+    public Minesweeper(Difficulty difficulty, Random random) {
         rows = difficulty.getNumRows();
         columns = difficulty.getNumColumns();
         numMines = difficulty.getNumMines();
@@ -45,6 +45,7 @@ public class Minesweeper {
                 tiles[i][j] = tile;
             }
         }
+        this.random = random;
     }
 
     @Override
@@ -76,18 +77,17 @@ public class Minesweeper {
      */
     private void startGame() {
         // Begin by randomly generating mines
-        Random rand = new Random();
         for (int i = 0; i < numMines; i++) {
-            int row = rand.nextInt(rows);
-            int column = rand.nextInt(columns);
+            int row = random.nextInt(rows);
+            int column = random.nextInt(columns);
 
             while (tiles[row][column].hasMine()
                 || (row >= startingRow - 1
                 && row <= startingRow + 1
                 && column >= startingColumn - 1
                 && column <= startingColumn + 1)) {
-                row = rand.nextInt(rows);
-                column = rand.nextInt(columns);
+                row = random.nextInt(rows);
+                column = random.nextInt(columns);
             }
             tiles[row][column].addMine();
             // now go around and increment the tiles immediately around it
@@ -108,7 +108,6 @@ public class Minesweeper {
     public Tile getTileAt(int row, int column) {
         return tiles[row][column];
     }
-
 
     public int getFlagsRemaining() {
         return flagsRemaining;

@@ -98,7 +98,7 @@ public class RuleManager {
                 probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
             }
             if (probability.compareTo(BigDecimal.ZERO) != 0) {
-                probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL32);
+                probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL128);
             }
             tileSet.setProbability(probability.doubleValue());
         }
@@ -118,7 +118,7 @@ public class RuleManager {
     }
 
     /**
-     * Recursive helper method to solve possibilities.
+     * Recursive helper method to solve possibilities and fill out the solution set.
      * Pre-order traversal
      */
     private void solveHelper(ResultNode current) {
