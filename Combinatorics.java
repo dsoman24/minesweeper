@@ -4,44 +4,18 @@ import java.math.BigInteger;
  * Source: https://stackoverflow.com/questions/25356014/calculate-cn-k-combinations-for-big-numbers-using-modinverse
  */
 public class Combinatorics {
-
-    // public static long combinations(int n, int r) {
-    //     System.out.println(factorial(n - r));
-    //     return factorial(n)/((factorial(r)) * (factorial(n - r)));
-    // }
-
-    // public static long factorial(int k) {
-    //     if (k <= 1) {
-    //         return 1;
-    //     }
-    //     return k * factorial(k - 1);
-    // }
-
-    public static int[] factorials = new int[100001];
-    public static int mod = 1000000007;
-    public static BigInteger MOD = BigInteger.valueOf(1000000007);
-
-    public static void calculateFactorials() {
-
-        long f = 1;
-
-        for (int i = 1; i < factorials.length; i++) {
-            f = (f * i) % mod;
-            factorials[i] = (int) f;
+    public static BigInteger combinations(int n, int k) {
+        BigInteger N = BigInteger.valueOf(n);
+        BigInteger K = BigInteger.valueOf(k);
+        // (n C k) and (n C (n-k)) are the same, so pick the smaller as k:
+        if (K.compareTo(N.subtract(K)) > 0) {
+            K = N.subtract(K);
         }
-
-    }
-
-    // Choose(n, k) = n! / (k! * (n-k)!)
-    public static long combinations(int n, int k) {
-        if (n < k) {
-            return 0;
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = BigInteger.ONE; i.compareTo(K) <= 0; i = i.add(BigInteger.ONE)) {
+            result = result.multiply(N.subtract(K).add(i));
+            result = result.divide(i);
         }
-
-        long a = BigInteger.valueOf(factorials[k]).modInverse(MOD).longValue();
-        long b = BigInteger.valueOf(factorials[n - k]).modInverse(MOD).longValue();
-
-        // Left to right associativity between * and %
-        return factorials[n] * a % mod * b % mod;
+        return result;
     }
 }

@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,8 @@ public class SupposedResults {
     /**
      * Returns a list of the number of mine configurations per solution
      */
-    public List<Integer> numCombinationsPerSolution() {
-        List<Integer> result = new ArrayList<>();
+    public List<BigInteger> numCombinationsPerSolution() {
+        List<BigInteger> result = new ArrayList<>();
         for (ResultNode resultNode : resultNodes) {
             result.add(resultNode.numCombinations());
         }
@@ -42,13 +43,13 @@ public class SupposedResults {
     }
 
     /**
-     * Sum of all combinations across all possible solutionsß
+     * Sum of all combinations across all possible solutions
      */
-    public int totalNumCombinations() {
-        int sum = 0;
-        List<Integer> result = numCombinationsPerSolution();
-        for (Integer i : result) {
-            sum += i;
+    public BigInteger totalNumCombinations() {
+        BigInteger sum = BigInteger.ZERO;
+        List<BigInteger> result = numCombinationsPerSolution();
+        for (BigInteger i : result) {
+            sum = sum.add(i);
         }
         return sum;
     }

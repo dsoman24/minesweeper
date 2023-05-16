@@ -26,6 +26,8 @@ public class MinesweeperPane extends GridPane {
 
     private boolean botActivated = false;
 
+    private static int botDelay = 0;
+
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
         setAlignment(Pos.CENTER);
@@ -42,28 +44,31 @@ public class MinesweeperPane extends GridPane {
         ComboBox<String> botStrategySelector = new ComboBox<>();
         botStrategySelector.getItems().addAll("Random", "Linear", "Probabilistic");
 
+        // Bot management here
         Button toggleBot = new Button("Start Bot");
         toggleBot.setOnAction(e -> {
-            if (botActivated) {
-                botActivated = false;
-                toggleBot.setText("Start Bot");
-            } else {
-                botActivated = true;
-                toggleBot.setText("Stop Bot");
+            if (minesweeper.isPlaying()) {
+                if (botActivated) {
+                    botActivated = false;
+                    toggleBot.setText("Start Bot");
+                } else {
+                    botActivated = true;
+                    toggleBot.setText("Stop Bot");
 
-                Bot bot = null;
+                    Bot bot = null;
 
-                if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Probabilistic")) {
-                    bot = new Bot(new ProbabilisticStrategy(minesweeper));
-                } else if (botStrategySelector.getValue().equals("Linear")){
-                    bot = new Bot(new LinearStrategy(minesweeper));
-                } else if (botStrategySelector.getValue().equals("Random")) {
-                    bot = new Bot(new RandomStrategy(minesweeper));
+                    if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Probabilistic")) {
+                        bot = new Bot(new ProbabilisticStrategy(minesweeper));
+                    } else if (botStrategySelector.getValue().equals("Linear")){
+                        bot = new Bot(new LinearStrategy(minesweeper));
+                    } else if (botStrategySelector.getValue().equals("Random")) {
+                        bot = new Bot(new RandomStrategy(minesweeper));
+                    }
+
+                    BotRunner botRunner = new BotRunner(bot);
+                    Thread botThread = new Thread(botRunner);
+                    botThread.start();
                 }
-
-                BotRunner botRunner = new BotRunner(bot);
-                Thread botThread = new Thread(botRunner);
-                botThread.start();
             }
         });
 
@@ -192,7 +197,7 @@ public class MinesweeperPane extends GridPane {
                     }
                 } else {
                     try {
-                        Thread.sleep(7000); // hardcoded delay
+                        Thread.sleep(botDelay);
                     } catch (InterruptedException e) {
                         System.out.println(e.getMessage());
                     }

@@ -77,7 +77,7 @@ public class TileSetRule {
      * Simplifies a single rule based on a resultNode (current state).
      */
     public SimplifyResult simplify(ResultNode resultNode) {
-        if (numTileSets() == 0) {
+        if (numTileSets() == 0 && result == 0) {
             return SimplifyResult.NO_EFFECT;
         }
         Iterator<TileSet> iterator = tileSets.iterator();
@@ -103,8 +103,9 @@ public class TileSetRule {
         // 1. something like [A] = X, clearly, TileSet [A] must have a value of X
         if (numTileSets() == 1) {
             resultNode.put(tileSets.get(0), result);
+            tileSets.clear();
+            result = 0;
             return SimplifyResult.SIMPLIFIED;
-
         }
 
         // 2. something like [A] + [B] = 0. Clearly, both [A] and [B] must be 0
@@ -112,6 +113,8 @@ public class TileSetRule {
             for (TileSet tileSet : tileSets) {
                 resultNode.put(tileSet, 0);
             }
+            tileSets.clear();
+            result = 0;
             return SimplifyResult.SIMPLIFIED;
         }
 

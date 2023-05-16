@@ -1,3 +1,6 @@
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +23,7 @@ public class RuleManager {
         this.supposedResults = new SupposedResults();
     }
 
-    public void printTileSetsAndRules() {
+    private void printTileSetsAndRules() {
         System.out.println("TILESETS");
         for (TileSet tileSet : tileSets) {
             System.out.println(tileSet);
@@ -34,12 +37,12 @@ public class RuleManager {
     /**
      * Create all TileSets (variables) for the given minesweeper gamestate.
      */
-    private void groupTiles() {
+    private void createTileSets() {
         int numRows = minesweeper.getNumRows();
         int numCols = minesweeper.getNumColumns();
 
-        for (int i = 0; i < numCols; i++) {
-            for (int j = 0; j < numRows; j++) {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
                 if (!minesweeper.getTileAt(i, j).isCleared()) {
                     boolean added = false;
                     for (TileSet tileSet : tileSets) {
@@ -59,7 +62,7 @@ public class RuleManager {
     /**
      * Create all TileSetRules (linear equations) for the given minesweeper gamestate.
      */
-    private void makeRules() {
+    private void createRules() {
         TileSetRule globalRule = new TileSetRule(minesweeper.getFlagsRemaining());
         for (TileSet tileSet : tileSets) {
             for (Tile ruleTile : tileSet.getCommonClearedNeighbors()) {
@@ -84,57 +87,20 @@ public class RuleManager {
         return null;
     }
 
-    public void calculateAndAssignProbabilities() {
-        List<Integer> numCombinationsPerSolution = supposedResults.numCombinationsPerSolution();
-        Combinatorics.calculateFactorials();
-        int totalNumCombinations = supposedResults.totalNumCombinations();
+    private void calculateAndAssignProbabilities() {
+        List<BigInteger> numCombinationsPerSolution = supposedResults.numCombinationsPerSolution();
+        BigInteger totalNumCombinations = supposedResults.totalNumCombinations();
         for (TileSet tileSet : tileSets) {
-            double probability = 0.0;
+            BigDecimal probability = BigDecimal.ZERO;
             for (int i = 0; i < supposedResults.getNumberOfResultNodes(); i++) {
                 int numMines = supposedResults.getNumMinesAtSpecificResultNode(i, tileSet);
-                probability += ((double) numMines / tileSet.size()) * numCombinationsPerSolution.get(i);
+                BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
+                probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
             }
-            probability /= totalNumCombinations;
-            tileSet.setProbability(probability);
+            probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL32);
+            tileSet.setProbability(probability.doubleValue());
         }
     }
-
-    // private TileSet findSmallestTileSet() {
-    //     TileSet smallest = tileSets.get(0);
-    //     for (TileSet tileSet : tileSets) {
-    //         if (smallest.size() > tileSet.size()) {
-    //             smallest = tileSet;
-    //         }
-    //     }
-    //     return smallest;
-    // }
-
-    // public void solve() {
-    //     System.out.println("***********");
-    //     System.out.println("Number of TileSets: " + tileSets.size());
-    //     // for (TileSet tileSet : tileSets) {
-    //     //     System.out.println(tileSet);
-    //     // }
-    //     System.out.println("Number of Rules: " + rules.size());
-    //     // for (TileSetRule rule : rules) {
-    //     //     System.out.println(rule);
-    //     // }
-    //     TileSet smallest = findSmallestTileSet();
-    //     int numIterations = smallest.size();
-    //     // System.out.println("Smallest selected 1: " + smallest);
-    //     for (int i = 0; i <= numIterations; i++) {
-    //         Map<TileSet, Integer> result = new HashMap<>();
-    //         for (TileSet tileSet : tileSets) {
-    //             result.put(tileSet, null);
-    //         }
-    //         result.put(smallest, i);
-    //         result = simplifyAllRulesGivenSupposedResult(result);
-    //         solveHelper(result);
-    //     }
-    //     System.out.println("Number of Solutions: " + supposedResults.getNumberOfSupposedResults());
-    //     System.out.println(supposedResults);
-    //     System.out.println("--------");
-    // }
 
     /**
      * Calls recursive helper method.
@@ -147,9 +113,6 @@ public class RuleManager {
         }
         ResultNode root = new ResultNode(rootResult, rules);
         solveHelper(root);
-        System.out.println("SOLUTIONS");
-        System.out.println("Number of Solutions: " + supposedResults.getNumberOfResultNodes());
-        System.out.println(supposedResults);
     }
 
     /**
@@ -175,7 +138,7 @@ public class RuleManager {
         }
     }
 
-    public TileSet leastLikelyTileSet() {
+    private TileSet leastLikelyTileSet() {
         TileSet leastLikely = tileSets.get(0);
         for (TileSet tileSet : tileSets) {
             if (tileSet.getProbability() < leastLikely.getProbability()) {
@@ -185,7 +148,7 @@ public class RuleManager {
         return leastLikely;
     }
 
-    private int[] tileToClear(Random random) {
+    private int[] findLeastLikelyTile(Random random) {
         int[] coordinates = new int[2]; // [row, column]
         TileSet leastLikelySet = leastLikelyTileSet();
         Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
@@ -196,17 +159,23 @@ public class RuleManager {
     }
 
     /**
-     * Driver method
+     * Wrapper method, performs the steps of the algorithm.
      */
     public int[] solve(Random random) {
-        System.out.println("*************");
-        groupTiles();
-        makeRules();
-        printTileSetsAndRules();
+        // 1. Group tiles into TileSets.
+        createTileSets();
+        // 2. Create rules based on cleared and non-zero numbered tiles.
+        createRules();
+        // printTileSetsAndRules();
+        // 3. Create all possible solutions
         solveAllPossibilities();
-        // calculateAndAssignProbabilities();
-        int[] tileToClear = tileToClear(random);
-        System.out.println("--------------------");
+        // System.out.println("supposed results");
+        // System.out.println(supposedResults);
+        // 4. Calculate the probabilities of each TileSet
+        calculateAndAssignProbabilities();
+        // 5. Choose the least-likely tile
+        int[] tileToClear = findLeastLikelyTile(random);
+        // System.out.println("--------------------");
         return tileToClear;
         // add probability calculation into this method
     }

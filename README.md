@@ -10,6 +10,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
     - Picks a random tile to clear each turn.
 3. Probabilistic
     - On each turn, computes the probability that each tile in a game state has a mine, and clears the least likely tile.
+    - It does not win 100% of the time!
 
 ## TODO:
 - [ ] Better write up, with diagrams.
@@ -24,7 +25,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 2. The algorithm then collects all TileSetRules.
     - TileSetRules are essentially linear equations. Each non-zero numbered and cleared tile will correspond to a rule. Each variable within a rule is a TileSet. For example, if we have a cleared tile numbered 3 (that is, in the eight surrounding tiles, three of them are mines), and this tile has the TileSets $A$, $B$, $C$, and $D$ surrounding it, we have the rule $$A + B + C + D = 3$$
     - Rules can be simplified:
-        - Simplifying a rule involves substitution in known values for variables and removing these from the rule. For instance, if we have a rule $$A + B + C = 2$$ and we know that $AC = 1$, then clearly, $B + C = 2$.
+        - Simplifying a rule involves substitution in known values for variables and removing these from the rule. For instance, if we have a rule $$A + B + C = 2$$ and we know that $A = 1$, then clearly, $B + C = 2$.
         - There are three base cases that one can hit after simplifying a rule:
             1. There is one variable remaining.
                 - If we end up with a rule with only one TileSet e.g. $D = 3$, then clearly, the TileSet $D$ must have 3 mines within it.

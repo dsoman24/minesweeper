@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,13 +61,12 @@ public class ResultNode {
         return true;
     }
 
-    public int numCombinations() {
-        int product = 1;
+    public BigInteger numCombinations() {
+        BigInteger product = BigInteger.ONE;
         for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
             TileSet tileSet = entry.getKey();
             int numMines = entry.getValue();
-            System.out.println(numMines);
-            product *= Combinatorics.combinations(tileSet.size(), numMines);
+            product = product.multiply(Combinatorics.combinations(tileSet.size(), numMines));
         }
         return product;
     }
