@@ -26,7 +26,7 @@ public class MinesweeperPane extends GridPane {
 
     private boolean botActivated = false;
 
-    private static int botDelay = 100; // 1000 is one second, delay in milliseconds
+    private final int botDelay = 0; // 1000 is one second, delay in milliseconds
 
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
@@ -86,7 +86,7 @@ public class MinesweeperPane extends GridPane {
     }
 
     /**
-     * Clear a tile
+     * Clear a tile, human player input only.
      */
     public void clear(int row, int column) {
         if (minesweeper.isPlaying() && !botActivated) {
@@ -95,18 +95,16 @@ public class MinesweeperPane extends GridPane {
             }
             minesweeper.clear(row, column);
             update();
-            if (!minesweeper.isPlaying()) {
-                if (minesweeper.getNumTilesCleared() == minesweeper.getNumRows() * minesweeper.getNumColumns() - minesweeper.getNumMines()) {
-                    winAction();
-                } else {
-                    loseAction();
-                }
+            if (minesweeper.status() == Status.WIN) {
+                winAction();
+            } else if (minesweeper.status() == Status.LOSE) {
+                loseAction(minesweeper.getTileAt(row, column));
             }
         }
     }
 
     /**
-     * Toggle flag at a row and column
+     * Toggle flag at a row and column, human player input only.
      */
     public void flag(int row, int column) {
         if (minesweeper.isPlaying() && !botActivated) { // can only flag if we are playing
@@ -129,9 +127,9 @@ public class MinesweeperPane extends GridPane {
     /**
      * GUI activity when the game is lost
      */
-    public void loseAction() {
+    public void loseAction(Tile badTile) {
         timer.stop();
-        reveal();
+        reveal(badTile);
         LoseStage losingStage = new LoseStage(gameStage);
         losingStage.show();
     }
@@ -150,10 +148,10 @@ public class MinesweeperPane extends GridPane {
     /**
      * Reveals all bombs in the stage, called when losing.
      */
-    public void reveal() {
+    public void reveal(Tile badTile) {
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
             for (int j = 0; j < minesweeper.getNumColumns(); j++) {
-                tilePanes[i][j].reveal();
+                tilePanes[i][j].reveal(badTile);
             }
         }
     }
@@ -188,14 +186,19 @@ public class MinesweeperPane extends GridPane {
                 if (minesweeper.getNumTilesCleared() == 0) {
                     timer.start();
                 }
-                bot.move();
+                // bot removes flags
+                minesweeper.removeAllFlags();
+                // find the tile to clear
+                Tile tileToClear = bot.tileToClear();
+                // clear the tile
+                minesweeper.clear(tileToClear.getRow(), tileToClear.getColumn());
+                // update UI
                 Platform.runLater(() -> update()); // Update the UI on the UI thread
-                if (!minesweeper.isPlaying()) {
-                    if (minesweeper.getNumTilesCleared() == minesweeper.getNumRows() * minesweeper.getNumColumns() - minesweeper.getNumMines()) {
-                        Platform.runLater(() -> winAction()); // Run the win action on the UI thread
-                    } else {
-                        Platform.runLater(() -> loseAction()); // Run the lose action on the UI thread
-                    }
+                // check win/lose or continue playing
+                if (minesweeper.status() == Status.WIN) {
+                    Platform.runLater(() -> winAction()); // Run the win action on the UI thread
+                } else if (minesweeper.status() == Status.LOSE) {
+                    Platform.runLater(() -> loseAction(tileToClear)); // Run the lose action on the UI thread
                 } else {
                     try {
                         Thread.sleep(botDelay);

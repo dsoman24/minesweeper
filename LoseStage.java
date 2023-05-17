@@ -14,14 +14,14 @@ public class LoseStage extends Stage {
 
         Label loseLabel = new Label("You Lose");
 
-        Button loseButton = new Button("Exit");
+        Button exitButton = new Button("Exit");
 
-        loseButton.setOnAction(a -> {
+        exitButton.setOnAction(a -> {
             close();
             gameStage.close();
         });
 
-        root.getChildren().addAll(loseLabel, loseButton);
+        root.getChildren().addAll(loseLabel, exitButton);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(10));
         root.setSpacing(10);

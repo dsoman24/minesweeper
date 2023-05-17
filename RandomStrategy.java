@@ -14,14 +14,13 @@ public class RandomStrategy extends BotStrategy {
     }
 
     @Override
-    public Status move() {
+    public Tile tileToClear() {
         int row = rand.nextInt(minesweeper.getNumRows());
         int column = rand.nextInt(minesweeper.getNumColumns());
         while (minesweeper.getTileAt(row, column).isCleared() || minesweeper.getTileAt(row, column).isFlagged()) {
             row = rand.nextInt(minesweeper.getNumRows());
             column = rand.nextInt(minesweeper.getNumColumns());
         }
-        minesweeper.clear(row, column);
-        return minesweeper.status();
+        return minesweeper.getTileAt(row, column);
     }
 }

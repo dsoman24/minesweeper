@@ -14,7 +14,8 @@ public abstract class BotStrategy {
      */
     public Status runGame() {
         while (minesweeper.status() == Status.PLAYING) {
-            move();
+            Tile tile = tileToClear();
+            minesweeper.clear(tile.getRow(), tile.getColumn());
         }
         return minesweeper.status();
     }
@@ -25,8 +26,9 @@ public abstract class BotStrategy {
 
 
     /**
-     * Play an individual move.
-     * @return Status the status of the game after the move
+     * Finds the tile to clear according to the strategy.
+     * @return the tile to clear
      */
-    public abstract Status move();
+    public abstract Tile tileToClear();
+
 }

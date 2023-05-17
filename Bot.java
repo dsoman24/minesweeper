@@ -19,9 +19,10 @@ public class Bot {
 
     /**
      * Perform one individual move based on the current minesweeper state.
+     * @return the row and column number of the tile to clear
      */
-    public Status move() {
-        return strategy.move();
+    public Tile tileToClear() {
+        return strategy.tileToClear();
     }
 
     /**

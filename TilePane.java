@@ -71,11 +71,14 @@ public class TilePane extends StackPane {
         }
     }
 
-    public void reveal() {
+    public void reveal(Tile badTile) {
         Tile currentTile = getCorrespondingTile();
         if (currentTile.hasMine() && !currentTile.isFlagged()) {
-            foreground.setFill(Color.GOLDENROD);
+            foreground.setFill(Color.YELLOW);
             getChildren().add(new Label("M"));
+            if (row == badTile.getRow() && column == badTile.getColumn()) {
+                foreground.setFill(Color.ORANGE);
+            }
         } else if (!currentTile.hasMine() && currentTile.isFlagged()) {
             getChildren().add(new Label("X"));
         }

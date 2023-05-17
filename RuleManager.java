@@ -23,17 +23,6 @@ public class RuleManager {
         this.solutionSet = new SolutionSet();
     }
 
-    // private void printTileSetsAndRules() {
-    //     System.out.println("TILESETS");
-    //     for (TileSet tileSet : tileSets) {
-    //         System.out.println(tileSet);
-    //     }
-    //     System.out.println("RULES");
-    //     for (TileSetRule rule : rules) {
-    //         System.out.println(rule);
-    //     }
-    // }
-
     /**
      * Create all TileSets (variables) for the given minesweeper gamestate.
      */
@@ -43,7 +32,8 @@ public class RuleManager {
 
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
-                if (!minesweeper.getTileAt(i, j).isCleared()) {
+                // only add the tile to the tileset if it is not cleared and not flagged
+                if (validTileForTileSet(minesweeper.getTileAt(i, j))) {
                     boolean added = false;
                     for (TileSet tileSet : tileSets) {
                         added = tileSet.add(minesweeper.getTileAt(i, j));
@@ -57,6 +47,10 @@ public class RuleManager {
                 }
             }
         }
+    }
+
+    private boolean validTileForTileSet(Tile tile) {
+        return !tile.isCleared() && !tile.isFlagged();
     }
 
     /**
@@ -92,12 +86,15 @@ public class RuleManager {
         BigInteger totalNumCombinations = solutionSet.totalNumCombinations();
         for (TileSet tileSet : tileSets) {
             BigDecimal probability = BigDecimal.ZERO;
-            for (int i = 0; i < solutionSet.getNumberOfResultNodes(); i++) {
-                int numMines = solutionSet.getNumMinesAtSpecificResultNode(i, tileSet);
-                BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
-                probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
-            }
-            if (probability.compareTo(BigDecimal.ZERO) != 0) {
+            // BUG HERE, REMOVE CONDITIONAL CHECK FOR 0. IDEALLY IT DOESN'T NEED IT
+            if (solutionSet.getNumberOfResultNodes() == 0) {
+                probability = BigDecimal.valueOf(minesweeper.density());
+            } else {
+                for (int i = 0; i < solutionSet.getNumberOfResultNodes(); i++) {
+                    int numMines = solutionSet.getNumMinesAtSpecificResultNode(i, tileSet);
+                    BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
+                    probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
+                }
                 probability = probability.divide(new BigDecimal(totalNumCombinations), MathContext.DECIMAL128);
             }
             tileSet.setProbability(probability.doubleValue());
@@ -140,6 +137,9 @@ public class RuleManager {
         }
     }
 
+    /**
+     * Finds the first minium likelihood tile set
+     */
     private TileSet minimumLikelihoodTileSet() {
         TileSet leastLikely = tileSets.get(0);
         for (TileSet tileSet : tileSets) {
@@ -150,34 +150,26 @@ public class RuleManager {
         return leastLikely;
     }
 
-    private int[] findMinimumLikelihoodTile(Random random) {
-        int[] coordinates = new int[2]; // [row, column]
+    private Tile findRandomMinimumLikelihoodTile(Random random) {
         TileSet leastLikelySet = minimumLikelihoodTileSet();
         Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
-        coordinates[0] = randomLeastLikelyTile.getRow();
-        coordinates[1] = randomLeastLikelyTile.getColumn();
-        // System.out.println(String.format("Clearing (%d, %d) with probability %.4f", coordinates[0], coordinates[1], leastLikelySet.getProbability()));
-        return coordinates;
+        return randomLeastLikelyTile;
     }
 
     /**
-     * Wrapper method, performs the steps of the algorithm.
+     * Wrapper method, performs the steps of the algorithm and finds the tile to clear.
      */
-    public int[] solve(Random random) {
+    public Tile tileToClear(Random random) {
         // 1. Group tiles into TileSets.
         createTileSets();
         // 2. Create rules based on cleared and non-zero numbered tiles.
         createRules();
-        // printTileSetsAndRules();
         // 3. Create all possible solutions
         buildSolutionSet();
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();
         // 5. Choose the least-likely tile
-        int[] tileToClear = findMinimumLikelihoodTile(random);
-        // System.out.println("--------------------");
+        Tile tileToClear = findRandomMinimumLikelihoodTile(random);
         return tileToClear;
-        // add probability calculation into this method
     }
-
 }

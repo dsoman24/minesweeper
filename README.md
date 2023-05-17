@@ -18,7 +18,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
         - EXPERT:
 
 ## To-do
-- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error.
+- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying.
 - [ ] Performance analysis.
 - [ ] Complexity analysis of the algorithm.
 - [X] Better write up, with diagrams.
@@ -146,7 +146,7 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
 
 ## JavaFX and Gameplay
 
-You can also play this version of minesweeper! I built the GUI using JavaFX SDK version 11.0.2. 
+You can also play this version of minesweeper! I built the GUI using JavaFX SDK version 11.0.2.
 - Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
 - Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
 

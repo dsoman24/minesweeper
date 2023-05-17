@@ -9,13 +9,12 @@ public class LinearStrategy extends BotStrategy {
     }
 
     @Override
-    public Status move() {
+    public Tile tileToClear() {
+        updatePosition();
         while (minesweeper.getTileAt(row, column).isCleared() || minesweeper.getTileAt(row, column).isFlagged()) {
             updatePosition();
         }
-        minesweeper.clear(row, column);
-        updatePosition();
-        return minesweeper.status();
+        return minesweeper.getTileAt(row, column);
     }
 
     private void updatePosition() {

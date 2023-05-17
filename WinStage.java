@@ -21,8 +21,13 @@ public class WinStage extends Stage {
         TextField nameField = new TextField();
         nameField.setPromptText("Enter your name");
 
-        Button saveToLeaderboard = new Button("Submit");
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(a -> {
+            close();
+            gameStage.close();
+        });
 
+        Button saveToLeaderboard = new Button("Submit");
         saveToLeaderboard.setOnAction(e -> {
             String name = nameField.getText();
             double time = Double.parseDouble(
@@ -38,7 +43,7 @@ public class WinStage extends Stage {
             gameStage.close();
         });
 
-        root.getChildren().addAll(winLabel, nameField, saveToLeaderboard);
+        root.getChildren().addAll(winLabel, nameField, saveToLeaderboard, exitButton);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(10));
         root.setSpacing(10);

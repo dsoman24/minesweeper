@@ -155,6 +155,4 @@ public class TileSetRule {
         }
         return hash;
     }
-
-
 }
