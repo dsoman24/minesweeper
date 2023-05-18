@@ -1,3 +1,4 @@
+package src.game_gui;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -5,6 +6,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import src.bot.Bot;
+import src.bot.strategy.linear.LinearStrategy;
+import src.bot.strategy.probabilistic.ProbabilisticStrategy;
+import src.bot.strategy.random.RandomStrategy;
+import src.minesweeper.Difficulty;
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Status;
+import src.minesweeper.Tile;
 
 /**
  * Implement game functionality for minesweeper.

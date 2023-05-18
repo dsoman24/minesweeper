@@ -1,3 +1,9 @@
+package src.bot;
+
+import src.bot.strategy.BotStrategy;
+import src.minesweeper.Status;
+import src.minesweeper.Tile;
+
 /**
  * Bot which will play one game of Minesweeper
  */

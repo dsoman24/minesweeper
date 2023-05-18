@@ -1,5 +1,8 @@
+package src.minesweeper.leaderboard;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import src.minesweeper.Difficulty;
 
 public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
     private String date;

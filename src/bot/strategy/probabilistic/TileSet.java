@@ -1,7 +1,11 @@
+package src.bot.strategy.probabilistic;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+
+import src.minesweeper.Tile;
+
 
 /**
  * TileSet class.
@@ -82,11 +86,6 @@ public class TileSet implements Iterable<Tile>{
         for (Tile tile : set) {
             sb.append(String.format("(%d, %d) ", tile.getRow(), tile.getColumn()));
         }
-        // sb.append("[");
-        // for (Tile tile : commonClearedNeighbors) {
-        //     sb.append(String.format("(%d, %d) ", tile.getRow(), tile.getColumn()));
-        // }
-        // sb.append("]");
         return sb.toString();
     }
 

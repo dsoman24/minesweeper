@@ -1,9 +1,11 @@
+package src.game_gui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import src.minesweeper.Difficulty;
 
 public class GameStage extends Stage {
 

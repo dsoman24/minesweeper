@@ -1,3 +1,4 @@
+package src.minesweeper;
 /**
  * Difficulty Enum.
  * Defines num rows, num columns, num mines of a minesweeper game.

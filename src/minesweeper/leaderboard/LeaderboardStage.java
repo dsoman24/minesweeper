@@ -1,9 +1,6 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+package src.minesweeper.leaderboard;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import src.minesweeper.Difficulty;
 
 public class LeaderboardStage extends Stage {
 
@@ -40,21 +38,7 @@ public class LeaderboardStage extends Stage {
 
         table.getColumns().addAll(dateColumn, nameColumn, diffColumn, timeColumn);
 
-        File file = new File("leaderboard.csv");
-        List<LeaderboardEntry> entries = new ArrayList<>();
-        try {
-            Scanner scan = new Scanner(file);
-            scan.nextLine();
-            while (scan.hasNextLine()) {
-                LeaderboardEntry entry = LeaderboardEntry.parseLine(scan.nextLine());
-                if (difficulty.equals(entry.getDifficulty())) {
-                    entries.add(entry);
-                }
-            }
-            scan.close();
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("File not found");
-        }
+        List<LeaderboardEntry> entries = LeaderboardIO.read("leaderboard.csv", difficulty);
 
         Collections.sort(entries);
         ObservableList<LeaderboardEntry> list = FXCollections.observableArrayList(entries);
@@ -64,5 +48,4 @@ public class LeaderboardStage extends Stage {
         Scene leaderScene = new Scene(leaderboardRoot);
         setScene(leaderScene);
     }
-
 }

@@ -1,3 +1,4 @@
+package src.bot.strategy.probabilistic;
 public enum SimplifyResult {
     SIMPLIFIED,
     NEGATIVE,

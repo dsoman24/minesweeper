@@ -1,6 +1,9 @@
+package src.bot.strategy.probabilistic;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import src.minesweeper.Tile;
 
 /**
  * Class to represent a rule.

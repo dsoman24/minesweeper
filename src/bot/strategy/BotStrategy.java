@@ -1,3 +1,9 @@
+package src.bot.strategy;
+
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Status;
+import src.minesweeper.Tile;
+
 /**
  * Strategy abstract class.
  */

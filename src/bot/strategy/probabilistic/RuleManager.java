@@ -1,3 +1,4 @@
+package src.bot.strategy.probabilistic;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -7,8 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Tile;
+
+
 /**
  * Class to group all tiles within a minesweeper game into TileSets, and create TileSetRules based on these TileSets.
+ * This class then creates the solution set based on these rules.
  */
 public class RuleManager {
     private List<TileSet> tileSets;
@@ -171,5 +177,18 @@ public class RuleManager {
         // 5. Choose the least-likely tile
         Tile tileToClear = findRandomMinimumLikelihoodTile(random);
         return tileToClear;
+    }
+
+    /**
+     * Would it be smart to flag all tiles with probability 1?
+     */
+    public List<Tile> tilesToFlag() {
+        List<Tile> tilesToFlag = new ArrayList<>();
+        for (TileSet tileSet : tileSets) {
+            for (Tile tile : tileSet) {
+                tilesToFlag.add(tile);
+            }
+        }
+        return tilesToFlag;
     }
 }

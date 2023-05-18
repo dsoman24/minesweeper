@@ -1,3 +1,4 @@
+package src.bot.strategy.probabilistic;
 import java.math.BigInteger;
 
 /**

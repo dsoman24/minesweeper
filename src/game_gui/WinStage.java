@@ -1,3 +1,4 @@
+package src.game_gui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -6,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import src.minesweeper.Difficulty;
+import src.minesweeper.leaderboard.LeaderboardEntry;
+import src.minesweeper.leaderboard.LeaderboardIO;
 
 public class WinStage extends Stage {
 
@@ -36,8 +40,7 @@ public class WinStage extends Stage {
 
             LeaderboardEntry entry = new LeaderboardEntry(name, difficulty, time);
 
-            LeaderboardWriter leaderBoardWriter = new LeaderboardWriter();
-            leaderBoardWriter.write(entry);
+            LeaderboardIO.write(entry);
 
             close();
             gameStage.close();

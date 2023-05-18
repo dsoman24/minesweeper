@@ -1,4 +1,9 @@
+package src.bot.strategy.random;
 import java.util.Random;
+
+import src.bot.strategy.BotStrategy;
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Tile;
 
 public class RandomStrategy extends BotStrategy {
 

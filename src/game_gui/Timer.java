@@ -1,3 +1,4 @@
+package src.game_gui;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 

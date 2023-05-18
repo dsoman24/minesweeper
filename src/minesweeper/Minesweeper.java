@@ -1,3 +1,4 @@
+package src.minesweeper;
 import java.util.Random;
 /**
  * Minesweeper game implementation.
@@ -18,7 +19,6 @@ public class Minesweeper {
 
     private int flagsRemaining;
 
-    // if the game is currently in play
     private boolean playing;
     private boolean won;
     private int numTilesCleared;
@@ -99,10 +99,6 @@ public class Minesweeper {
                 }
             }
         }
-    }
-
-    public Tile[][] getTiles() {
-        return tiles;
     }
 
     public Tile getTileAt(int row, int column) {

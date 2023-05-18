@@ -1,9 +1,12 @@
+package src.game_gui;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Tile;
 
 public class TilePane extends StackPane {
     private int row;

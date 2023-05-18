@@ -1,4 +1,9 @@
+package src.bot.strategy.probabilistic;
 import java.util.Random;
+
+import src.bot.strategy.BotStrategy;
+import src.minesweeper.Minesweeper;
+import src.minesweeper.Tile;
 
 
 /**
