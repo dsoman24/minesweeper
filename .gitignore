@@ -1,3 +1,4 @@
 *.class
 leaderboard.csv
 .vscode
+.DS_STORE
