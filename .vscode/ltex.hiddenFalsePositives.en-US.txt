@@ -1,5 +1,0 @@
-{"rule":"LC_AFTER_PERIOD","sentence":"^\\QCompile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java\\E$"}
-{"rule":"LC_AFTER_PERIOD","sentence":"^\\QRun with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game\\E$"}
-{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qminesweeper\\E$"}
-{"rule":"CURRENCY","sentence":"^\\QConsequently, we also see that \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q$ and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
-{"rule":"CURRENCY","sentence":"^\\QSo, \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q$ where \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q\nThe Algorithm\\E$"}
