@@ -1,4 +1,6 @@
 package src.minesweeper;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 /**
  * Minesweeper game implementation.
@@ -14,9 +16,6 @@ public class Minesweeper {
     private int columns;
     private int numMines;
 
-    private int startingRow;
-    private int startingColumn;
-
     private int flagsRemaining;
 
     private boolean playing;
@@ -27,11 +26,24 @@ public class Minesweeper {
 
     private Random random;
 
+    private boolean guaranteeZeroOnStart;
+
+    /**
+     * Use this constructor to guarantee zero on start, used for actual game play,
+     * where the start condition will not cause an infinite loop.
+     */
     public Minesweeper(Difficulty difficulty) {
-        this(difficulty, new Random());
+        this(difficulty, new Random(), true);
     }
 
-    public Minesweeper(Difficulty difficulty, Random random) {
+    /**
+     * Use this constructor for custom difficulties, where density > 1 - 8/(rows * columns)
+     */
+    public Minesweeper(Difficulty difficulty, boolean guaranteeZeroOnStart) {
+        this(difficulty, new Random(), guaranteeZeroOnStart);
+    }
+
+    public Minesweeper(Difficulty difficulty, Random random, boolean guaranteeZeroOnStart) {
         rows = difficulty.getNumRows();
         columns = difficulty.getNumColumns();
         numMines = difficulty.getNumMines();
@@ -46,6 +58,7 @@ public class Minesweeper {
             }
         }
         this.random = random;
+        this.guaranteeZeroOnStart = guaranteeZeroOnStart;
     }
 
     @Override
@@ -75,20 +88,36 @@ public class Minesweeper {
     /**
      * Generate the game state. Will guarantee a 0 on start.
      */
-    private void startGame() {
+    private void startGame(int startingRow, int startingColumn) {
         // Begin by randomly generating mines
-        for (int i = 0; i < numMines; i++) {
-            int row = random.nextInt(rows);
-            int column = random.nextInt(columns);
 
-            while (tiles[row][column].hasMine()
-                || (row >= startingRow - 1
-                && row <= startingRow + 1
-                && column >= startingColumn - 1
-                && column <= startingColumn + 1)) {
-                row = random.nextInt(rows);
-                column = random.nextInt(columns);
+        List<int[]> validPositions = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                validPositions.add(new int[]{i, j});
             }
+        }
+        for (int i = 0; i < numMines; i++) {
+
+            int randomIndex = random.nextInt(validPositions.size());
+            int[] minePosition = validPositions.get(randomIndex);
+            int row = minePosition[0];
+            int column = minePosition[1];
+
+            if (guaranteeZeroOnStart) {
+                while (row >= startingRow - 1 &&
+                    row <= startingRow + 1 &&
+                    column >= startingColumn - 1 &&
+                    column <= startingColumn + 1) {
+                    randomIndex = random.nextInt(validPositions.size());
+                    minePosition = validPositions.get(randomIndex);
+                    row = minePosition[0];
+                    column = minePosition[1];
+                }
+            }
+
+            validPositions.remove(randomIndex);
+
             tiles[row][column].addMine();
             // now go around and increment the tiles immediately around it
             for (int x = row - 1; x < row + 2; x++) {
@@ -121,9 +150,7 @@ public class Minesweeper {
             if (!currentTile.isCleared() && !currentTile.isFlagged()) {
                 // Generate the tiles if no tiles have been cleared.
                 if (numTilesCleared == 0) {
-                    startingRow = row;
-                    startingColumn = column;
-                    startGame();
+                    startGame(row, column);
                 }
                 playing = currentTile.clearSurroundingTiles();
                 if (numTilesCleared == rows * columns - numMines) {

@@ -10,17 +10,12 @@ import src.bot.strategy.probabilistic.ProbabilisticStrategy;
  */
 public class Driver {
     public static void main(String[] args) {
-        int trials = 100;
-        int wins = 0;
-        for (int i = 0; i < trials; i++) {
-            Minesweeper minesweeper = new Minesweeper(Difficulty.HARD);
-            Bot bot = new Bot(new ProbabilisticStrategy(minesweeper));
-            Status status = bot.runGame();
-            if (status == Status.WIN) {
-                wins++;
-            }
-            System.out.println(i);
-        }
-        System.out.println("Win Percentage: " + (double) wins / trials);
+        Difficulty difficulty = Difficulty.customDifficulty(5, 5, 0.8);
+        Minesweeper minesweeper = new Minesweeper(difficulty, false);
+        System.out.println(difficulty.toString());
+        minesweeper.clear(1, 1);
+        System.out.println(minesweeper);
+        System.out.println(minesweeper.status());
     }
+
 }

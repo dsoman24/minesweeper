@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import src.bot.Bot;
@@ -35,7 +36,7 @@ public class MinesweeperPane extends GridPane {
 
     private boolean botActivated = false;
 
-    private final int botDelay = 0; // 1000 is one second, delay in milliseconds
+    private int botDelay = 0; // 1000 is one second, delay in milliseconds
 
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
@@ -53,6 +54,9 @@ public class MinesweeperPane extends GridPane {
 
         ComboBox<String> botStrategySelector = new ComboBox<>();
         botStrategySelector.getItems().addAll("Random", "Linear", "Probabilistic");
+        botStrategySelector.setPromptText("Bot Strategy");
+        TextField botDelayTextField = new TextField();
+        botDelayTextField.setPromptText("Delay (ms)");
 
         // Bot management here
         Button toggleBot = new Button("Start Bot");
@@ -64,6 +68,17 @@ public class MinesweeperPane extends GridPane {
                 } else {
                     botActivated = true;
                     toggleBot.setText("Stop Bot");
+
+                    String delayValue = botDelayTextField.getText();
+                    if (delayValue == null || delayValue.isBlank()) {
+                        botDelay = 0;
+                    } else {
+                        try {
+                            botDelay = Integer.parseInt(delayValue);
+                        } catch (NumberFormatException nfe) {
+                            botDelay = 0;
+                        }
+                    }
 
                     Bot bot = null;
 
@@ -82,8 +97,9 @@ public class MinesweeperPane extends GridPane {
             }
         });
 
+
         botInput = new HBox();
-        botInput.getChildren().addAll(botStrategySelector, toggleBot);
+        botInput.getChildren().addAll(botStrategySelector, botDelayTextField, toggleBot);
 
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
             for (int j = 0; j < minesweeper.getNumColumns(); j++) {
@@ -181,7 +197,7 @@ public class MinesweeperPane extends GridPane {
         return botInput;
     }
 
-    private class BotRunner implements Runnable{
+    private class BotRunner implements Runnable {
 
         private Bot bot;
 

@@ -20,6 +20,19 @@ public enum Difficulty {
         this.rows = rows;
         this.columns = columns;
         this.density = density;
+        updateNumMines();
+    }
+
+    public static Difficulty customDifficulty(int rows, int columns, double density) {
+        Difficulty difficulty = EASY;
+        difficulty.rows = rows;
+        difficulty.columns = columns;
+        difficulty.density = density;
+        difficulty.updateNumMines();
+        return difficulty;
+    }
+
+    private void updateNumMines() {
         this.numMines = (int) (density * rows * columns);
     }
 
