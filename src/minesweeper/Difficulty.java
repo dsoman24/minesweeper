@@ -9,7 +9,8 @@ public enum Difficulty {
     EASY(9, 9, (10.0)/(9*9)),
     MEDIUM(16, 16, (40.0)/(16*16)),
     HARD(16, 30, (99.0)/(16*30)),
-    EXPERT(24, 30, (180.0)/(24*30));
+    EXPERT(24, 30, (180.0)/(24*30)),
+    CUSTOM;
 
     private int rows;
     private int columns;
@@ -23,8 +24,10 @@ public enum Difficulty {
         updateNumMines();
     }
 
+    private Difficulty() {}
+
     public static Difficulty customDifficulty(int rows, int columns, double density) {
-        Difficulty difficulty = EASY;
+        Difficulty difficulty = CUSTOM;
         difficulty.rows = rows;
         difficulty.columns = columns;
         difficulty.density = density;

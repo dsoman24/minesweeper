@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import src.minesweeper.Difficulty;
-import src.minesweeper.leaderboard.LeaderboardStage;
+import src.ui.leaderboard.LeaderboardStage;
 import javafx.geometry.Insets;
 
 /**

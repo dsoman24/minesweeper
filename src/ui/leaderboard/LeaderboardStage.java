@@ -1,4 +1,4 @@
-package src.minesweeper.leaderboard;
+package src.ui.leaderboard;
 import java.util.Collections;
 import java.util.List;
 

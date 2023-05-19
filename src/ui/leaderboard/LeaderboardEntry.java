@@ -1,4 +1,4 @@
-package src.minesweeper.leaderboard;
+package src.ui.leaderboard;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

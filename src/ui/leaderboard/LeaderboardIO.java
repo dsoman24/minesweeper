@@ -1,4 +1,4 @@
-package src.minesweeper.leaderboard;
+package src.ui.leaderboard;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,7 +15,7 @@ import src.minesweeper.Difficulty;
 public class LeaderboardIO {
 
     public static void write(LeaderboardEntry entry) {
-        File leaderboard = new File("src/minesweeper/leaderboard/leaderboard.csv");
+        File leaderboard = new File("src/ui/leaderboard/leaderboard.csv");
         PrintWriter writer;
         try {
             boolean newFile = !leaderboard.exists();
@@ -33,7 +33,7 @@ public class LeaderboardIO {
     }
 
     public static List<LeaderboardEntry> read(String filename, Difficulty difficulty) {
-        File file = new File("src/minesweeper/leaderboard/" + filename);
+        File file = new File("src/ui/leaderboard/" + filename);
         List<LeaderboardEntry> entries = new ArrayList<>();
         try {
             Scanner scan = new Scanner(file);

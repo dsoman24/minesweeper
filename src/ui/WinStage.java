@@ -8,8 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import src.minesweeper.Difficulty;
-import src.minesweeper.leaderboard.LeaderboardEntry;
-import src.minesweeper.leaderboard.LeaderboardIO;
+import src.ui.leaderboard.LeaderboardEntry;
+import src.ui.leaderboard.LeaderboardIO;
 
 public class WinStage extends Stage {
 

@@ -15,6 +15,7 @@ public class Minesweeper {
     private int rows;
     private int columns;
     private int numMines;
+    private double initialDensity;
 
     private int flagsRemaining;
 
@@ -26,26 +27,17 @@ public class Minesweeper {
 
     private Random random;
 
-    private boolean guaranteeZeroOnStart;
-
     /**
-     * Use this constructor to guarantee zero on start, used for actual game play,
      * where the start condition will not cause an infinite loop.
      */
     public Minesweeper(Difficulty difficulty) {
-        this(difficulty, new Random(), true);
+        this(difficulty, new Random());
     }
 
-    /**
-     * Use this constructor for custom difficulties, where density > 1 - 8/(rows * columns)
-     */
-    public Minesweeper(Difficulty difficulty, boolean guaranteeZeroOnStart) {
-        this(difficulty, new Random(), guaranteeZeroOnStart);
-    }
-
-    public Minesweeper(Difficulty difficulty, Random random, boolean guaranteeZeroOnStart) {
+    public Minesweeper(Difficulty difficulty, Random random) {
         rows = difficulty.getNumRows();
         columns = difficulty.getNumColumns();
+        initialDensity = difficulty.getDensity();
         numMines = difficulty.getNumMines();
         playing = true;
         numTilesCleared = 0;
@@ -58,7 +50,6 @@ public class Minesweeper {
             }
         }
         this.random = random;
-        this.guaranteeZeroOnStart = guaranteeZeroOnStart;
     }
 
     @Override
@@ -104,7 +95,7 @@ public class Minesweeper {
             int row = minePosition[0];
             int column = minePosition[1];
 
-            if (guaranteeZeroOnStart) {
+            if (numMines < rows * columns - 8) {
                 while (row >= startingRow - 1 &&
                     row <= startingRow + 1 &&
                     column >= startingColumn - 1 &&
@@ -235,17 +226,6 @@ public class Minesweeper {
         return numMoves;
     }
 
-    public String gameStateSummary() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("******************\n");
-        sb.append(String.format("Status: %s\n", status().toString()));
-        sb.append(String.format("Moves: %d\n", numMoves));
-        sb.append(String.format("Tiles Cleared: %d/%d\n", numTilesCleared, rows * columns));
-        sb.append(String.format("Flags Remaining: %d/%d", flagsRemaining, numMines));
-        return sb.toString();
-    }
-
     public void removeAllFlags() {
         for (Tile[] row : tiles) {
             for (Tile tile : row) {
@@ -256,7 +236,18 @@ public class Minesweeper {
         }
     }
 
+    /**
+     * Gets the current density
+     */
     public double density() {
         return (double) numMines / (rows * columns - numTilesCleared - (numMines - flagsRemaining));
+    }
+
+    public double getInitialDensity() {
+        return initialDensity;
+    }
+
+    public GameSummary getSummary() {
+        return new GameSummary(this);
     }
 }
