@@ -9,9 +9,12 @@ import src.minesweeper.Tile;
  */
 public abstract class BotStrategy {
 
+    /**
+     * Bot class initializes the minesweeper instance.
+     */
     protected Minesweeper minesweeper;
 
-    public BotStrategy(Minesweeper minesweeper) {
+    public void setMinesweeper(Minesweeper minesweeper) {
         this.minesweeper = minesweeper;
     }
 

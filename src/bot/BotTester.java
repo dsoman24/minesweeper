@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import src.bot.strategy.probabilistic.ProbabilisticStrategy;
+import src.bot.strategy.BotStrategy;
 
 /**
- * Driver class to test bots.
+ * Class to generate data and test bot
  */
 public class BotTester {
 
@@ -24,18 +24,21 @@ public class BotTester {
     private int rows;
     private int columns;
 
+    private BotStrategy strategy;
+
     /** Data to write */
     private List<GameSummary> data;
 
-    public BotTester(int numTrials, int rows, int columns) {
+    public BotTester(BotStrategy strategy, int numTrials, int rows, int columns) {
+        this.strategy = strategy;
         this.numTrials = numTrials;
         this.rows = rows;
         this.columns = columns;
         this.data = new ArrayList<>();
     }
 
-    public BotTester(int numTrials) {
-        this(numTrials, 9, 9);
+    public BotTester(BotStrategy strategy, int numTrials) {
+        this(strategy, numTrials, 9, 9);
     }
 
     /**
@@ -45,7 +48,7 @@ public class BotTester {
     private GameSummary playToCompletion(double density) {
         Difficulty difficulty = Difficulty.customDifficulty(rows, columns, density);
         Minesweeper minesweeper = new Minesweeper(difficulty);
-        Bot bot = new Bot(new ProbabilisticStrategy(minesweeper));
+        Bot bot = new Bot(minesweeper, strategy);
         bot.runGame();
         return minesweeper.getSummary();
     }
@@ -58,7 +61,6 @@ public class BotTester {
     private void collectDataForNumMines(int numMines) {
         System.out.println("Collecting data for " + numMines);
         for (int i = 0; i < numTrials; i++) {
-            System.out.println(i);
             data.add(playToCompletion(numMines));
         }
     }

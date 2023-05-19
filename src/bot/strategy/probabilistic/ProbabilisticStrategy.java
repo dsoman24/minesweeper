@@ -2,7 +2,6 @@ package src.bot.strategy.probabilistic;
 import java.util.Random;
 
 import src.bot.strategy.BotStrategy;
-import src.minesweeper.Minesweeper;
 import src.minesweeper.Tile;
 
 
@@ -16,13 +15,12 @@ public class ProbabilisticStrategy extends BotStrategy {
     // ruleManager is not initialized until tileToClear is called
     private RuleManager ruleManager;
 
-    public ProbabilisticStrategy(Minesweeper minesweeper, Random random) {
-        super(minesweeper);
+    public ProbabilisticStrategy(Random random) {
         this.random = random;
     }
 
-    public ProbabilisticStrategy(Minesweeper minesweeper) {
-        this(minesweeper, new Random());
+    public ProbabilisticStrategy() {
+        this(new Random());
     }
 
     @Override

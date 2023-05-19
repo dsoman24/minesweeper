@@ -83,11 +83,11 @@ public class MinesweeperPane extends GridPane {
                     Bot bot = null;
 
                     if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Probabilistic")) {
-                        bot = new Bot(new ProbabilisticStrategy(minesweeper));
+                        bot = new Bot(minesweeper, new ProbabilisticStrategy());
                     } else if (botStrategySelector.getValue().equals("Linear")){
-                        bot = new Bot(new LinearStrategy(minesweeper));
+                        bot = new Bot(minesweeper, new LinearStrategy());
                     } else if (botStrategySelector.getValue().equals("Random")) {
-                        bot = new Bot(new RandomStrategy(minesweeper));
+                        bot = new Bot(minesweeper, new RandomStrategy());
                     }
 
                     BotRunner botRunner = new BotRunner(bot);

@@ -1,18 +1,12 @@
 package src.bot.strategy.linear;
 
 import src.bot.strategy.BotStrategy;
-import src.minesweeper.Minesweeper;
 import src.minesweeper.Tile;
 
 public class LinearStrategy extends BotStrategy {
 
     private int row = 0;
     private int column = 0;
-
-
-    public LinearStrategy(Minesweeper minesweeper) {
-        super(minesweeper);
-    }
 
     @Override
     public Tile tileToClear() {

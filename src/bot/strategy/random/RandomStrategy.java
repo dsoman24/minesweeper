@@ -2,20 +2,18 @@ package src.bot.strategy.random;
 import java.util.Random;
 
 import src.bot.strategy.BotStrategy;
-import src.minesweeper.Minesweeper;
 import src.minesweeper.Tile;
 
 public class RandomStrategy extends BotStrategy {
 
     private Random rand;
 
-    public RandomStrategy(Minesweeper minesweeper, Random rand) {
-        super(minesweeper);
+    public RandomStrategy(Random rand) {
         this.rand = rand;
     }
 
-    public RandomStrategy(Minesweeper minesweeper) {
-        this(minesweeper, new Random());
+    public RandomStrategy() {
+        this(new Random());
     }
 
     @Override
