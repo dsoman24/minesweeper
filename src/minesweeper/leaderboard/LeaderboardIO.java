@@ -15,7 +15,7 @@ import src.minesweeper.Difficulty;
 public class LeaderboardIO {
 
     public static void write(LeaderboardEntry entry) {
-        File leaderboard = new File("leaderboard.csv");
+        File leaderboard = new File("src/minesweeper/leaderboard/leaderboard.csv");
         PrintWriter writer;
         try {
             boolean newFile = !leaderboard.exists();
@@ -32,8 +32,8 @@ public class LeaderboardIO {
         }
     }
 
-    public static List<LeaderboardEntry> read(String path, Difficulty difficulty) {
-        File file = new File("leaderboard.csv");
+    public static List<LeaderboardEntry> read(String filename, Difficulty difficulty) {
+        File file = new File("src/minesweeper/leaderboard/" + filename);
         List<LeaderboardEntry> entries = new ArrayList<>();
         try {
             Scanner scan = new Scanner(file);
