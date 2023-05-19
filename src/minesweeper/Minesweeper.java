@@ -27,6 +27,11 @@ public class Minesweeper {
 
     private Random random;
 
+    /** Time elapsed since game start */
+    private long elapsedMillis;
+
+    private long startTime;
+
     /**
      * where the start condition will not cause an infinite loop.
      */
@@ -50,6 +55,8 @@ public class Minesweeper {
             }
         }
         this.random = random;
+        this.elapsedMillis = 0;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -95,11 +102,9 @@ public class Minesweeper {
             int row = minePosition[0];
             int column = minePosition[1];
 
-            if (numMines < rows * columns - 8) {
-                while (row >= startingRow - 1 &&
-                    row <= startingRow + 1 &&
-                    column >= startingColumn - 1 &&
-                    column <= startingColumn + 1) {
+            // Guaranteed to not start on a mine, unless the density is 1.
+            if (numMines <= rows * columns - 1) {
+                while (row == startingRow && column == startingColumn) {
                     randomIndex = random.nextInt(validPositions.size());
                     minePosition = validPositions.get(randomIndex);
                     row = minePosition[0];
@@ -131,6 +136,7 @@ public class Minesweeper {
 
     /**
      * Method to clear a single tile from the board.
+     * Updates elapsed time upon clearing.
      * TO-DO use in bot functionality
      * @param row the row of the tile to clear
      * @param column the column of the tile to clear
@@ -144,11 +150,12 @@ public class Minesweeper {
                     startGame(row, column);
                 }
                 playing = currentTile.clearSurroundingTiles();
-                if (numTilesCleared == rows * columns - numMines) {
+                if (playing && numTilesCleared == rows * columns - numMines) {
                     won = true;
                     playing = false;
                 }
                 numMoves++;
+                updateElapsedTime();
             }
         }
     }
@@ -245,6 +252,14 @@ public class Minesweeper {
 
     public double getInitialDensity() {
         return initialDensity;
+    }
+
+    public long getElapsedMillis() {
+        return elapsedMillis;
+    }
+
+    private void updateElapsedTime() {
+        elapsedMillis = System.currentTimeMillis() - startTime;
     }
 
     public GameSummary getSummary() {

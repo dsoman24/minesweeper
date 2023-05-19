@@ -30,4 +30,9 @@ public class LinearStrategy extends BotStrategy {
             column++;
         }
     }
+
+    @Override
+    public String name() {
+        return "LINEAR";
+    }
 }

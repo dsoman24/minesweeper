@@ -37,4 +37,8 @@ public class Bot {
     public Status runGame() {
         return strategy.runGame();
     }
+
+    public String strategyName() {
+        return strategy.name();
+    }
 }

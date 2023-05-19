@@ -31,4 +31,9 @@ public class ProbabilisticStrategy extends BotStrategy {
         Tile tile = ruleManager.tileToClear(random);
         return tile;
     }
+
+    @Override
+    public String name() {
+        return "PROBABILISTIC";
+    }
 }

@@ -28,4 +28,9 @@ public class RandomStrategy extends BotStrategy {
         }
         return minesweeper.getTileAt(row, column);
     }
+
+    @Override
+    public String name() {
+        return "RANDOM";
+    }
 }

@@ -26,15 +26,15 @@ public abstract class BotStrategy {
         return minesweeper.status();
     }
 
-    public Minesweeper getMinesweeper() {
-        return minesweeper;
-    }
-
-
     /**
      * Finds the tile to clear according to the strategy.
      * @return the tile to clear
      */
     public abstract Tile tileToClear();
+
+    /**
+     * The name of the strategy.
+     */
+    public abstract String name();
 
 }
