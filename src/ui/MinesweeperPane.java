@@ -1,4 +1,4 @@
-package src.game_gui;
+package src.ui;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

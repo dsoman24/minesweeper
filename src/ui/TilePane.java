@@ -1,4 +1,4 @@
-package src.game_gui;
+package src.ui;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

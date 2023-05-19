@@ -1,6 +1,4 @@
 *.class
 .DS_STORE
-.vscode/ltex.dictionary.en-US.txt
-.vscode/ltex.disabledRules.en-US.txt
-.vscode/ltex.hiddenFalsePositives.en-US.txt
+.vscode
 src/minesweeper/leaderboard/*.csv
