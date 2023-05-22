@@ -3,3 +3,10 @@
 .vscode
 src/ui/leaderboard/*.csv
 bin
+.gradle
+gradlew
+gradlew.bat
+build.gradle
+build
+gradle
+MANIFEST.MF

@@ -27,7 +27,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 ## Probabilistic Algorithm
 
 ### Definitions and Terminology
-**NOTE**: Set notation on GitHub markdown's latex is a little weird, so curly brackets are not shown
+**NOTE**: Set notation on GitHub Markdown's latex is a little weird, so curly brackets are not shown
 
 
 - We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \emptyset$.
@@ -140,15 +140,18 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
     - We now have enough information to define the probability functions $P(s)$, for each $s \in S$. The function $P(s)$ is thus defined as follows:
     $$P(s) = \frac{1}{\chi}\sum_{j = 0}^{|\Sigma| - 1} \frac{a(s, j)}{|s|} c_j$$
     where $a$ is a function $a : S \times \{0, 1, \dots, |\Sigma| - 1\} \rightarrow \mathbb{Z}$ such that $a(s, j) = \text{value of alpha in the ith result node}$.
-    - The algorithm applies $P(s)$ for each $s \in S$, and then, using  probabilities are assigned to each tile in the game configuration.
+    - The algorithm applies $P(s)$ for each $s \in S$, and then, using $p(s)$  probabilities are assigned to each tile in the game configuration.
 
 5. Pick the minimum likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. This approach works due to the property that for each $t \in s$, $p(t) = P(s)$, for each $s \in S$. The game configuration is now updated upon clearing, and we repeat from the start until the game ends (either a win or a loss).
 
 ## JavaFX and Gameplay
 
 You can also play this version of minesweeper! I built the GUI using JavaFX SDK version 11.0.2.
-- Compile with: javac --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls *.java
-- Run with: java --module-path /path/javafx-sdk-11.0.2/lib --add-modules javafx.controls Game
+
+gradle wrapper (optional)
+./gradlew build
+java -jar build/libs/minesweeper.jar
+
 
 #### Gameplay:
 - Left click to clear a tile

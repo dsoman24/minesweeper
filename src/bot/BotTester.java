@@ -37,6 +37,9 @@ public class BotTester {
         this.data = new ArrayList<>();
     }
 
+    /**
+     * Default to 9x9 board.
+     */
     public BotTester(BotStrategy strategy, int numTrials) {
         this(strategy, numTrials, 9, 9);
     }

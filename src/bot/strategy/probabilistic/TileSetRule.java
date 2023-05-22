@@ -84,7 +84,6 @@ public class TileSetRule {
             return SimplifyResult.NO_EFFECT;
         }
         Iterator<TileSet> iterator = tileSets.iterator();
-
         // We only keep TileSets that have unknown values
         while (iterator.hasNext()) {
             Integer numMines = resultNode.get(iterator.next());
@@ -100,8 +99,6 @@ public class TileSetRule {
         if (result > numTiles()) {
             return SimplifyResult.TOO_BIG;
         }
-
-
         // three simplification scenarios:
         // 1. something like [A] = X, clearly, TileSet [A] must have a value of X
         if (numTileSets() == 1) {

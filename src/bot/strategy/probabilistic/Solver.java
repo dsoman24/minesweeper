@@ -16,13 +16,13 @@ import src.minesweeper.Tile;
  * Class to group all tiles within a minesweeper game into TileSets, and create TileSetRules based on these TileSets.
  * This class then creates the solution set based on these rules.
  */
-public class RuleManager {
+public class Solver {
     private List<TileSet> tileSets;
     private List<TileSetRule> rules; // map of ruleTile : TileSetRule
     private SolutionSet solutionSet;
     private Minesweeper minesweeper;
 
-    public RuleManager(Minesweeper minesweeper) {
+    public Solver(Minesweeper minesweeper) {
         this.minesweeper = minesweeper;
         this.tileSets = new ArrayList<>();
         this.rules = new ArrayList<>();
