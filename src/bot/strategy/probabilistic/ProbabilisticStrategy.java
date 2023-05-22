@@ -13,7 +13,7 @@ public class ProbabilisticStrategy extends BotStrategy {
 
     private Random random;
     // ruleManager is not initialized until tileToClear is called
-    private Solver ruleManager;
+    private Solver solver;
 
     public ProbabilisticStrategy(Random random) {
         this.random = random;
@@ -25,8 +25,8 @@ public class ProbabilisticStrategy extends BotStrategy {
 
     @Override
     public Tile tileToClear() {
-        ruleManager = new Solver(minesweeper);
-        Tile tile = ruleManager.tileToClear(random);
+        solver = new Solver(minesweeper);
+        Tile tile = solver.tileToClear(random);
         return tile;
     }
 
