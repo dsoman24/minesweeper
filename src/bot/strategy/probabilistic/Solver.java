@@ -134,7 +134,9 @@ public class Solver {
         TileSet smallest = current.findSmallestUnknownTileSet();
         // iterate over the possibilities e.g. a set with 2 tiles could have 0, 1, or 2 mines in it
         for (int i = 0; i <= Math.min(smallest.size(), minesweeper.getNumMines()); i++) {
+            // child is a new node that is a deep copy of current
             ResultNode child = new ResultNode(current);
+            // attempt to solve the rules supposing that alpha for smallest = i
             child.put(smallest, i);
             boolean validSimplification = child.simplifyAllRules();
             if (validSimplification) {
@@ -158,7 +160,8 @@ public class Solver {
 
     private Tile findRandomMinimumLikelihoodTile(Random random) {
         TileSet leastLikelySet = minimumLikelihoodTileSet();
-        Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random); // picks a random tile from the least likely set
+        // picks a random tile from the least likely set
+        Tile randomLeastLikelyTile = leastLikelySet.selectRandomTile(random);
         return randomLeastLikelyTile;
     }
 
