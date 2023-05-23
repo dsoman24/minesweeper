@@ -1,7 +1,9 @@
 package src.minesweeper;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 /**
  * Minesweeper game implementation.
  * Logic only, no UI elements.
@@ -12,6 +14,7 @@ import java.util.Random;
 public class Minesweeper {
 
     private Tile[][] tiles;
+    private Set<Tile> mineSet;
     private int rows;
     private int columns;
     private int numMines;
@@ -44,6 +47,7 @@ public class Minesweeper {
         columns = difficulty.getNumColumns();
         initialDensity = difficulty.getDensity();
         numMines = difficulty.getNumMines();
+        mineSet = new HashSet<>();
         playing = true;
         numTilesCleared = 0;
         flagsRemaining = numMines;
@@ -114,7 +118,8 @@ public class Minesweeper {
 
             validPositions.remove(randomIndex);
 
-            tiles[row][column].addMine();
+            // add to the mineset if it is a mine
+            mineSet.add(tiles[row][column]);
             // now go around and increment the tiles immediately around it
             for (int x = row - 1; x < row + 2; x++) {
                 for (int y = column - 1; y < column + 2; y++) {
@@ -149,7 +154,7 @@ public class Minesweeper {
                 if (numTilesCleared == 0) {
                     startGame(row, column);
                 }
-                playing = currentTile.clearSurroundingTiles();
+                playing = clearSurroundingTiles(currentTile);
                 if (playing && numTilesCleared == rows * columns - numMines) {
                     won = true;
                     playing = false;
@@ -158,6 +163,28 @@ public class Minesweeper {
                 updateElapsedTime();
             }
         }
+    }
+
+    /**
+     * Recursive helper method to clear the tiles using DFS.
+     * Clears all this tile and adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
+     * @param curr the current tile we are clearing
+     */
+    private boolean clearSurroundingTiles(Tile curr) {
+        if (hasMine(curr)) {
+            return false;
+        }
+        if (!curr.isCleared() && !curr.isFlagged()) {
+            curr.setCleared();
+            incrementNumTilesCleared();
+            if (curr.getNumNeighboringMines() == 0) {
+                Set<Tile> neighbors = curr.getNeighbors();
+                for (Tile tile : neighbors) {
+                    clearSurroundingTiles(tile);
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -203,6 +230,13 @@ public class Minesweeper {
         } else {
             return Status.PLAYING;
         }
+    }
+
+    /**
+     * Check if a tile is a mine
+     */
+    public boolean hasMine(Tile tile) {
+        return mineSet.contains(tile);
     }
 
     public int getNumTilesCleared() {

@@ -9,7 +9,6 @@ public class Tile {
     private int row;
     private int column;
     private int neighboringMines;
-    private boolean mine;
     private boolean flag;
     private boolean cleared;
     private Minesweeper minesweeper;
@@ -24,39 +23,7 @@ public class Tile {
         this.row = row;
         this.column = column;
         this.minesweeper = minesweeper;
-        mine = false;
         cleared = false;
-    }
-
-    /**
-     * Method to clear a tile.
-     * Calls a recursive helper.
-     * @return true if clear was successful (not a mine), false otherwise (lose condition)
-     */
-    public boolean clearSurroundingTiles() {
-        if (mine) {
-            return false;
-        }
-        clearSurroundingTilesHelper(this);
-        return true;
-    }
-
-    /**
-     * Recursive helper method to clear the tiles using DFS.
-     * Clears all this tile and adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
-     * @param curr the current tile we are clearing
-     */
-    private void clearSurroundingTilesHelper(Tile curr) {
-        if (!curr.cleared && !curr.flag) {
-            curr.cleared = true;
-            minesweeper.incrementNumTilesCleared();
-            if (curr.neighboringMines == 0) {
-                Set<Tile> neighbors = getNeighbors(curr);
-                for (Tile tile : neighbors) {
-                    clearSurroundingTilesHelper(tile);
-                }
-            }
-        }
     }
 
     public int getNumNeighboringMines() {
@@ -107,13 +74,10 @@ public class Tile {
         this.flag = flag;
     }
 
-    public void addMine() {
-        this.mine = true;
-    }
 
     @Override
     public String toString() {
-        return mine ? "M" : String.format("%d", neighboringMines);
+        return String.format("(%d, %d): %d", row, column, neighboringMines);
     }
 
     @Override
@@ -122,8 +86,7 @@ public class Tile {
             Tile other = (Tile) o;
             return this.row == other.row
                 && this.column == other.column
-                && this.neighboringMines == other.neighboringMines
-                && this.mine == other.mine;
+                && this.neighboringMines == other.neighboringMines;
         }
         return false;
     }
@@ -137,12 +100,12 @@ public class Tile {
         return flag;
     }
 
-    public boolean hasMine() {
-        return mine;
-    }
-
     public boolean isCleared() {
         return cleared;
+    }
+
+    public void setCleared() {
+        cleared = true;
     }
 
     public int getRow() {

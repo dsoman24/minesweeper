@@ -59,7 +59,7 @@ public class TilePane extends StackPane {
                 foreground.setFill(Color.LIGHTGRAY);
             }
         } else {
-            if (currentTile.hasMine()) {
+            if (minesweeper.hasMine(currentTile)) {
                 foreground.setFill(Color.DARKGOLDENROD);
                 getChildren().add(new Label("M"));
             } else {
@@ -76,13 +76,13 @@ public class TilePane extends StackPane {
 
     public void reveal(Tile badTile) {
         Tile currentTile = getCorrespondingTile();
-        if (currentTile.hasMine() && !currentTile.isFlagged()) {
+        if (minesweeper.hasMine(currentTile) && !currentTile.isFlagged()) {
             foreground.setFill(Color.YELLOW);
             getChildren().add(new Label("M"));
             if (row == badTile.getRow() && column == badTile.getColumn()) {
                 foreground.setFill(Color.ORANGE);
             }
-        } else if (!currentTile.hasMine() && currentTile.isFlagged()) {
+        } else if (!minesweeper.hasMine(currentTile) && currentTile.isFlagged()) {
             getChildren().add(new Label("X"));
         }
     }
