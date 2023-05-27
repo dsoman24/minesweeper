@@ -1,39 +1,27 @@
 package src.main.java.minesweeper.bot.strategy;
 
-import src.main.java.minesweeper.logic.Minesweeper;
-import src.main.java.minesweeper.logic.Status;
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.TilingState;
 
 /**
  * Strategy abstract class.
  */
-public abstract class BotStrategy {
+public abstract class BotStrategy<T extends Tileable> {
 
     /**
      * Bot class initializes the minesweeper instance.
      */
-    protected Minesweeper minesweeper;
+    protected TilingState<T> tilingState;
 
-    public void setMinesweeper(Minesweeper minesweeper) {
-        this.minesweeper = minesweeper;
-    }
-
-    /**
-     * Run moves until completion
-     */
-    public Status runGame() {
-        while (minesweeper.status() == Status.PLAYING) {
-            Tile tile = tileToClear();
-            minesweeper.clear(tile.getRow(), tile.getColumn());
-        }
-        return minesweeper.status();
+    public void setTilingState(TilingState<T> tilingState) {
+        this.tilingState = tilingState;
     }
 
     /**
      * Finds the tile to clear according to the strategy.
      * @return the tile to clear
      */
-    public abstract Tile tileToClear();
+    public abstract T tileToClear();
 
     /**
      * The name of the strategy.

@@ -1,24 +1,22 @@
 package src.main.java.minesweeper.bot;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
-import src.main.java.minesweeper.bot.strategy.StrategyType;
-import src.main.java.minesweeper.logic.Minesweeper;
-import src.main.java.minesweeper.logic.Status;
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.TilingState;
 
 /**
  * Bot which will play one game of Minesweeper
  */
-public class Bot {
+public class Bot<T extends Tileable> {
     /** The strategy this bot uses */
-    private BotStrategy strategy;
+    private BotStrategy<T> strategy;
 
-    public Bot(Minesweeper minesweeper, StrategyType strategyType) {
-        this.strategy = strategyType.getStrategy();
-        this.strategy.setMinesweeper(minesweeper);
+    public Bot(TilingState<T> tilingState, BotStrategy<T> strategy) {
+        this.strategy = strategy;
+        this.strategy.setTilingState(tilingState);
     }
 
-    public BotStrategy getStrategy() {
+    public BotStrategy<T> getStrategy() {
         return strategy;
     }
 
@@ -26,15 +24,8 @@ public class Bot {
      * Perform one individual move based on the current minesweeper state.
      * @return the row and column number of the tile to clear
      */
-    public Tile tileToClear() {
+    public T tileToClear() {
         return strategy.tileToClear();
-    }
-
-    /**
-     * Run a game until completion
-     */
-    public Status runGame() {
-        return strategy.runGame();
     }
 
     public String strategyName() {

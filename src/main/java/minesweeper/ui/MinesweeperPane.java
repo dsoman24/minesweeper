@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import src.main.java.minesweeper.bot.Bot;
-import src.main.java.minesweeper.bot.strategy.StrategyType;
+import src.main.java.minesweeper.bot.strategy.StrategyTypeOnTile;
 import src.main.java.minesweeper.logic.Difficulty;
 import src.main.java.minesweeper.logic.Minesweeper;
 import src.main.java.minesweeper.logic.Status;
@@ -51,8 +51,8 @@ public class MinesweeperPane extends GridPane {
         timer = new Timer(secondsLabel);
         tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumColumns()];
 
-        ComboBox<StrategyType> botStrategySelector = new ComboBox<>();
-        for (StrategyType strategyType : StrategyType.values()) {
+        ComboBox<StrategyTypeOnTile> botStrategySelector = new ComboBox<>();
+        for (StrategyTypeOnTile strategyType : StrategyTypeOnTile.values()) {
             botStrategySelector.getItems().add(strategyType);
         }
         botStrategySelector.setPromptText("Bot Strategy");
@@ -80,14 +80,14 @@ public class MinesweeperPane extends GridPane {
                         }
                     }
 
-                    Bot bot = null;
+                    Bot<Tile> bot = null;
 
-                    StrategyType strategyType = botStrategySelector.getValue();
+                    StrategyTypeOnTile strategyType = botStrategySelector.getValue();
                     if (strategyType == null) {
-                        strategyType = StrategyType.PROBABILISTIC;
+                        strategyType = StrategyTypeOnTile.PROBABILISTIC;
                     }
 
-                    bot = new Bot(minesweeper, strategyType);
+                    bot = new Bot<>(minesweeper.getTilingState(), strategyType.getStrategy());
                     BotRunner botRunner = new BotRunner(bot);
                     Thread botThread = new Thread(botRunner);
                     botThread.start();
@@ -201,9 +201,9 @@ public class MinesweeperPane extends GridPane {
 
     private class BotRunner implements Runnable {
 
-        private Bot bot;
+        private Bot<Tile> bot;
 
-        public BotRunner(Bot bot) {
+        public BotRunner(Bot<Tile> bot) {
             this.bot = bot;
         }
 

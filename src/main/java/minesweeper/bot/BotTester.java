@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import src.main.java.minesweeper.bot.strategy.StrategyType;
+import src.main.java.minesweeper.bot.strategy.BotStrategy;
+import src.main.java.minesweeper.bot.strategy.StrategyTypeOnTile;
 import src.main.java.minesweeper.logic.Difficulty;
 import src.main.java.minesweeper.logic.GameSummary;
 import src.main.java.minesweeper.logic.Minesweeper;
+import src.main.java.minesweeper.logic.Status;
+import src.main.java.minesweeper.logic.Tile;
 
 /**
  * Class to generate data and test bot
@@ -23,13 +26,13 @@ public class BotTester {
     private int rows;
     private int columns;
 
-    private StrategyType strategyType;
+    private BotStrategy<Tile> strategy;
 
     /** Data to write */
     private List<GameSummary> data;
 
-    public BotTester(StrategyType strategyType, int numTrials, int rows, int columns) {
-        this.strategyType = strategyType;
+    public BotTester(StrategyTypeOnTile strategyType, int numTrials, int rows, int columns) {
+        this.strategy = strategyType.getStrategy();
         this.numTrials = numTrials;
         this.rows = rows;
         this.columns = columns;
@@ -39,7 +42,7 @@ public class BotTester {
     /**
      * Default to 9x9 board.
      */
-    public BotTester(StrategyType strategyType, int numTrials) {
+    public BotTester(StrategyTypeOnTile strategyType, int numTrials) {
         this(strategyType, numTrials, 9, 9);
     }
 
@@ -50,8 +53,13 @@ public class BotTester {
     private GameSummary playToCompletion(double density) {
         Difficulty difficulty = Difficulty.customDifficulty(rows, columns, density);
         Minesweeper minesweeper = new Minesweeper(difficulty);
-        Bot bot = new Bot(minesweeper, strategyType);
-        bot.runGame();
+        Bot<Tile> bot = new Bot<>(minesweeper.getTilingState(), strategy);
+
+        while (minesweeper.status() == Status.PLAYING) {
+            Tile tile = bot.tileToClear();
+            minesweeper.clear(tile.getRow(), tile.getColumn());
+        }
+
         return minesweeper.getSummary();
     }
 

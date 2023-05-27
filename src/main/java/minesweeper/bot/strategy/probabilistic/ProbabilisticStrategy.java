@@ -2,18 +2,18 @@ package src.main.java.minesweeper.bot.strategy.probabilistic;
 import java.util.Random;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
 
 
 /**
  * Probabilistic minesweeper strategy.
  * Algorithm inspired by: https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
  */
-public class ProbabilisticStrategy extends BotStrategy {
+public class ProbabilisticStrategy<T extends Tileable> extends BotStrategy<T> {
 
     private Random random;
     // ruleManager is not initialized until tileToClear is called
-    private Solver<Tile> solver;
+    private Solver<T> solver;
 
     public ProbabilisticStrategy(Random random) {
         this.random = random;
@@ -24,9 +24,9 @@ public class ProbabilisticStrategy extends BotStrategy {
     }
 
     @Override
-    public Tile tileToClear() {
-        solver = new Solver<>(minesweeper.getTilingState());
-        Tile tile = solver.tileToClear(random);
+    public T tileToClear() {
+        solver = new Solver<>(tilingState);
+        T tile = solver.tileToClear(random);
         return tile;
     }
 

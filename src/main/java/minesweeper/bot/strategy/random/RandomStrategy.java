@@ -2,9 +2,9 @@ package src.main.java.minesweeper.bot.strategy.random;
 import java.util.Random;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
 
-public class RandomStrategy extends BotStrategy {
+public class RandomStrategy<T extends Tileable> extends BotStrategy<T> {
 
     private Random rand;
 
@@ -17,14 +17,14 @@ public class RandomStrategy extends BotStrategy {
     }
 
     @Override
-    public Tile tileToClear() {
-        int row = rand.nextInt(minesweeper.getNumRows());
-        int column = rand.nextInt(minesweeper.getNumColumns());
-        while (minesweeper.getTileAt(row, column).isCleared() || minesweeper.getTileAt(row, column).isFlagged()) {
-            row = rand.nextInt(minesweeper.getNumRows());
-            column = rand.nextInt(minesweeper.getNumColumns());
+    public T tileToClear() {
+        int row = rand.nextInt(tilingState.getNumRows());
+        int column = rand.nextInt(tilingState.getNumColumns());
+        while (tilingState.get(row, column).isCleared() || tilingState.get(row, column).isFlagged()) {
+            row = rand.nextInt(tilingState.getNumRows());
+            column = rand.nextInt(tilingState.getNumColumns());
         }
-        return minesweeper.getTileAt(row, column);
+        return tilingState.get(row, column);
     }
 
     @Override

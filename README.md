@@ -148,30 +148,29 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
 ## JavaFX and Gameplay
 
 You can also play this version of minesweeper! I built the GUI using JavaFX SDK version 11.0.2.
-
+<!--
 gradle wrapper (optional)
+
 ./gradlew build
-java -jar build/libs/minesweeper.jar
+
+java -jar build/libs/minesweeper.jar -->
 
 
 #### Gameplay:
-- Left click to clear a tile
-- Right click to toggle flags
+- Left-click to clear a tile
+- Right-click to toggle flags
 
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
 ## Some sources
 
-Main algorithm inspiration: https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
+Main algorithm inspiration:
+- https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
 
-https://dash.harvard.edu/bitstream/handle/1/14398552/BECERRA-SENIORTHESIS-2015.pdf
-
-https://www.claymath.org/sites/default/files/minesweeper.pdf
-
-https://minesweepergame.com/math/explorations-of-the-minesweeper-consistency-problem-2003.pdf
-
-https://www.minesweeper.info/articles/SomeMinesweeperConfigurations.pdf
-
-https://web.mat.bham.ac.uk/R.W.Kaye/minesw/infmsw.pdf
-
-https://www.youtube.com/watch?v=G2kd745uYuo&ab_channel=CodingChannel
+Other sources:
+- https://dash.harvard.edu/bitstream/handle/1/14398552/BECERRA-SENIORTHESIS-2015.pdf
+- https://www.claymath.org/sites/default/files/minesweeper.pdf
+- https://minesweepergame.com/math/explorations-of-the-minesweeper-consistency-problem-2003.pdf
+- https://www.minesweeper.info/articles/SomeMinesweeperConfigurations.pdf
+- https://web.mat.bham.ac.uk/R.W.Kaye/minesw/infmsw.pdf
+- https://www.youtube.com/watch?v=G2kd745uYuo&ab_channel=CodingChannel
