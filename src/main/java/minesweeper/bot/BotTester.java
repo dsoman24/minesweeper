@@ -41,6 +41,8 @@ public class BotTester {
 
     /**
      * Default to 9x9 board.
+     * @param strateyType the stratey type on Tile objects to evaluate.
+     * @param numTrials the number of trials to evaluate.
      */
     public BotTester(StrategyTypeOnTile strategyType, int numTrials) {
         this(strategyType, numTrials, 9, 9);
@@ -48,6 +50,7 @@ public class BotTester {
 
     /**
      * Plays one game to completion with a given density.
+     * @parma density the density of the game to play
      * @return a summary of the game
      */
     private GameSummary playToCompletion(double density) {
@@ -63,11 +66,20 @@ public class BotTester {
         return minesweeper.getSummary();
     }
 
+    /**
+     * Plays one game to completion based on number of mines.
+     * @parma numMines the number of mines to evaluate the density of.
+     * @return the game summary
+     */
     private GameSummary playToCompletion(int numMines) {
         double density = numMines > (rows * columns) ? 1.0 : (double) numMines / (rows * columns);
         return playToCompletion(density);
     }
 
+    /**
+     * Performs all trials for a given number of mines.
+     * @param numMines the number of mines to play trials for.
+     */
     private void collectDataForNumMines(int numMines) {
         System.out.println("Collecting data for " + numMines);
         for (int i = 0; i < numTrials; i++) {
@@ -75,6 +87,10 @@ public class BotTester {
         }
     }
 
+    /**
+     * @param low the low number of mines to play trials for
+     * @param high the high number of mines to play trials for
+     */
     private void collectDataInRangeOfMines(int low, int high) {
         for (int numMines = low; numMines <= high; numMines++) {
             collectDataForNumMines(numMines);
@@ -85,6 +101,10 @@ public class BotTester {
         collectDataInRangeOfMines(0, rows * columns);
     }
 
+    /**
+     * Updates the file following a read-modify-write pattern.
+     * @param filename the filename to update with the given number of trials.
+     */
     public void updateFile(String filname) {
         String path = "data/" + filname;
         File file = new File(path);

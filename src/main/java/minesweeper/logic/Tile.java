@@ -3,7 +3,7 @@ package src.main.java.minesweeper.logic;
 /**
  * Class to represent the tile
  */
-public class Tile implements Tileable {
+public class Tile implements MinesweeperTileable {
     private int row;
     private int column;
     private int neighboringMines;
@@ -24,7 +24,9 @@ public class Tile implements Tileable {
         this.initialDensity = initialDensity;
     }
 
-    @Override
+    // Overriden from Tileable
+
+    @Override()
     public int getNumberOfNeighboringMines() {
         return neighboringMines;
     }
@@ -34,7 +36,34 @@ public class Tile implements Tileable {
         return initialDensity;
     }
 
-    public void addNeighboringMine() {
+    @Override
+    public int hashCode() {
+        return row * 5 + column * 7;
+    }
+
+    @Override
+    public boolean isFlagged() {
+        return flag;
+    }
+
+    @Override
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    @Override
+    public int getRow() {
+        return row;
+    }
+
+    @Override
+    public int getColumn() {
+        return column;
+    }
+
+    // The only necessary methods for this concrete minesweeper implementation.
+
+    public void incrementNumberOfNeighboringMines() {
         neighboringMines++;
     }
 
@@ -42,6 +71,12 @@ public class Tile implements Tileable {
         this.flag = flag;
     }
 
+    public void setCleared() {
+        cleared = true;
+    }
+
+
+    // Overriden from Object
 
     @Override
     public String toString() {
@@ -59,28 +94,4 @@ public class Tile implements Tileable {
         return false;
     }
 
-    @Override
-    public int hashCode() {
-        return row * 5 + column * 7;
-    }
-
-    public boolean isFlagged() {
-        return flag;
-    }
-
-    public boolean isCleared() {
-        return cleared;
-    }
-
-    public void setCleared() {
-        cleared = true;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
 }

@@ -49,7 +49,7 @@ public class MinesweeperPane extends GridPane {
         secondsLabel.setAlignment(Pos.CENTER);
         secondsLabel.setMinWidth(70);
         timer = new Timer(secondsLabel);
-        tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumColumns()];
+        tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumberOfColumns()];
 
         ComboBox<StrategyTypeOnTile> botStrategySelector = new ComboBox<>();
         for (StrategyTypeOnTile strategyType : StrategyTypeOnTile.values()) {
@@ -100,7 +100,7 @@ public class MinesweeperPane extends GridPane {
         botInput.getChildren().addAll(botStrategySelector, botDelayTextField, toggleBot);
 
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
-            for (int j = 0; j < minesweeper.getNumColumns(); j++) {
+            for (int j = 0; j < minesweeper.getNumberOfColumns(); j++) {
                 TilePane tilePane = new TilePane(i, j, this);
                 tilePanes[i][j] = tilePane;
                 add(tilePane, j, i); // this adds to gridpane
@@ -113,7 +113,7 @@ public class MinesweeperPane extends GridPane {
      */
     public void clear(int row, int column) {
         if (minesweeper.isPlaying() && !botActivated) {
-            if (minesweeper.getNumTilesCleared() == 0) {
+            if (minesweeper.getNumberOfTilesCleared() == 0) {
                 timer.start();
             }
             minesweeper.clear(row, column);
@@ -165,7 +165,7 @@ public class MinesweeperPane extends GridPane {
      */
     public void update() {
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
-            for (int j = 0; j < minesweeper.getNumColumns(); j++) {
+            for (int j = 0; j < minesweeper.getNumberOfColumns(); j++) {
                 tilePanes[i][j].update();
             }
         }
@@ -177,7 +177,7 @@ public class MinesweeperPane extends GridPane {
      */
     public void reveal(Tile badTile) {
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
-            for (int j = 0; j < minesweeper.getNumColumns(); j++) {
+            for (int j = 0; j < minesweeper.getNumberOfColumns(); j++) {
                 tilePanes[i][j].reveal(badTile);
             }
         }
@@ -210,7 +210,7 @@ public class MinesweeperPane extends GridPane {
         @Override
         public void run() {
             while (botActivated && minesweeper.status() == Status.PLAYING) {
-                if (minesweeper.getNumTilesCleared() == 0) {
+                if (minesweeper.getNumberOfTilesCleared() == 0) {
                     timer.start();
                 }
                 // bot removes flags

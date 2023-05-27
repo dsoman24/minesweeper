@@ -6,7 +6,8 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Non-parametrized Minesweeper game implementation.
+ * Non-generic Minesweeper game implementation.
+ * Uses a TilingState of Tile objects.
  * Logic only, no UI elements.
  * @author Daniel Öman
  * @date 12/31/2022
@@ -36,15 +37,24 @@ public class Minesweeper {
 
     private long startTime;
 
+    /**
+     * 1-arg constructor.
+     * @param difficulty the difficulty of this game instance
+     */
     public Minesweeper(Difficulty difficulty) {
         this(difficulty, new Random());
     }
 
+    /**
+     * 2-arg constructor.
+     * @param difficulty the difficulty of this game instance
+     * @param random the random number generator to use when generating mine positions.
+     */
     public Minesweeper(Difficulty difficulty, Random random) {
-        rows = difficulty.getNumRows();
-        columns = difficulty.getNumColumns();
+        rows = difficulty.getNumberOfRows();
+        columns = difficulty.getNumberOfColumns();
         initialDensity = difficulty.getDensity();
-        numMines = difficulty.getNumMines();
+        numMines = difficulty.getNumberOfMines();
         mineSet = new HashSet<>();
         playing = true;
         numTilesCleared = 0;
@@ -80,6 +90,8 @@ public class Minesweeper {
 
     /**
      * Generate the game state. Will guarantee a 0 on start.
+     * @param startingRow the row of the first position cleared.
+     * @param startingColumn the column of the first position cleared.
      */
     private void startGame(int startingRow, int startingColumn) {
         // Begin by randomly generating mines
@@ -115,17 +127,26 @@ public class Minesweeper {
             for (int x = row - 1; x < row + 2; x++) {
                 for (int y = column - 1; y < column + 2; y++) {
                     if (!(x == row && y == column) && isInBounds(x, y)) {
-                        getTileAt(x, y).addNeighboringMine();
+                        getTileAt(x, y).incrementNumberOfNeighboringMines();
                     }
                 }
             }
         }
     }
 
+    /**
+     * Returns the tile at a given positon.
+     * @param row the row to get
+     * @param column the column to get
+     * @return the tile at (row, column)
+     */
     public Tile getTileAt(int row, int column) {
         return tilingState.get(row, column);
     }
 
+    /**
+     * @return the number of flags that have not been placed
+     */
     public int getFlagsRemaining() {
         return flagsRemaining;
     }
@@ -161,6 +182,8 @@ public class Minesweeper {
      * Recursive helper method to clear the tiles using DFS.
      * Clears all this tile and adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
      * @param curr the current tile we are clearing
+     * @return false if the current tile is a mine, true otherwise.
+     *         Will only return false if the first tile in the recursive callis a mine.
      */
     private boolean clearSurroundingTiles(Tile curr) {
         if (hasMine(curr)) {
@@ -168,7 +191,7 @@ public class Minesweeper {
         }
         if (!curr.isCleared() && !curr.isFlagged()) {
             curr.setCleared();
-            incrementNumTilesCleared();
+            numTilesCleared++;
             if (curr.getNumberOfNeighboringMines() == 0) {
                 Set<Tile> neighbors = tilingState.getNeighbors(curr);
                 for (Tile tile : neighbors) {
@@ -204,10 +227,18 @@ public class Minesweeper {
         }
     }
 
+    /**
+     * Check if the game is over and has been won.
+     * @return true if the game has been won, false otherwise.
+     */
     private boolean hasWon() {
         return !playing && won;
     }
 
+    /**
+     * Check if the game is over and has been lost.
+     * @return true if the game has been lost, false otherwise.
+     */
     private boolean hasLost() {
         return !playing && !won;
     }
@@ -226,40 +257,58 @@ public class Minesweeper {
     }
 
     /**
-     * Check if a tile is a mine
+     * Check if a tile is a mine (the tile is contained within the mineSet)
+     * @return true if the tile is a mine, false otherwise
      */
     public boolean hasMine(Tile tile) {
         return mineSet.contains(tile);
     }
 
-    public int getNumTilesCleared() {
+    /**
+     * @return the number of cleared tiles in this game.
+     */
+    public int getNumberOfTilesCleared() {
         return numTilesCleared;
     }
 
+    /**
+     * @return the total number of mines in this game.
+     */
     public int getNumMines() {
         return numMines;
     }
 
+    /**
+     * @return the total number of rows in this game.
+     */
     public int getNumRows() {
         return rows;
     }
 
-    public int getNumColumns() {
+    /**
+     * @return the total number of columns in this game.
+     */
+    public int getNumberOfColumns() {
         return columns;
     }
 
+    /**
+     * @return true if the game is in play, false otherwise.
+     */
     public boolean isPlaying() {
         return playing;
     }
 
-    public void incrementNumTilesCleared() {
-        numTilesCleared++;
-    }
-
-    public int getNumMoves() {
+    /**
+     * @return the number of moves that have been played up to now.
+     */
+    public int getNumberOfMoves() {
         return numMoves;
     }
 
+    /**
+     * Removes all the flags from the game and updates the tilingState's density property.
+     */
     public void removeAllFlags() {
         for (Tile tile : tilingState) {
             if (tile.isFlagged()) {
@@ -271,28 +320,45 @@ public class Minesweeper {
     }
 
     /**
-     * Gets the current density
+     * @return the current density.
      */
     public double density() {
         return (double) numMines / (rows * columns - numTilesCleared - (numMines - flagsRemaining));
     }
 
+    /**
+     * @return the initial density of the game.
+     */
     public double getInitialDensity() {
         return initialDensity;
     }
 
+    /**
+     * @return the elapsed time in milliseconds since the start of the game.
+     */
     public long getElapsedMillis() {
         return elapsedMillis;
     }
 
+    /**
+     * Updates the elapsed time through: elpasedMillis = current time - start time
+     */
     private void updateElapsedTime() {
         elapsedMillis = System.currentTimeMillis() - startTime;
     }
 
+    /**
+     * Returns a representation of the current game state containing many features.
+     * @return the GameSummary object that stores information about this game.
+     */
     public GameSummary getSummary() {
         return new GameSummary(this);
     }
 
+    /**
+     * Returns a more "physical" representation of the current game state.
+     * @return the current tiling state of the game.
+     */
     public TilingState<Tile> getTilingState() {
         return tilingState;
     }

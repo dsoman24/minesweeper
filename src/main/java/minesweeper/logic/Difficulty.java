@@ -25,6 +25,12 @@ public enum Difficulty {
 
     private Difficulty() {}
 
+    /**
+     * Returns a custom difficulty object.
+     * @param rows the number of rows
+     * @param columns the number of columns
+     * @param density the density of this difficulty
+     */
     public static Difficulty customDifficulty(int rows, int columns, double density) {
         Difficulty difficulty = CUSTOM;
         difficulty.rows = rows;
@@ -38,22 +44,35 @@ public enum Difficulty {
         this.numMines = (int) (density * rows * columns);
     }
 
+    @Override
     public String toString() {
         return String.format("%s (%dx%d, %d mines)", name(), rows, columns, numMines);
     }
 
-    public int getNumRows() {
+    /**
+     * @return the number of rows corresponding to this difficulty.
+     */
+    public int getNumberOfRows() {
         return rows;
     }
 
-    public int getNumColumns() {
+    /**
+     * @return the number of columns corresponding to this difficulty.
+     */
+    public int getNumberOfColumns() {
         return columns;
     }
 
-    public int getNumMines() {
+    /**
+     * @return the number of mines corresponding to this difficulty.
+     */
+    public int getNumberOfMines() {
         return numMines;
     }
 
+    /**
+     * @return the density corresponding to this difficulty.
+     */
     public double getDensity() {
         return density;
     }

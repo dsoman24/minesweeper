@@ -6,13 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.MinesweeperTileable;
 
-public class ResultNode<T extends Tileable> {
+/**
+ * Node of the solution tree.
+ * Stores information about the rules and their associated alpha and beta values.
+ */
+public class ResultNode<T extends MinesweeperTileable> {
 
     private Map<TileSet<T>, Integer> tileSetResults; // data
     private List<TileSetRule<T>> rules; // keeps track of all simplified rules
 
+    /**
+     * Create a new result node.
+     * @param tileSetReults the mapping of TileSet : alphas.
+     * @param rules the rules that are being evaluated.
+     */
     public ResultNode(Map<TileSet<T>, Integer> tileSetResults, List<TileSetRule<T>> rules) {
         this.tileSetResults = tileSetResults;
         this.rules = rules;
@@ -20,7 +29,8 @@ public class ResultNode<T extends Tileable> {
 
     /**
      * Copy constructor.
-     * Deep copies the rules but not the tileSets
+     * Deep copies the rules but not the tileSets.
+     * @param other the ResultNode to deep copy.
      */
     public ResultNode(ResultNode<T> other) {
         Map<TileSet<T>, Integer> newTileSetResults = new HashMap<>();
@@ -34,6 +44,10 @@ public class ResultNode<T extends Tileable> {
         this.tileSetResults = newTileSetResults;
     }
 
+    /**
+     * A complete ResultNode is one such that each alpha is known. That is, there is no null alpha.
+     * @return true if the resultNode is complete, false otherwise.
+     */
     public boolean isComplete() {
         for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
             if (entry.getValue() == null) {
@@ -41,14 +55,6 @@ public class ResultNode<T extends Tileable> {
             }
         }
         return true;
-    }
-
-    public void setTileSetResults(Map<TileSet<T>, Integer> tileSetResults) {
-        this.tileSetResults = tileSetResults;
-    }
-
-    public boolean isInvalidResult() {
-        return tileSetResults == null;
     }
 
     /**
@@ -65,6 +71,9 @@ public class ResultNode<T extends Tileable> {
         return true;
     }
 
+    /**
+     * @return the total number of combinations that can be done with this resultNode.
+    */
     public BigInteger numCombinations() {
         BigInteger product = BigInteger.ONE;
         for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
@@ -84,10 +93,16 @@ public class ResultNode<T extends Tileable> {
         return sb.toString();
     }
 
+    /**
+     * @return the alpha of a given TileSet
+     */
     public Integer get(TileSet<T> tileSet) {
         return tileSetResults.get(tileSet);
     }
 
+    /**
+     * @return the smallest TileSet that has an unknown (null) alpha.
+     */
     public TileSet<T> findSmallestUnknownTileSet() {
         TileSet<T> smallest = null;
         for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
@@ -100,6 +115,11 @@ public class ResultNode<T extends Tileable> {
         return smallest;
     }
 
+    /**
+     * Updates an alpha value.
+     * @param tileSet the tile set to update
+     * @param numMines the alpha value of this tile set.
+     */
     public void put(TileSet<T> tileSet, Integer numMines) {
         tileSetResults.put(tileSet, numMines);
     }

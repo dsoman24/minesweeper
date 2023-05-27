@@ -2,17 +2,21 @@ package src.main.java.minesweeper.bot.strategy.probabilistic;
 import java.math.BigInteger;
 
 /**
+ * Class to calculate the number of combinations.
  * Source: https://stackoverflow.com/questions/25356014/calculate-cn-k-combinations-for-big-numbers-using-modinverse
  */
 public class Combinatorics {
 
     /**
-     * Cannot be instantiated
+     * Cannot be instantiated.
      */
     private Combinatorics() {}
 
     /**
-     * Computes the number of combinations of n choose k
+     * Computes the number of combinations of n choose k.
+     * @param n the size of the set
+     * @param k the size of the subsets
+     * @return number of subsets of size k from a set of size n.
      */
     public static BigInteger combinations(int n, int k) {
         BigInteger N = BigInteger.valueOf(n);

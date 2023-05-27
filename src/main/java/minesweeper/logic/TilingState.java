@@ -6,9 +6,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- * Generic to represent the current TilingState
+ * Generic to represent the current TilingState.
+ * Represents a "snapshot" of a game, no knowledge of mines at all.
  */
-public class TilingState<T extends Tileable> implements Iterable<T>{
+public class TilingState<T extends MinesweeperTileable> implements Iterable<T>{
     private T[][] tiles;
     private int rows;
     private int columns;
@@ -19,21 +20,31 @@ public class TilingState<T extends Tileable> implements Iterable<T>{
 
     @SuppressWarnings("unchecked")
     public TilingState(int rows, int columns, int numMines) {
-        tiles = (T[][]) new Tileable[rows][columns];
+        tiles = (T[][]) new MinesweeperTileable[rows][columns];
         this.rows = rows;
         this.columns = columns;
         this.numMines = numMines;
         this.density = (double) numMines / (rows * columns);
     }
 
+    /**
+     * Updates the density of the tiling state
+     */
     public void updateDensity(double density) {
         this.density = density;
     }
 
+
+    /**
+     * Add a tile to a given position
+     */
     public void add(int row, int column, T tile) {
         tiles[row][column] = tile;
     }
 
+    /**
+     * Return a tile at a given position
+     */
     public T get(int row, int column) {
         return tiles[row][column];
     }
@@ -54,6 +65,9 @@ public class TilingState<T extends Tileable> implements Iterable<T>{
         return state;
     }
 
+    /**
+     * Helper method to determine if a position is in bounds.
+     */
     public boolean isInBounds(int row, int column) {
         return row >= 0 && row < rows
             && column >= 0 && column < columns
@@ -99,6 +113,13 @@ public class TilingState<T extends Tileable> implements Iterable<T>{
         return new TilingStateIterator();
     }
 
+    /**
+     * Returns the density at the given state
+     */
+    public double density() {
+        return density;
+    }
+
     private class TilingStateIterator implements Iterator<T> {
 
         private int currentRow = 0;
@@ -126,8 +147,5 @@ public class TilingState<T extends Tileable> implements Iterable<T>{
 
     }
 
-    public double density() {
-        return density;
-    }
 
 }

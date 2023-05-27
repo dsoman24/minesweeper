@@ -6,7 +6,6 @@ import src.main.java.minesweeper.bot.strategy.StrategyTypeOnTile;
 
 /**
  * Driver class for data collection.
- * Reads from command line.
  */
 public class DataCollection {
 

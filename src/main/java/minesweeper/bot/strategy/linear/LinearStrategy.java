@@ -1,9 +1,9 @@
 package src.main.java.minesweeper.bot.strategy.linear;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
-import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.MinesweeperTileable;
 
-public class LinearStrategy<T extends Tileable> extends BotStrategy<T> {
+public class LinearStrategy<T extends MinesweeperTileable> extends BotStrategy<T> {
 
     private int row = 0;
     private int column = 0;

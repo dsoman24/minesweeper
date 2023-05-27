@@ -8,23 +8,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.MinesweeperTileable;
 import src.main.java.minesweeper.logic.TilingState;
 
 
 /**
  * Class to group all tiles within a minesweeper game into TileSets, and create TileSetRules based on these TileSets.
  * This class then creates the solution set based on these rules.
+ * See README for details on the solver algorithm.
  * @param <T> the generic Tileable object this bot can solve minesweeper games for.
  */
-public class Solver<T extends Tileable> {
+public class Solver<T extends MinesweeperTileable> {
     private List<TileSet<T>> tileSets;
     private List<TileSetRule<T>> rules; // map of ruleTile : TileSetRule
     private SolutionSet<T> solutionSet;
     private TilingState<T> tilingState;
 
     /**
-     * Initializes the solver with the minesweeper gamestate to solve, and empty tileSets, rules, and solutionSet
+     * Initializes the solver with the minesweeper gamestate to solve, and empty tileSets, rules, and solutionSet.
+     * @param tilingState the game state to initialize the solver with
      */
     public Solver(TilingState<T> tilingState) {
         this.tilingState = tilingState;
@@ -34,7 +36,7 @@ public class Solver<T extends Tileable> {
     }
 
     /**
-     * Create all TileSets (variables) for the given minesweeper gamestate.
+     * Creates all TileSets (variables) for the given minesweeper gamestate.
      */
     private void createTileSets() {
         int numRows = tilingState.getNumRows();
@@ -83,7 +85,8 @@ public class Solver<T extends Tileable> {
     }
 
     /**
-     * Helper method to get the rule corresponding to the given result tile (e.g. find a rule by its alpha).
+     * Helper method to get the rule corresponding to the given result tile.
+     * @return TileSetRule the tileset rule corresponding to the given result tile
      */
     private TileSetRule<T> getRuleByResultTile(T resultTile) {
         for (TileSetRule<T> rule : rules) {
@@ -96,7 +99,7 @@ public class Solver<T extends Tileable> {
 
     /**
      * Calls recursive helper method.
-     * Fills out solution set
+     * Populates out the solution set.
      */
     private void buildSolutionSet() {
         Map<TileSet<T>, Integer> rootResult = new HashMap<>();
@@ -157,6 +160,7 @@ public class Solver<T extends Tileable> {
 
     /**
      * Returns a mapping of each tile in the minesweeper game to the corresponding probability in its encompassing TileSet.
+     * @return the mapping of each tile to its corresponding probability
      */
     public Map<T, Double> getProbabilityMap() {
         Map<T, Double> probabilityMap = new HashMap<T, Double>();
@@ -170,7 +174,7 @@ public class Solver<T extends Tileable> {
     }
 
     /**
-     * Finds the first minium likelihood tile set
+     * Finds the first minium likelihood tile set.
      */
     private TileSet<T> minimumLikelihoodTileSet() {
         TileSet<T> leastLikely = tileSets.get(0);
@@ -182,6 +186,9 @@ public class Solver<T extends Tileable> {
         return leastLikely;
     }
 
+    /**
+     * @return a random tile within the minimum likelihood tile set.
+     */
     private T findRandomMinimumLikelihoodTile(Random random) {
         TileSet<T> leastLikelySet = minimumLikelihoodTileSet();
         // picks a random tile from the least likely set
@@ -191,6 +198,9 @@ public class Solver<T extends Tileable> {
 
     /**
      * Wrapper method, performs the steps of the algorithm and finds the tile to clear.
+     * See README for details.
+     * @param random the random instance to use when picking the random tile.
+     * @return the tile to clear according to this strategy.
      */
     public T tileToClear(Random random) {
         // 1. Group tiles into TileSets.
@@ -207,13 +217,18 @@ public class Solver<T extends Tileable> {
     }
 
     /**
-     * Would it be smart to flag all tiles with probability 1?
+     * Finds all the tiles with probability 1.
+     * @return a list of tiles to flag.
      */
     public List<T> tilesToFlag() {
+        double epsilon = 0.0001;
         List<T> tilesToFlag = new ArrayList<>();
         for (TileSet<T> tileSet : tileSets) {
-            for (T tile : tileSet) {
-                tilesToFlag.add(tile);
+            double probability = tileSet.getProbability();
+            if (probability > 1.0 - epsilon && probability < 1.0 + epsilon) {
+                for (T tile : tileSet) {
+                    tilesToFlag.add(tile);
+                }
             }
         }
         return tilesToFlag;

@@ -3,14 +3,17 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.MinesweeperTileable;
 
 /**
- * Stores a list of all solutions for a game state
+ * Stores a list of all solutions (ResultNodes) for a game state.
  */
-public class SolutionSet<T extends Tileable> {
+public class SolutionSet<T extends MinesweeperTileable> {
     private List<ResultNode<T>> resultNodes;
 
+    /**
+     * Initializes an empty solution set.
+     */
     public SolutionSet() {
         resultNodes = new ArrayList<>();
     }
@@ -22,20 +25,24 @@ public class SolutionSet<T extends Tileable> {
         resultNodes.add(results);
     }
 
+    /**
+     * @param index the index of the result node we want to see
+     * @param tileSet the TileSet we want to get the alpha of
+     * @return the alpha of the the given TileSet
+     */
     public Integer getNumMinesAtSpecificResultNode(int index, TileSet<T> tileSet) {
         return resultNodes.get(index).get(tileSet);
     }
 
-    public void setResultNode(int index, ResultNode<T> resultNode) {
-        resultNodes.set(index, resultNode);
-    }
-
+    /**
+     * @return the number of result nodes within this solution set i.e. the size of the solution set.
+     */
     public int getNumberOfResultNodes() {
         return resultNodes.size();
     }
 
     /**
-     * Returns a list of the number of mine configurations per solution
+     * @return a list of the number of mine configurations per solution.
      */
     public List<BigInteger> numCombinationsPerSolution() {
         List<BigInteger> result = new ArrayList<>();
@@ -46,7 +53,8 @@ public class SolutionSet<T extends Tileable> {
     }
 
     /**
-     * Sum of all combinations across all possible solutions
+     * Sum of all combinations across all possible solutions.
+     * @return the sum of of combinations across all result nodes.
      */
     public BigInteger totalNumCombinations() {
         BigInteger sum = BigInteger.ZERO;
