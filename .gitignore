@@ -4,4 +4,4 @@
 src/ui/leaderboard/*.csv
 bin
 .gradle
-MANIFEST.MF
+build
