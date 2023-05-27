@@ -2,7 +2,7 @@ package src.main.java.minesweeper.bot;
 
 import java.util.Scanner;
 
-import src.main.java.minesweeper.bot.strategy.probabilistic.ProbabilisticStrategy;
+import src.main.java.minesweeper.bot.strategy.StrategyType;
 
 /**
  * Driver class for data collection.
@@ -26,7 +26,7 @@ public class DataCollection {
             }
         }
 
-        BotTester tester = new BotTester(new ProbabilisticStrategy(), numTrials);
+        BotTester tester = new BotTester(StrategyType.PROBABILISTIC, numTrials);
         String filename = "test.csv";
         tester.updateFile(filename);
     }

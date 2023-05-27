@@ -1,17 +1,15 @@
 package src.main.java.minesweeper.logic;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class to represent the tile
  */
-public class Tile {
+public class Tile implements Tileable {
     private int row;
     private int column;
     private int neighboringMines;
     private boolean flag;
     private boolean cleared;
-    private Minesweeper minesweeper;
+    private double initialDensity;
 
     /**
      * Constructor for a tile.
@@ -19,51 +17,21 @@ public class Tile {
      * @param row the row the tile is on
      * @param column the column the tile is on
      */
-    public Tile(int row, int column, Minesweeper minesweeper) {
+    public Tile(int row, int column, double initialDensity) {
         this.row = row;
         this.column = column;
-        this.minesweeper = minesweeper;
         cleared = false;
+        this.initialDensity = initialDensity;
     }
 
-    public int getNumNeighboringMines() {
+    @Override
+    public int getNumberOfNeighboringMines() {
         return neighboringMines;
     }
 
-    /**
-     * Get neighbors of a given Tile instance.
-     */
-    private Set<Tile> getNeighbors(Tile tile) {
-        Set<Tile> neighbors = new HashSet<>();
-        for (int i = tile.row - 1; i < tile.row + 2; i++) {
-            for (int j = tile.column - 1; j < tile.column + 2; j++) {
-                if (!(i == tile.row && j == tile.column) && minesweeper.isInBounds(i, j)) {
-                    neighbors.add(minesweeper.getTileAt(i, j));
-                }
-            }
-        }
-        return neighbors;
-    }
-
-    /**
-     * Get neighbors of this Tile instance.
-     */
-    public Set<Tile> getNeighbors() {
-        return getNeighbors(this);
-    }
-
-    /**
-     * Get neighbors of this Tile instance that have been cleared.
-     */
-    public Set<Tile> getClearedAndNumberedNeighbors() {
-        Set<Tile> cleared = new HashSet<>();
-        Set<Tile> neighbors = getNeighbors();
-        for (Tile tile : neighbors) {
-            if (tile.isCleared()) {
-                cleared.add(tile);
-            }
-        }
-        return cleared;
+    @Override
+    public double initialDensity() {
+        return initialDensity;
     }
 
     public void addNeighboringMine() {
@@ -93,7 +61,7 @@ public class Tile {
 
     @Override
     public int hashCode() {
-        return row * minesweeper.getNumColumns() + column;
+        return row * 5 + column * 7;
     }
 
     public boolean isFlagged() {
@@ -114,9 +82,5 @@ public class Tile {
 
     public int getColumn() {
         return column;
-    }
-
-    public double density() {
-        return minesweeper.density();
     }
 }

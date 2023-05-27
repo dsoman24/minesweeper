@@ -19,8 +19,9 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 
 ## To-do
 - [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying.
-- [ ] Performance analysis.
 - [ ] Complexity analysis of the algorithm.
+- [ ] Visualize the bot in action
+- [X] Performance analysis.
 - [X] Better write up, with diagrams.
 - [X] Write up how to describe computations.
 

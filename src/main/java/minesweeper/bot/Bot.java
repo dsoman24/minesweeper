@@ -1,6 +1,7 @@
 package src.main.java.minesweeper.bot;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
+import src.main.java.minesweeper.bot.strategy.StrategyType;
 import src.main.java.minesweeper.logic.Minesweeper;
 import src.main.java.minesweeper.logic.Status;
 import src.main.java.minesweeper.logic.Tile;
@@ -12,8 +13,8 @@ public class Bot {
     /** The strategy this bot uses */
     private BotStrategy strategy;
 
-    public Bot(Minesweeper minesweeper, BotStrategy strategy) {
-        this.strategy = strategy;
+    public Bot(Minesweeper minesweeper, StrategyType strategyType) {
+        this.strategy = strategyType.getStrategy();
         this.strategy.setMinesweeper(minesweeper);
     }
 

@@ -36,7 +36,9 @@ public class GameApp extends Application {
         Label difficultyLabel = new Label("Difficulty: ");
         ComboBox<Difficulty> difficultyInput = new ComboBox<>();
         for (Difficulty difficulty : Difficulty.values()) {
-            difficultyInput.getItems().add(difficulty);
+            if (difficulty != Difficulty.CUSTOM) {
+                difficultyInput.getItems().add(difficulty);
+            }
         }
         Button startButton = new Button("Start");
         startButton.setPrefHeight(45);

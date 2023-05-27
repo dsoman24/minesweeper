@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResultNode {
+import src.main.java.minesweeper.logic.Tileable;
 
-    private Map<TileSet, Integer> tileSetResults; // data
-    private List<TileSetRule> rules; // keeps track of all simplified rules
+public class ResultNode<T extends Tileable> {
 
-    public ResultNode(Map<TileSet, Integer> tileSetResults, List<TileSetRule> rules) {
+    private Map<TileSet<T>, Integer> tileSetResults; // data
+    private List<TileSetRule<T>> rules; // keeps track of all simplified rules
+
+    public ResultNode(Map<TileSet<T>, Integer> tileSetResults, List<TileSetRule<T>> rules) {
         this.tileSetResults = tileSetResults;
         this.rules = rules;
     }
@@ -20,20 +22,20 @@ public class ResultNode {
      * Copy constructor.
      * Deep copies the rules but not the tileSets
      */
-    public ResultNode(ResultNode other) {
-        Map<TileSet, Integer> newTileSetResults = new HashMap<>();
-        for (Map.Entry<TileSet, Integer> entry : other.tileSetResults.entrySet()) {
+    public ResultNode(ResultNode<T> other) {
+        Map<TileSet<T>, Integer> newTileSetResults = new HashMap<>();
+        for (Map.Entry<TileSet<T>, Integer> entry : other.tileSetResults.entrySet()) {
             newTileSetResults.put(entry.getKey(), entry.getValue());
         }
         rules = new ArrayList<>();
-        for (TileSetRule rule : other.rules) {
-            rules.add(new TileSetRule(rule));
+        for (TileSetRule<T> rule : other.rules) {
+            rules.add(new TileSetRule<>(rule));
         }
         this.tileSetResults = newTileSetResults;
     }
 
     public boolean isComplete() {
-        for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
+        for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
             if (entry.getValue() == null) {
                 return false;
             }
@@ -41,7 +43,7 @@ public class ResultNode {
         return true;
     }
 
-    public void setTileSetResults(Map<TileSet, Integer> tileSetResults) {
+    public void setTileSetResults(Map<TileSet<T>, Integer> tileSetResults) {
         this.tileSetResults = tileSetResults;
     }
 
@@ -54,7 +56,7 @@ public class ResultNode {
      * @return true if the simplificaiton was successful, false otherwise
      */
     public boolean simplifyAllRules() {
-        for (TileSetRule rule : rules) {
+        for (TileSetRule<T> rule : rules) {
             SimplifyResult simplifyResult = rule.simplify(this);
             if (simplifyResult.isFailure()) {
                 return false;
@@ -65,8 +67,8 @@ public class ResultNode {
 
     public BigInteger numCombinations() {
         BigInteger product = BigInteger.ONE;
-        for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
-            TileSet tileSet = entry.getKey();
+        for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
+            TileSet<T> tileSet = entry.getKey();
             int numMines = entry.getValue();
             product = product.multiply(Combinatorics.combinations(tileSet.size(), numMines));
         }
@@ -76,19 +78,19 @@ public class ResultNode {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
+        for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
             sb.append("\n" + entry.getKey().hashCode() + " : " + entry.getValue());
         }
         return sb.toString();
     }
 
-    public Integer get(TileSet tileSet) {
+    public Integer get(TileSet<T> tileSet) {
         return tileSetResults.get(tileSet);
     }
 
-    public TileSet findSmallestUnknownTileSet() {
-        TileSet smallest = null;
-        for (Map.Entry<TileSet, Integer> entry : tileSetResults.entrySet()) {
+    public TileSet<T> findSmallestUnknownTileSet() {
+        TileSet<T> smallest = null;
+        for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
             if (entry.getValue() == null) {
                 if (smallest == null || entry.getKey().size() < smallest.size()) {
                     smallest = entry.getKey();
@@ -98,7 +100,7 @@ public class ResultNode {
         return smallest;
     }
 
-    public void put(TileSet tileSet, Integer numMines) {
+    public void put(TileSet<T> tileSet, Integer numMines) {
         tileSetResults.put(tileSet, numMines);
     }
 }

@@ -8,9 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import src.main.java.minesweeper.bot.Bot;
-import src.main.java.minesweeper.bot.strategy.linear.LinearStrategy;
-import src.main.java.minesweeper.bot.strategy.probabilistic.ProbabilisticStrategy;
-import src.main.java.minesweeper.bot.strategy.random.RandomStrategy;
+import src.main.java.minesweeper.bot.strategy.StrategyType;
 import src.main.java.minesweeper.logic.Difficulty;
 import src.main.java.minesweeper.logic.Minesweeper;
 import src.main.java.minesweeper.logic.Status;
@@ -44,7 +42,8 @@ public class MinesweeperPane extends GridPane {
         this.difficulty = difficulty;
 
         this.minesweeper = new Minesweeper(difficulty);
-        flagLabel = new Label(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
+        flagLabel = new Label();
+        updateFlagText();
         flagLabel.setAlignment(Pos.CENTER);
         secondsLabel = new Label("0 s");
         secondsLabel.setAlignment(Pos.CENTER);
@@ -52,8 +51,10 @@ public class MinesweeperPane extends GridPane {
         timer = new Timer(secondsLabel);
         tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumColumns()];
 
-        ComboBox<String> botStrategySelector = new ComboBox<>();
-        botStrategySelector.getItems().addAll("Random", "Linear", "Probabilistic");
+        ComboBox<StrategyType> botStrategySelector = new ComboBox<>();
+        for (StrategyType strategyType : StrategyType.values()) {
+            botStrategySelector.getItems().add(strategyType);
+        }
         botStrategySelector.setPromptText("Bot Strategy");
         TextField botDelayTextField = new TextField();
         botDelayTextField.setPromptText("Delay (ms)");
@@ -68,7 +69,6 @@ public class MinesweeperPane extends GridPane {
                 } else {
                     botActivated = true;
                     toggleBot.setText("Stop Bot");
-
                     String delayValue = botDelayTextField.getText();
                     if (delayValue == null || delayValue.isBlank()) {
                         botDelay = 0;
@@ -82,14 +82,12 @@ public class MinesweeperPane extends GridPane {
 
                     Bot bot = null;
 
-                    if (botStrategySelector.getValue() == null || botStrategySelector.getValue().equals("Probabilistic")) {
-                        bot = new Bot(minesweeper, new ProbabilisticStrategy());
-                    } else if (botStrategySelector.getValue().equals("Linear")){
-                        bot = new Bot(minesweeper, new LinearStrategy());
-                    } else if (botStrategySelector.getValue().equals("Random")) {
-                        bot = new Bot(minesweeper, new RandomStrategy());
+                    StrategyType strategyType = botStrategySelector.getValue();
+                    if (strategyType == null) {
+                        strategyType = StrategyType.PROBABILISTIC;
                     }
 
+                    bot = new Bot(minesweeper, strategyType);
                     BotRunner botRunner = new BotRunner(bot);
                     Thread botThread = new Thread(botRunner);
                     botThread.start();
@@ -134,10 +132,13 @@ public class MinesweeperPane extends GridPane {
     public void flag(int row, int column) {
         if (minesweeper.isPlaying() && !botActivated) { // can only flag if we are playing
             minesweeper.flag(row, column);
-            flagLabel.setText(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
+            updateFlagText();
             tilePanes[row][column].update(); // only need to update individual tile
         }
+    }
 
+    public void updateFlagText() {
+        flagLabel.setText(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
     }
 
     /**
@@ -168,6 +169,7 @@ public class MinesweeperPane extends GridPane {
                 tilePanes[i][j].update();
             }
         }
+        updateFlagText();
     }
 
     /**
@@ -213,6 +215,7 @@ public class MinesweeperPane extends GridPane {
                 }
                 // bot removes flags
                 minesweeper.removeAllFlags();
+
                 // find the tile to clear
                 Tile tileToClear = bot.tileToClear();
                 // clear the tile

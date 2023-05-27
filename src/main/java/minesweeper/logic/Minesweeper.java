@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Minesweeper game implementation.
+ * Non-parametrized Minesweeper game implementation.
  * Logic only, no UI elements.
  * @author Daniel Öman
  * @date 12/31/2022
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class Minesweeper {
 
-    private Tile[][] tiles;
+    private TilingState<Tile> tilingState;
     private Set<Tile> mineSet;
     private int rows;
     private int columns;
@@ -36,9 +36,6 @@ public class Minesweeper {
 
     private long startTime;
 
-    /**
-     * where the start condition will not cause an infinite loop.
-     */
     public Minesweeper(Difficulty difficulty) {
         this(difficulty, new Random());
     }
@@ -52,11 +49,13 @@ public class Minesweeper {
         playing = true;
         numTilesCleared = 0;
         flagsRemaining = numMines;
-        tiles = new Tile[rows][columns];
+
+        // initialize the tiling state
+        tilingState = new TilingState<>(rows, columns, numMines);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                Tile tile = new Tile(i, j, this);
-                tiles[i][j] = tile;
+                Tile tile = new Tile(i, j, difficulty.getDensity());
+                tilingState.add(i, j, tile);
             }
         }
         this.random = random;
@@ -66,14 +65,7 @@ public class Minesweeper {
 
     @Override
     public String toString() {
-        String minefield = "";
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                minefield += tiles[i][j] + " ";
-            }
-            minefield += "\n";
-        }
-        return minefield;
+        return tilingState.toString();
     }
 
     /**
@@ -83,9 +75,7 @@ public class Minesweeper {
      * @return if the position is within the bounds of the minefield
      */
     public boolean isInBounds(int row, int column) {
-        return row >= 0 && row < rows
-            && column >= 0 && column < columns
-            && row * column <= (rows - 1) * (columns - 1) && row * column >= 0;
+        return tilingState.isInBounds(row, column);
     }
 
     /**
@@ -120,12 +110,12 @@ public class Minesweeper {
             validPositions.remove(randomIndex);
 
             // add to the mineset if it is a mine
-            mineSet.add(tiles[row][column]);
+            mineSet.add(getTileAt(row, column));
             // now go around and increment the tiles immediately around it
             for (int x = row - 1; x < row + 2; x++) {
                 for (int y = column - 1; y < column + 2; y++) {
                     if (!(x == row && y == column) && isInBounds(x, y)) {
-                        tiles[x][y].addNeighboringMine();
+                        getTileAt(x, y).addNeighboringMine();
                     }
                 }
             }
@@ -133,7 +123,7 @@ public class Minesweeper {
     }
 
     public Tile getTileAt(int row, int column) {
-        return tiles[row][column];
+        return tilingState.get(row, column);
     }
 
     public int getFlagsRemaining() {
@@ -149,13 +139,14 @@ public class Minesweeper {
      */
     public void clear(int row, int column) {
         if (playing) {
-            Tile currentTile = tiles[row][column];
+            Tile currentTile = getTileAt(row, column);
             if (!currentTile.isCleared() && !currentTile.isFlagged()) {
                 // Generate the tiles if no tiles have been cleared.
                 if (numTilesCleared == 0) {
                     startGame(row, column);
                 }
                 playing = clearSurroundingTiles(currentTile);
+                tilingState.updateDensity(density());
                 if (playing && numTilesCleared == rows * columns - numMines) {
                     won = true;
                     playing = false;
@@ -178,8 +169,8 @@ public class Minesweeper {
         if (!curr.isCleared() && !curr.isFlagged()) {
             curr.setCleared();
             incrementNumTilesCleared();
-            if (curr.getNumNeighboringMines() == 0) {
-                Set<Tile> neighbors = curr.getNeighbors();
+            if (curr.getNumberOfNeighboringMines() == 0) {
+                Set<Tile> neighbors = tilingState.getNeighbors(curr);
                 for (Tile tile : neighbors) {
                     clearSurroundingTiles(tile);
                 }
@@ -196,7 +187,7 @@ public class Minesweeper {
      */
     public void flag(int row, int column) {
         if (playing) {
-            Tile currentTile = tiles[row][column];
+            Tile currentTile = getTileAt(row, column);
             if (!currentTile.isCleared()) {
                 if (!currentTile.isFlagged()) {
                     if (flagsRemaining > 0) {
@@ -208,6 +199,7 @@ public class Minesweeper {
                     currentTile.setFlag(false);
                 }
                 numMoves++;
+                tilingState.updateDensity(density());
             }
         }
     }
@@ -269,13 +261,13 @@ public class Minesweeper {
     }
 
     public void removeAllFlags() {
-        for (Tile[] row : tiles) {
-            for (Tile tile : row) {
-                if (tile.isFlagged()) {
-                    tile.setFlag(false);
-                }
+        for (Tile tile : tilingState) {
+            if (tile.isFlagged()) {
+                flagsRemaining++;
+                tile.setFlag(false);
             }
         }
+        tilingState.updateDensity(density());
     }
 
     /**
@@ -299,5 +291,9 @@ public class Minesweeper {
 
     public GameSummary getSummary() {
         return new GameSummary(this);
+    }
+
+    public TilingState<Tile> getTilingState() {
+        return tilingState;
     }
 }

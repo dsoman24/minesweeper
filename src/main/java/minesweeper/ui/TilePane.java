@@ -64,7 +64,7 @@ public class TilePane extends StackPane {
                 getChildren().add(new Label("M"));
             } else {
                 foreground.setFill(Color.CORNFLOWERBLUE);
-                int number = currentTile.getNumNeighboringMines();
+                int number = currentTile.getNumberOfNeighboringMines();
                 Label minesLabel = new Label(String.format("%s", number == 0 ? " " : number));
                 if (number > 0) {
                     minesLabel.setTextFill(numberLabelColors[number - 1]);

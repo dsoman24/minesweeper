@@ -18,8 +18,7 @@ public class LinearStrategy extends BotStrategy {
     }
 
     private void updatePosition() {
-        row++;
-        if (row >= minesweeper.getNumRows()) {
+        if (++row >= minesweeper.getNumRows()) {
             row = 0;
             column++;
         }

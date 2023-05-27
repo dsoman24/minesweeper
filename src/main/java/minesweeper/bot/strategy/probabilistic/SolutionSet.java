@@ -3,11 +3,13 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import src.main.java.minesweeper.logic.Tileable;
+
 /**
  * Stores a list of all solutions for a game state
  */
-public class SolutionSet {
-    private List<ResultNode> resultNodes;
+public class SolutionSet<T extends Tileable> {
+    private List<ResultNode<T>> resultNodes;
 
     public SolutionSet() {
         resultNodes = new ArrayList<>();
@@ -16,15 +18,15 @@ public class SolutionSet {
     /**
      * Add a new round of solutions
      */
-    public void addResultNode(ResultNode results) {
+    public void addResultNode(ResultNode<T> results) {
         resultNodes.add(results);
     }
 
-    public Integer getNumMinesAtSpecificResultNode(int index, TileSet tileSet) {
+    public Integer getNumMinesAtSpecificResultNode(int index, TileSet<T> tileSet) {
         return resultNodes.get(index).get(tileSet);
     }
 
-    public void setResultNode(int index, ResultNode resultNode) {
+    public void setResultNode(int index, ResultNode<T> resultNode) {
         resultNodes.set(index, resultNode);
     }
 
@@ -37,7 +39,7 @@ public class SolutionSet {
      */
     public List<BigInteger> numCombinationsPerSolution() {
         List<BigInteger> result = new ArrayList<>();
-        for (ResultNode resultNode : resultNodes) {
+        for (ResultNode<T> resultNode : resultNodes) {
             result.add(resultNode.numCombinations());
         }
         return result;
@@ -59,7 +61,7 @@ public class SolutionSet {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (ResultNode resultNode : resultNodes) {
+        for (ResultNode<T> resultNode : resultNodes) {
             sb.append("Solution " + i + ":");
             sb.append(resultNode.toString());
             sb.append("\n");

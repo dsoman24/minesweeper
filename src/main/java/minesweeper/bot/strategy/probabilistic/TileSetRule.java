@@ -3,34 +3,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
 
 /**
  * Class to represent a rule.
  * This is essentially a linear equation. The TileSets are used instead of individual tiles as variables
  * to reduce # of computations
  */
-public class TileSetRule {
-    private List<TileSet> tileSets;
+public class TileSetRule<T extends Tileable> {
+    private List<TileSet<T>> tileSets;
     private int result; // how many mines are within this rule
-    private Tile resultTile;
+    private T resultTile;
 
-    public TileSetRule(Tile resultTile, int result) {
+    public TileSetRule(T resultTile, int result) {
         tileSets = new ArrayList<>();
         this.resultTile = resultTile;
         this.result = result;
     }
 
-    public TileSetRule(Tile resultTile) {
-        this(resultTile, resultTile.getNumNeighboringMines());
+    public TileSetRule(T resultTile) {
+        this(resultTile, resultTile.getNumberOfNeighboringMines());
     }
 
     /**
      * "Shallow" copy constructor, not necessary to copy the tileSets
      */
-    public TileSetRule(TileSetRule other) {
+    public TileSetRule(TileSetRule<T> other) {
         this.tileSets = new ArrayList<>();
-        for (TileSet tileSet : other.tileSets) {
+        for (TileSet<T> tileSet : other.tileSets) {
             tileSets.add(tileSet);
         }
         this.result = other.result;
@@ -50,7 +50,7 @@ public class TileSetRule {
 
     public int numTiles() {
         int size = 0;
-        for (TileSet tileSet : tileSets) {
+        for (TileSet<T> tileSet : tileSets) {
             size += tileSet.size();
         }
         return size;
@@ -64,7 +64,7 @@ public class TileSetRule {
         return resultTile == null;
     }
 
-    public void addTileSet(TileSet tileSet) {
+    public void addTileSet(TileSet<T> tileSet) {
         tileSets.add(tileSet);
     }
 
@@ -72,18 +72,18 @@ public class TileSetRule {
         return result;
     }
 
-    public Tile getResultTile() {
+    public T getResultTile() {
         return resultTile;
     }
 
     /**
      * Simplifies a single rule based on a resultNode (current state).
      */
-    public SimplifyResult simplify(ResultNode resultNode) {
+    public SimplifyResult simplify(ResultNode<T> resultNode) {
         if (numTileSets() == 0 && result == 0) {
             return SimplifyResult.NO_EFFECT;
         }
-        Iterator<TileSet> iterator = tileSets.iterator();
+        Iterator<TileSet<T>> iterator = tileSets.iterator();
         // We only keep TileSets that have unknown values
         while (iterator.hasNext()) {
             Integer numMines = resultNode.get(iterator.next());
@@ -110,7 +110,7 @@ public class TileSetRule {
 
         // 2. something like [A] + [B] = 0. Clearly, both [A] and [B] must be 0
         if (result == 0) {
-            for (TileSet tileSet : tileSets) {
+            for (TileSet<T> tileSet : tileSets) {
                 resultNode.put(tileSet, 0);
             }
             tileSets.clear();
@@ -120,7 +120,7 @@ public class TileSetRule {
 
         // 3. Something like [a + b + c] + [c + d] = 5. Clearly, everything must be 5.
         if (numTiles() == result) {
-            for (TileSet tileSet : tileSets) {
+            for (TileSet<T> tileSet : tileSets) {
                 resultNode.put(tileSet, tileSet.size() * result / numTileSets());
             }
             return SimplifyResult.SIMPLIFIED;
@@ -132,7 +132,7 @@ public class TileSetRule {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (TileSet tileSet : tileSets) {
+        for (TileSet<T> tileSet : tileSets) {
             sb.append("[" + tileSet.hashCode() + "]");
             if (i < tileSets.size() - 1) {
                 sb.append(" + ");
@@ -146,7 +146,7 @@ public class TileSetRule {
     @Override
     public int hashCode() {
         int hash = 0;
-        for (TileSet tileSet : tileSets) {
+        for (TileSet<T> tileSet : tileSets) {
             hash += tileSet.hashCode();
         }
         hash += result;

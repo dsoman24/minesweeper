@@ -4,32 +4,35 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.logic.Tileable;
+import src.main.java.minesweeper.logic.TilingState;
 
 
 /**
- * TileSet class.
+ * Generic TileSet class.
  * Each tile is unique to a set, and is characterized by the neighboring numbered cleared tiles.
  * A TileSet is essentially the variable in the linear equation.
  * Each tile in the tileset is the assigned the probability of its encompassing Set
  */
-public class TileSet implements Iterable<Tile>{
-    private Set<Tile> set;
-    private Set<Tile> commonClearedNeighbors;
+public class TileSet<T extends Tileable> implements Iterable<T>{
+    private Set<T> set;
+    private Set<T> commonClearedNeighbors;
+    private TilingState<T> tilingState;
     private double probability;
 
-    public TileSet(Tile tile) {
+    public TileSet(T tile, TilingState<T> tilingState) {
         set = new HashSet<>();
         set.add(tile);
-        commonClearedNeighbors = tile.getClearedAndNumberedNeighbors();
-        probability = tile.density(); // will have the same probability as the game density
+        commonClearedNeighbors = tilingState.getClearedAndNumberedNeighbors(tile);
+        probability = tile.initialDensity(); // will have the same probability as the game density
+        this.tilingState = tilingState;
     }
 
     /**
      * Add to this TileSet only if the tile is already within the commonClearedNeighbors
      * @return true if the tile is added (and shares common cleared neighbors), false otherwise
      */
-    public boolean add(Tile tile) {
+    public boolean add(T tile) {
         if (equalClearedNeighbors(tile)) {
             set.add(tile);
             return true;
@@ -40,12 +43,12 @@ public class TileSet implements Iterable<Tile>{
     /**
      * Check if a tile shares common cleared neighbors to that of this TileSet
      */
-    private boolean equalClearedNeighbors(Tile other) {
-        Set<Tile> otherClearedNeighbors = other.getClearedAndNumberedNeighbors();
+    private boolean equalClearedNeighbors(T other) {
+        Set<T> otherClearedNeighbors = tilingState.getClearedAndNumberedNeighbors(other);
         if (commonClearedNeighbors.size() != otherClearedNeighbors.size()) {
             return false;
         }
-        for (Tile tile : otherClearedNeighbors) {
+        for (T tile : otherClearedNeighbors) {
             if (!commonClearedNeighborsContains(tile)) {
                 return false;
             }
@@ -53,11 +56,11 @@ public class TileSet implements Iterable<Tile>{
         return true;
     }
 
-    public boolean commonClearedNeighborsContains(Tile tile) {
+    public boolean commonClearedNeighborsContains(T tile) {
         return commonClearedNeighbors.contains(tile);
     }
 
-    public Set<Tile> getCommonClearedNeighbors() {
+    public Set<T> getCommonClearedNeighbors() {
         return commonClearedNeighbors;
     }
 
@@ -73,9 +76,10 @@ public class TileSet implements Iterable<Tile>{
         return set.size();
     }
 
-    public Tile selectRandomTile(Random random) {
+    @SuppressWarnings("unchecked")
+    public T selectRandomTile(Random random) {
         int index = random.nextInt(size());
-        Tile[] tiles = set.toArray(new Tile[size()]);
+        T[] tiles = set.toArray((T[]) new Tileable[size()]);
         return tiles[index];
     }
 
@@ -83,28 +87,29 @@ public class TileSet implements Iterable<Tile>{
         StringBuilder sb = new StringBuilder();
         // sb.append(String.format("%.4f ", probability));
         sb.append(String.format("%d: ", hashCode()));
-        for (Tile tile : set) {
+        for (T tile : set) {
             sb.append(String.format("(%d, %d) ", tile.getRow(), tile.getColumn()));
         }
         return sb.toString();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
         if (obj instanceof TileSet) {
-            TileSet other = (TileSet) obj;
+            TileSet<T> other = (TileSet<T>) obj;
             if (size() != other.size()) {
                 return false;
             }
             if (commonClearedNeighbors.size() != other.commonClearedNeighbors.size()) {
                 return false;
             }
-            for (Tile tile : set) {
+            for (T tile : set) {
                 if (!other.set.contains(tile)) {
                     return false;
                 }
             }
-            for (Tile tile : commonClearedNeighbors) {
+            for (T tile : commonClearedNeighbors) {
                 if (!other.commonClearedNeighbors.contains(tile)) {
                     return false;
                 }
@@ -117,17 +122,17 @@ public class TileSet implements Iterable<Tile>{
     @Override
     public int hashCode() {
         int hash = 0;
-        for (Tile tile : set) {
+        for (T tile : set) {
             hash += tile.hashCode();
         }
-        for (Tile tile : commonClearedNeighbors) {
+        for (T tile : commonClearedNeighbors) {
             hash += tile.hashCode();
         }
         return hash;
     }
 
     @Override
-    public Iterator<Tile> iterator() {
+    public Iterator<T> iterator() {
         return set.iterator();
     }
 }
