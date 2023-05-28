@@ -8,8 +8,8 @@ import src.main.java.minesweeper.logic.Tile;
 /**
  * Enum to initialize strategies and essentially include all of them.
  * This enum only has strategies that act on Tile objects.
- * NOT GENERIC
- * "one import fits all"
+ * NOT GENERIC!
+ * "one import fits all".
  * When creating new strategies, add them here.
  */
 public enum StrategyTypeOnTile {

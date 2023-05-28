@@ -1,6 +1,9 @@
 package src.main.java.minesweeper.bot;
 
+import java.util.Map;
+
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
+import src.main.java.minesweeper.bot.strategy.DecisionDetailsProvider;
 import src.main.java.minesweeper.logic.MinesweeperTileable;
 import src.main.java.minesweeper.logic.TilingState;
 
@@ -11,9 +14,12 @@ import src.main.java.minesweeper.logic.TilingState;
  *            Must be minesweeper-tilable.
  */
 public class Bot<T extends MinesweeperTileable> {
-    /** The strategy this bot uses */
     private BotStrategy<T> strategy;
 
+    /**
+     * @param tilingState the TilingState to operate on.
+     * @param strategy the strategy to use.
+     */
     public Bot(TilingState<T> tilingState, BotStrategy<T> strategy) {
         this.strategy = strategy;
         this.strategy.setTilingState(tilingState);
@@ -32,5 +38,13 @@ public class Bot<T extends MinesweeperTileable> {
      */
     public String strategyName() {
         return strategy.name();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<T, ? extends Number> decisionDetails() {
+        if (strategy instanceof DecisionDetailsProvider) {
+            return ((DecisionDetailsProvider<T>) strategy).decisionDetails();
+        }
+        return null;
     }
 }

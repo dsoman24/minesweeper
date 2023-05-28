@@ -174,7 +174,7 @@ public class Solver<T extends MinesweeperTileable> {
     }
 
     /**
-     * Finds the first minium likelihood tile set.
+     * Finds the first minimum likelihood tile set.
      */
     private TileSet<T> minimumLikelihoodTileSet() {
         TileSet<T> leastLikely = tileSets.get(0);

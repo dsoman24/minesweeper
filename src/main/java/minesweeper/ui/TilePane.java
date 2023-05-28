@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import src.main.java.minesweeper.logic.Minesweeper;
 import src.main.java.minesweeper.logic.Tile;
 
@@ -15,6 +16,7 @@ public class TilePane extends StackPane {
     private MinesweeperPane minesweeperPane;
     private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
     private final Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
+    private Label informationLabel;
 
     private final Color[] numberLabelColors = new Color[]{
         Color.BLUE, Color.GREEN, Color.RED, Color.PURPLE, Color.MAROON, Color.TEAL, Color.BLACK, Color.GRAY
@@ -26,13 +28,16 @@ public class TilePane extends StackPane {
         this.column = column;
         this.minesweeperPane = minesweeperPane;
         this.minesweeper = minesweeperPane.getMinesweeper();
+        informationLabel = new Label();
 
         getChildren().add(background);
-            getChildren().add(foreground);
+        getChildren().add(foreground);
+        getChildren().add(informationLabel);
+        informationLabel.setFont(Font.font(9));
 
-            setOnMouseClicked(e -> {
-                trigger(e);
-            });
+        setOnMouseClicked(e -> {
+            trigger(e);
+        });
     }
 
     /**
@@ -59,17 +64,13 @@ public class TilePane extends StackPane {
                 foreground.setFill(Color.LIGHTGRAY);
             }
         } else {
-            if (minesweeper.hasMine(currentTile)) {
-                foreground.setFill(Color.DARKGOLDENROD);
-                getChildren().add(new Label("M"));
-            } else {
+            if (!minesweeper.hasMine(currentTile)) {
                 foreground.setFill(Color.CORNFLOWERBLUE);
                 int number = currentTile.getNumberOfNeighboringMines();
-                Label minesLabel = new Label(String.format("%s", number == 0 ? " " : number));
+                informationLabel.setText(String.format("%s", number == 0 ? " " : number));
                 if (number > 0) {
-                    minesLabel.setTextFill(numberLabelColors[number - 1]);
+                    informationLabel.setTextFill(numberLabelColors[number - 1]);
                 }
-                getChildren().add(minesLabel);
             }
         }
     }
@@ -78,16 +79,40 @@ public class TilePane extends StackPane {
         Tile currentTile = getCorrespondingTile();
         if (minesweeper.hasMine(currentTile) && !currentTile.isFlagged()) {
             foreground.setFill(Color.YELLOW);
-            getChildren().add(new Label("M"));
+            informationLabel.setText("M");
             if (row == badTile.getRow() && column == badTile.getColumn()) {
                 foreground.setFill(Color.ORANGE);
             }
         } else if (!minesweeper.hasMine(currentTile) && currentTile.isFlagged()) {
-            getChildren().add(new Label("X"));
+            informationLabel.setText("X");
         }
     }
 
     public Tile getCorrespondingTile() {
         return minesweeper.getTileAt(row, column);
+    }
+
+    public void addNumericalOverlay(Number value) {
+        double doubleValue = (double) value;
+        informationLabel.setText(String.format("%.2f", doubleValue));
+
+        Color color = calculateGradientColor(doubleValue);
+        foreground.setFill(color);
+    }
+
+    public void removeNumericalOverlay() {
+        informationLabel.setText("");
+        foreground.setFill(Color.LIGHTGRAY);
+    }
+
+    private Color calculateGradientColor(double value) {
+        Color greenColor = Color.GREEN;
+        Color redColor = Color.RED;
+
+        double red = redColor.getRed() * value + greenColor.getRed() * (1 - value);
+        double green = redColor.getGreen() * value + greenColor.getGreen() * (1 - value);
+        double blue = redColor.getBlue() * value + greenColor.getBlue() * (1 - value);
+
+        return new Color(red, green, blue, 1.0);
     }
 }
