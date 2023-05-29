@@ -13,10 +13,6 @@ public class GameStage extends Stage {
         VBox subroot = new VBox();
         HBox gameDetails = new HBox();
 
-        if (difficulty == null) {
-            difficulty = Difficulty.EASY;
-        }
-
         MinesweeperPane minesweeperPane = new MinesweeperPane(difficulty, this);
 
         setHeight(30 * difficulty.getNumberOfRows() + 120);

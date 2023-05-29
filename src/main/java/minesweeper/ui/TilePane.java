@@ -107,9 +107,13 @@ public class TilePane extends StackPane {
         decisionLayer.setFill(new Color(0, 0, 0, 0));
     }
 
+    public void highlightTileToClear() {
+        decisionLayer.setFill(Color.LIGHTBLUE);
+    }
+
     private Color calculateGradientColor(double value) {
-        Color greenColor = Color.GREEN;
-        Color redColor = Color.RED;
+        Color greenColor = Color.LIGHTGREEN;
+        Color redColor = Color.LIGHTCORAL;
 
         double red = redColor.getRed() * value + greenColor.getRed() * (1 - value);
         double green = redColor.getGreen() * value + greenColor.getGreen() * (1 - value);

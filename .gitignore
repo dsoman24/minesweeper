@@ -1,7 +1,7 @@
 *.class
 .DS_STORE
 .vscode
-src/ui/leaderboard/*.csv
+src/main/java/minesweeper/ui/leaderboard/*.csv
 bin
 .gradle
 build

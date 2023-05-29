@@ -220,6 +220,10 @@ public class MinesweeperPane extends GridPane {
         }
     }
 
+    private void highlightTileToClear(Tile tile) {
+        tilePanes[tile.getRow()][tile.getColumn()].highlightTileToClear();
+    }
+
     private class BotRunner implements Runnable {
 
         private Bot<Tile> bot;
@@ -243,6 +247,9 @@ public class MinesweeperPane extends GridPane {
 
                 // add decision overlay
                 Platform.runLater(() -> applyDecisionOverlay(decisionDetails));
+
+                // highlight the tile we are about to clear
+                Platform.runLater(() -> highlightTileToClear(tileToClear));
 
                 // "thinking" delay time.
                 try {
