@@ -134,7 +134,7 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
     $$\chi = \sum_{j = 0}^{|\Sigma| - 1}c_j$$
     - We now have enough information to define the probability functions $P(s)$, for each $s \in S$. The function $P(s)$ is thus defined as follows:
     $$P(s) = \frac{1}{\chi}\sum_{j = 0}^{|\Sigma| - 1} \frac{a(s, j)}{|s|} c_j$$
-    - Here, $a$ is a function $a : S \times \{0, 1, \dots, |\Sigma| - 1\} \rightarrow \mathbb{Z}$ such that $a(s, j) = $ the value of $\alpha$ corresponding to the tile set $s$ in the $j$ th result node.
+    - Here, $a$ is a function $a : S \times \{0, 1, \dots, |\Sigma| - 1\} \rightarrow \mathbb{Z}$ such that $a(s, j) =$ the value of $\alpha$ corresponding to the tile set $s$ in the $j$ th result node.
     - The algorithm applies $P(s)$ for each $s \in S$, and then, using $p(s)$, probabilities are assigned to each tile in the game configuration.
 
 5. Pick the minimum likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. This approach works due to the property that for each $t \in s$, $p(t) = P(s)$, for each $s \in S$. The game configuration is now updated upon clearing, and we repeat from the start until the game ends (either a win or a loss).
