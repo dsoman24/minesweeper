@@ -17,19 +17,13 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
         - HARD: ~33%
         - EXPERT:
 
-## To-do
-- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying.
-- [ ] Complexity analysis of the algorithm.
-- [ ] Visualize the bot in action
-- [X] Performance analysis.
-- [X] Better write up, with diagrams.
-- [X] Write up how to describe computations.
-
 ## Probabilistic Algorithm
+Here is a video of the probabilistic algorithm in action:
+
+https://github.com/dsoman24/minesweeper/assets/94134732/615cc052-5881-4daa-933f-af9c314baa82
 
 ### Definitions and Terminology
-**NOTE**: Set notation on GitHub Markdown's latex is a little weird, so curly brackets are not shown
-
+**NOTE**: Set notation on GitHub Markdown's latex is a little weird, so curly brackets are not shown.
 
 - We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \emptyset$.
     - A minesweeper board is rectangular with $h$ rows and $w$ columns, and with a set of tiles with mines $M$ such that $M \subseteq U$.
@@ -163,7 +157,6 @@ java -jar build/libs/minesweeper.jar -->
 Uses a simple file-based leaderboard system, saving the results into a local csv file in the same directory as the game.
 
 ## Some sources
-
 Main algorithm inspiration:
 - https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
 
@@ -174,3 +167,11 @@ Other sources:
 - https://www.minesweeper.info/articles/SomeMinesweeperConfigurations.pdf
 - https://web.mat.bham.ac.uk/R.W.Kaye/minesw/infmsw.pdf
 - https://www.youtube.com/watch?v=G2kd745uYuo&ab_channel=CodingChannel
+
+## To-do
+- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying.
+- [ ] Complexity analysis of the algorithm.
+- [X] Visualize the bot in action
+- [X] Performance analysis.
+- [X] Better write up, with diagrams.
+- [X] Write up how to describe computations.
