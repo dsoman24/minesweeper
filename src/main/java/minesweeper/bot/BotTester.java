@@ -81,7 +81,7 @@ public class BotTester {
      * @param numMines the number of mines to play trials for.
      */
     private void collectDataForNumMines(int numMines) {
-        System.out.println("Collecting data for " + numMines);
+        ProgressBar.updateProgressBar(numMines, rows * columns);
         for (int i = 0; i < numTrials; i++) {
             data.add(playToCompletion(numMines));
         }
@@ -95,6 +95,7 @@ public class BotTester {
         for (int numMines = low; numMines <= high; numMines++) {
             collectDataForNumMines(numMines);
         }
+        System.out.println(); // progress bar done
     }
 
     private void collectData() {
@@ -105,8 +106,8 @@ public class BotTester {
      * Updates the file following a read-modify-write pattern.
      * @param filename the filename to update with the given number of trials.
      */
-    public void updateFile(String filname) {
-        String path = "data/" + filname;
+    public void runGamesAndUpdateFile(String filename) {
+        String path = "data/" + filename;
         File file = new File(path);
         read(file);
         collectData();
@@ -126,9 +127,7 @@ public class BotTester {
                 data.add(summary);
             }
             scan.close();
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("Failed to read: File not found.");
-        }
+        } catch (FileNotFoundException fnfe) {}
     }
 
     /**
