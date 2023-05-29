@@ -309,14 +309,19 @@ public class Minesweeper {
     /**
      * Removes all the flags from the game and updates the tilingState's density property.
      */
-    public void removeAllFlags() {
+    public boolean removeAllFlags() {
+        boolean flagRemoved = false;
         for (Tile tile : tilingState) {
             if (tile.isFlagged()) {
                 flagsRemaining++;
                 tile.setFlag(false);
+                flagRemoved = true;
             }
         }
-        tilingState.updateDensity(density());
+        if (flagRemoved) {
+            tilingState.updateDensity(density());
+        }
+        return flagRemoved;
     }
 
     /**

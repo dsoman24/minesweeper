@@ -13,7 +13,6 @@ import src.main.java.minesweeper.bot.strategy.StrategyTypeOnTile;
 import src.main.java.minesweeper.logic.Difficulty;
 import src.main.java.minesweeper.logic.GameSummary;
 import src.main.java.minesweeper.logic.Minesweeper;
-import src.main.java.minesweeper.logic.Status;
 import src.main.java.minesweeper.logic.Tile;
 
 /**
@@ -58,9 +57,10 @@ public class BotTester {
         Minesweeper minesweeper = new Minesweeper(difficulty);
         Bot<Tile> bot = new Bot<>(minesweeper.getTilingState(), strategy);
 
-        while (minesweeper.status() == Status.PLAYING) {
-            Tile tile = bot.tileToClear();
-            minesweeper.clear(tile.getRow(), tile.getColumn());
+        BotController controller = new BotController(minesweeper, bot);
+
+        while (controller.hasNext()) {
+            controller.next();
         }
 
         return minesweeper.getSummary();

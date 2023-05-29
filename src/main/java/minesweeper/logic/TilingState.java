@@ -89,11 +89,14 @@ public class TilingState<T extends MinesweeperTileable> implements Iterable<T>{
         return neighbors;
     }
 
-    public Set<T> getClearedAndNumberedNeighbors(T tile) {
+    /**
+     * Returns the in-play neighbors, which are neighbors that are flagged or are cleared.
+     */
+    public Set<T> getInPlayNeighbors(T tile) {
         Set<T> cleared = new HashSet<>();
         Set<T> neighbors = getNeighbors(tile);
         for (T neighbor : neighbors) {
-            if (neighbor.isCleared()) {
+            if (neighbor.isCleared() || neighbor.isFlagged()) {
                 cleared.add(neighbor);
             }
         }

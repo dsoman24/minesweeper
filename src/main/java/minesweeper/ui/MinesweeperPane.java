@@ -1,4 +1,5 @@
 package src.main.java.minesweeper.ui;
+// import java.util.List;
 import java.util.Map;
 
 import javafx.application.Platform;
@@ -37,7 +38,7 @@ public class MinesweeperPane extends GridPane {
     private boolean botActivated = false;
     private boolean overlayAdded = false;
 
-    private int botDelay = 0; // 1000 is one second, delay in milliseconds
+    private int botDelay = 300; // 1000 is one second, delay in milliseconds
 
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
@@ -73,31 +74,29 @@ public class MinesweeperPane extends GridPane {
                     botActivated = true;
                     toggleBot.setText("Stop Bot");
                     String delayValue = botDelayTextField.getText();
-                    if (delayValue == null || delayValue.isBlank()) {
-                        botDelay = 0;
-                    } else {
+                    if (delayValue != null && !delayValue.isBlank()) {
                         try {
                             botDelay = Integer.parseInt(delayValue);
-                        } catch (NumberFormatException nfe) {
-                            botDelay = 0;
-                        }
+                        } catch (NumberFormatException nfe) {}
                     }
 
-                    Bot<Tile> bot = null;
+                    // remove all flags once before running the bot
+                    if (minesweeper.removeAllFlags()) {
+                        update();
+                    }
 
                     StrategyTypeOnTile strategyType = botStrategySelector.getValue();
                     if (strategyType == null) {
                         strategyType = StrategyTypeOnTile.PROBABILISTIC;
                     }
 
-                    bot = new Bot<>(minesweeper.getTilingState(), strategyType.getStrategy());
+                    Bot<Tile> bot = new Bot<>(minesweeper.getTilingState(), strategyType.getStrategy());
                     BotRunner botRunner = new BotRunner(bot);
                     Thread botThread = new Thread(botRunner);
                     botThread.start();
                 }
             }
         });
-
 
         botInput = new HBox();
         botInput.getChildren().addAll(botStrategySelector, botDelayTextField, toggleBot);
@@ -235,34 +234,40 @@ public class MinesweeperPane extends GridPane {
                 if (minesweeper.getNumberOfTilesCleared() == 0) {
                     timer.start();
                 }
-                // bot removes flags
-                minesweeper.removeAllFlags();
 
                 // find the tile to clear
                 Tile tileToClear = bot.tileToClear();
 
                 // apply decision details to tiles
                 Map<Tile, ? extends Number> decisionDetails = bot.decisionDetails();
-                if (decisionDetails != null) {
-                    Platform.runLater(() -> applyDecisionOverlay(decisionDetails));
-                }
 
+                // add decision overlay
+                Platform.runLater(() -> applyDecisionOverlay(decisionDetails));
+
+                // "thinking" delay time.
                 try {
                     Thread.sleep(botDelay);
                 } catch (InterruptedException e) {
                     System.out.println(e.getMessage());
                 }
 
+                // add the decision details on the UI thread
+
+                // apply flags to the tiles that we want to flag
+                // List<Tile> tilesToFlag = bot.tilesToFlag();
+                // for (Tile tile : tilesToFlag) {
+                //     tile.setFlag(true);
+                // }
+
                 // clear the tile
                 minesweeper.clear(tileToClear.getRow(), tileToClear.getColumn());
 
-                if (decisionDetails != null) {
-                    Platform.runLater(() -> clearDecisionOverlay(decisionDetails));
-                }
+                Platform.runLater(() -> clearDecisionOverlay(decisionDetails));
 
                 // update UI
                 Platform.runLater(() -> update()); // Update the UI on the UI thread
-                // check win/lose or continue playing
+
+                // check win/lose condition
                 if (minesweeper.status() == Status.WIN) {
                     Platform.runLater(() -> winAction()); // Run the win action on the UI thread
                 } else if (minesweeper.status() == Status.LOSE) {

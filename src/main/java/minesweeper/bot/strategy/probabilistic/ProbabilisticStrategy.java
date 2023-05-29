@@ -1,9 +1,11 @@
 package src.main.java.minesweeper.bot.strategy.probabilistic;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
 import src.main.java.minesweeper.bot.strategy.DecisionDetailsProvider;
+import src.main.java.minesweeper.bot.strategy.FlaggingStrategy;
 import src.main.java.minesweeper.logic.MinesweeperTileable;
 
 
@@ -11,7 +13,7 @@ import src.main.java.minesweeper.logic.MinesweeperTileable;
  * Probabilistic minesweeper strategy.
  * Algorithm inspired by: https://codereview.stackexchange.com/questions/54737/analyzing-minesweeper-probabilities
  */
-public class ProbabilisticStrategy<T extends MinesweeperTileable> extends BotStrategy<T> implements DecisionDetailsProvider<T> {
+public class ProbabilisticStrategy<T extends MinesweeperTileable> extends BotStrategy<T> implements DecisionDetailsProvider<T>, FlaggingStrategy<T> {
 
     private Random random;
     private Solver<T> solver;
@@ -36,6 +38,11 @@ public class ProbabilisticStrategy<T extends MinesweeperTileable> extends BotStr
         solver = new Solver<>(tilingState);
         T tile = solver.tileToClear(random);
         return tile;
+    }
+
+    @Override
+    public List<T> tilesToFlag() {
+        return solver.tilesToFlag();
     }
 
     /**

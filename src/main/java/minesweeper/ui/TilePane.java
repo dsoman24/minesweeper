@@ -16,6 +16,7 @@ public class TilePane extends StackPane {
     private MinesweeperPane minesweeperPane;
     private final Rectangle background = new Rectangle(30, 30, Color.DARKGRAY);
     private final Rectangle foreground = new Rectangle(25, 25, Color.LIGHTGRAY);
+    private final Rectangle decisionLayer = new Rectangle(25, 25, new Color(0, 0, 0, 0));
     private Label informationLabel;
 
     private final Color[] numberLabelColors = new Color[]{
@@ -32,6 +33,7 @@ public class TilePane extends StackPane {
 
         getChildren().add(background);
         getChildren().add(foreground);
+        getChildren().add(decisionLayer);
         getChildren().add(informationLabel);
         informationLabel.setFont(Font.font(9));
 
@@ -65,7 +67,7 @@ public class TilePane extends StackPane {
             }
         } else {
             if (!minesweeper.hasMine(currentTile)) {
-                foreground.setFill(Color.CORNFLOWERBLUE);
+                foreground.setFill(Color.WHITE);
                 int number = currentTile.getNumberOfNeighboringMines();
                 informationLabel.setText(String.format("%s", number == 0 ? " " : number));
                 if (number > 0) {
@@ -97,12 +99,12 @@ public class TilePane extends StackPane {
         informationLabel.setText(String.format("%.2f", doubleValue));
 
         Color color = calculateGradientColor(doubleValue);
-        foreground.setFill(color);
+        decisionLayer.setFill(color);
     }
 
     public void removeNumericalOverlay() {
         informationLabel.setText("");
-        foreground.setFill(Color.LIGHTGRAY);
+        decisionLayer.setFill(new Color(0, 0, 0, 0));
     }
 
     private Color calculateGradientColor(double value) {

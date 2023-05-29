@@ -217,7 +217,7 @@ public class Solver<T extends MinesweeperTileable> {
     }
 
     /**
-     * Finds all the tiles with probability 1.
+     * Finds all the tiles with probability 1.0 +/- epsilon (0.0001).
      * @return a list of tiles to flag.
      */
     public List<T> tilesToFlag() {

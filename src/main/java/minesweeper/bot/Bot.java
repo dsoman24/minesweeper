@@ -1,9 +1,13 @@
 package src.main.java.minesweeper.bot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import src.main.java.minesweeper.bot.strategy.BotStrategy;
 import src.main.java.minesweeper.bot.strategy.DecisionDetailsProvider;
+import src.main.java.minesweeper.bot.strategy.FlaggingStrategy;
 import src.main.java.minesweeper.logic.MinesweeperTileable;
 import src.main.java.minesweeper.logic.TilingState;
 
@@ -26,11 +30,33 @@ public class Bot<T extends MinesweeperTileable> {
     }
 
     /**
-     * Perform one individual move based on the current minesweeper state.
-     * @return the tile to clear according to the strategy.
+     * @return the next tile to clear according to the strategy.
      */
     public T tileToClear() {
         return strategy.tileToClear();
+    }
+
+
+    /**
+     * @return the decision details, e.g. numerical metrics on what tile is being cleared.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<T, ? extends Number> decisionDetails() {
+        if (strategy instanceof DecisionDetailsProvider) {
+            return ((DecisionDetailsProvider<T>) strategy).decisionDetails();
+        }
+        return new HashMap<>();
+    }
+
+    /**
+     * @return a list of the tiles to flag according to the strategy.
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> tilesToFlag() {
+        if (strategy instanceof FlaggingStrategy) {
+            return ((FlaggingStrategy<T>) strategy).tilesToFlag();
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -38,13 +64,5 @@ public class Bot<T extends MinesweeperTileable> {
      */
     public String strategyName() {
         return strategy.name();
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<T, ? extends Number> decisionDetails() {
-        if (strategy instanceof DecisionDetailsProvider) {
-            return ((DecisionDetailsProvider<T>) strategy).decisionDetails();
-        }
-        return null;
     }
 }
