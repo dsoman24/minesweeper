@@ -13,8 +13,7 @@ import src.main.java.minesweeper.logic.TilingState;
 
 
 /**
- * Class to group all tiles within a minesweeper game into TileSets, and create TileSetRules based on these TileSets.
- * This class then creates the solution set based on these rules.
+ * Class to solve a minesweeper game state and provide the best tile to clear.
  * See README for details on the solver algorithm.
  * @param <T> the generic Tileable object this bot can solve minesweeper games for.
  */
@@ -99,7 +98,7 @@ public class Solver<T extends MinesweeperTileable> {
 
     /**
      * Calls recursive helper method.
-     * Populates out the solution set.
+     * Populates the solution set with complete result nodes.
      */
     private void buildSolutionSet() {
         Map<TileSet<T>, Integer> rootResult = new HashMap<>();
@@ -112,7 +111,7 @@ public class Solver<T extends MinesweeperTileable> {
 
     /**
      * Recursive helper method to solve possibilities and fill out the solution set.
-     * Pre-order traversal
+     * Pre-order traversal of the solution tree.
      */
     private void buildSolutionSet(ResultNode<T> current) {
         // is a leaf if there are no null values in the map

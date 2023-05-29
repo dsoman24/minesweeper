@@ -28,6 +28,7 @@ https://github.com/dsoman24/minesweeper/assets/94134732/615cc052-5881-4daa-933f-
 - We will define $B$ as the **minesweeper board configuration**. We define $B$ as the union $B = C \cup U$ where $C$ is the set of cleared tiles and $U$ is the set of uncleared tiles. Naturally, $C \cap U = \emptyset$.
     - A minesweeper board is rectangular with $h$ rows and $w$ columns, and with a set of tiles with mines $M$ such that $M \subseteq U$.
     - It follows that a minesweeper configuration is "solved" when $M = U$. That is, the only uncleared tiles remaining are those with mines.
+    - I can notate a minesweeper game as $\mathbb{M} = (B, M)$.
 - Let $t_k$ be the $k^\text{th}$ **tile** located at row $x$ and column $y$, where $k = wx + y$. The top left corner of a minesweeper configuration is $(x = 0, y = 0)$, so $x = 0, \dots, h - 1$ and $y = 0, \dots, w - 1$. So, we see that $k = 0, 1, \dots, hw - 1$.
     - Consequently, we also see that $$B = \bigcup_{k = 0}^{hw - 1} \{t_k\}$$ and $|B| = hw$.
     - We define the probability function that a given tile $t_k$ has a mine as $p: U \rightarrow [0, 1]$ such that $p(t) = \mathbb{P}(t \in M)$.
@@ -43,8 +44,8 @@ https://github.com/dsoman24/minesweeper/assets/94134732/615cc052-5881-4daa-933f-
     </div>
 
     - In this configuration, the tiles labeled $a, b, c, d, e, f, g, h, i, j, k \in U$, and $C = B \setminus U$ (that is, the cleared tiles are those that are not uncleared). The tiles in this configuration are grouped into $n = 6$ TileSets, represented by the differently colored rectangles. We group $S_0 = \{a, b\}$ because $a$ and $b$ share the cleared tile at row 1, column 0. Note that we have $S_1 = \{c, d, f, g\}$, because they all do not have any neighbors, and hence belong to the same TileSet. The remaining tiles are grouped the same way into their own TileSets.
-    - We can consider $S$ to be the set of all TileSets (so $|S| = n$).
-    - I can define the probability function for tile sets, which I will notate as $P: S \rightarrow [0, 1]$ such that $P(s) = \mathbb{P}(\exists t \in s, t \in M)$.
+    - We can consider $\mathbb{S}$ to be the set of all TileSets (so $|\mathbb{S}| = n$).
+    - I can define the probability function for tile sets, which I will notate as $P: \mathbb{S} \rightarrow [0, 1]$ such that $P(s) = \mathbb{P}(\exists t \in s, t \in M)$.
         - A consequence of this definition is that for each $t \in s$, $p(t) = P(s)$.
 - A **TileSetRule**, or rule for short, is a linear equation with the result determined by the non-zero numbered cleared tiles. The variables in each equation correspond to a TileSet. A solution to a TileSetRule will provide information about how many tiles contain mines within a TileSet. The $j^\text{th}$ rule will be denoted by $R_j$.
     - $\alpha_i$ will be defined as the number of mines within TileSet $i$. Similarly, $\beta_j$ will be defined as the result of the rule $j$.
@@ -134,10 +135,18 @@ Given a game configuration $B$, my probabilistic algorithm will output a *minimu
     $$\chi = \sum_{j = 0}^{|\Sigma| - 1}c_j$$
     - We now have enough information to define the probability functions $P(s)$, for each $s \in S$. The function $P(s)$ is thus defined as follows:
     $$P(s) = \frac{1}{\chi}\sum_{j = 0}^{|\Sigma| - 1} \frac{a(s, j)}{|s|} c_j$$
-    - Here, $a$ is a function $a : S \times \{0, 1, \dots, |\Sigma| - 1\} \rightarrow \mathbb{Z}$ such that $a(s, j) =$ the value of $\alpha$ corresponding to the tile set $s$ in the $j$ th result node.
+    - Here, $a$ is a function $a : \mathbb{S} \times \{0, 1, \dots, |\Sigma| - 1\} \rightarrow \mathbb{Z}$ such that $a(s, j) =$ the value of $\alpha$ corresponding to the tile set $s$ in the $j$ th result node.
     - The algorithm applies $P(s)$ for each $s \in S$, and then, using $p(s)$, probabilities are assigned to each tile in the game configuration.
 
 5. Pick the minimum likely TileSet. This is the TileSet with the lowest probability of containing a mine. Then, randomly pick a Tile within this TileSet, and clear it. This approach works due to the property that for each $t \in s$, $p(t) = P(s)$, for each $s \in S$. The game configuration is now updated upon clearing, and we repeat from the start until the game ends (either a win or a loss).
+
+### Time complexity analysis
+
+1. Creating tile sets and rules
+    - Given a minesweeper board configuration $B$ with uncleared tiles $U \subseteq B$, the worst-case time complexity of creating the tile sets is $O(|U|)$. This also happens to be the best and average case, because all tiles in $U$ must be explored.
+    - Now, given a set of all tile sets $\mathbb{S}$, the time complexity of creating rules is approximately $O(|\mathbb{S}|)$. This is because each tile set in $\mathbb{S}$ is explored, and then each characterizing cleared tile per tile set. Each of the latter set of tiles has a fixed upper bound in its size, which we can ignore in complexity analysis.
+2. Building the solution tree
+    - Given the set of all tile sets $\mathbb{S}$, what is the worst-case time complexity of building the solution tree?
 
 ## JavaFX and Gameplay
 

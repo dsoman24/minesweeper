@@ -68,10 +68,8 @@ public class MinesweeperPane extends GridPane {
         toggleBot.setOnAction(e -> {
             if (minesweeper.isPlaying()) {
                 if (botActivated) {
-                    botActivated = false;
                     toggleBot.setText("Start Bot");
                 } else {
-                    botActivated = true;
                     toggleBot.setText("Stop Bot");
                     String delayValue = botDelayTextField.getText();
                     if (delayValue != null && !delayValue.isBlank()) {
@@ -95,6 +93,7 @@ public class MinesweeperPane extends GridPane {
                     Thread botThread = new Thread(botRunner);
                     botThread.start();
                 }
+                botActivated = !botActivated;
             }
         });
 
@@ -114,7 +113,7 @@ public class MinesweeperPane extends GridPane {
      * Clear a tile, human player input only.
      */
     public void clear(int row, int column) {
-        if (minesweeper.isPlaying() && !botActivated) {
+        if (userCanInteract()) {
             if (minesweeper.getNumberOfTilesCleared() == 0) {
                 timer.start();
             }
@@ -132,11 +131,15 @@ public class MinesweeperPane extends GridPane {
      * Toggle flag at a row and column, human player input only.
      */
     public void flag(int row, int column) {
-        if (minesweeper.isPlaying() && !botActivated) { // can only flag if we are playing
+        if (userCanInteract()) { // can only flag if we are playing
             minesweeper.flag(row, column);
             updateFlagText();
             tilePanes[row][column].update(); // only need to update individual tile
         }
+    }
+
+    private boolean userCanInteract() {
+        return minesweeper.isPlaying() && !botActivated;
     }
 
     private void updateFlagText() {
@@ -211,11 +214,13 @@ public class MinesweeperPane extends GridPane {
         }
     }
 
-    private void clearDecisionOverlay(Map<Tile, ? extends Number> decisionDetails) {
+    private void clearDecisionOverlay() {
         if (overlayAdded) {
             overlayAdded = false;
-            for (Tile tile : decisionDetails.keySet()) {
-                tilePanes[tile.getRow()][tile.getColumn()].removeNumericalOverlay();
+            for (TilePane[] row : tilePanes) {
+                for (TilePane tilePane : row) {
+                    tilePane.removeNumericalOverlay();
+                }
             }
         }
     }
@@ -269,7 +274,7 @@ public class MinesweeperPane extends GridPane {
                 // clear the tile
                 minesweeper.clear(tileToClear.getRow(), tileToClear.getColumn());
 
-                Platform.runLater(() -> clearDecisionOverlay(decisionDetails));
+                Platform.runLater(() -> clearDecisionOverlay());
 
                 // update UI
                 Platform.runLater(() -> update()); // Update the UI on the UI thread

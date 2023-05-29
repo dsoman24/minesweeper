@@ -45,9 +45,6 @@ public class ProbabilisticStrategy<T extends MinesweeperTileable> extends BotStr
         return solver.tilesToFlag();
     }
 
-    /**
-     * For correct result, alwasy call after tileToClear()
-     */
     @Override
     public Map<T, Double> decisionDetails() {
         return solver.getProbabilityMap();

@@ -36,7 +36,6 @@ public class Bot<T extends MinesweeperTileable> {
         return strategy.tileToClear();
     }
 
-
     /**
      * @return the decision details, e.g. numerical metrics on what tile is being cleared.
      */

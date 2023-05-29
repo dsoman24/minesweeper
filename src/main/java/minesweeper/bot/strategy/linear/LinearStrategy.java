@@ -5,23 +5,17 @@ import src.main.java.minesweeper.logic.MinesweeperTileable;
 
 public class LinearStrategy<T extends MinesweeperTileable> extends BotStrategy<T> {
 
-    private int row = 0;
-    private int column = 0;
-
     @Override
     public T tileToClear() {
-        updatePosition();
+        int row = 0;
+        int column = 0;
         while (tilingState.get(row, column).isCleared() || tilingState.get(row, column).isFlagged()) {
-            updatePosition();
+            if (++row >= tilingState.getNumRows()) {
+                row = 0;
+                column++;
+            };
         }
         return tilingState.get(row, column);
-    }
-
-    private void updatePosition() {
-        if (++row >= tilingState.getNumRows()) {
-            row = 0;
-            column++;
-        }
     }
 
     @Override

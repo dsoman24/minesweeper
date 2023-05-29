@@ -16,7 +16,7 @@ public abstract class BotStrategy<T extends MinesweeperTileable> {
     protected TilingState<T> tilingState;
 
     /**
-     * Sets the tilingState to evalue for this strategy.
+     * Sets the current tilingState to evalue for this strategy.
      */
     public void setTilingState(TilingState<T> tilingState) {
         this.tilingState = tilingState;

@@ -10,6 +10,7 @@ import src.main.java.minesweeper.logic.MinesweeperTileable;
 public interface FlaggingStrategy<T extends MinesweeperTileable> {
 
     /**
+     * Always call after tileToClear().
      * @return a list of MinesweeperTileable tiles that the strategy suggest must be flagged.
      */
     List<T> tilesToFlag();
