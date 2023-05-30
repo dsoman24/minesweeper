@@ -20,7 +20,7 @@ Minesweeper game with GUI supported by JavaFX. Notable feature is different bot 
 ## Probabilistic Algorithm
 Here is a video of the probabilistic algorithm in action:
 
-https://github.com/dsoman24/minesweeper/assets/94134732/615cc052-5881-4daa-933f-af9c314baa82
+https://github.com/dsoman24/minesweeper/assets/94134732/88b5a983-03a3-48bc-96e3-9daf3ed316c1
 
 ### Definitions and Terminology
 **NOTE**: Set notation on GitHub Markdown's latex is a little weird, so curly brackets are not shown.
