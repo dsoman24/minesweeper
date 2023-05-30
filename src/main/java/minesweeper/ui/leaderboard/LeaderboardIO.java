@@ -46,7 +46,6 @@ public class LeaderboardIO {
      * Reads the leaderboard.
      */
     public static List<LeaderboardEntry> read(String filename, Difficulty difficulty) {
-
         File file = new File(MAIN_PATH + filename);
         List<LeaderboardEntry> entries = new ArrayList<>();
         try {

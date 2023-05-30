@@ -24,6 +24,7 @@ public class GameSummary {
     private int numMoves;
     private int numTilesCleared;
     private long elapsedMillis;
+    private Difficulty difficulty;
 
     /**
      * 1-arg constructor
@@ -54,12 +55,13 @@ public class GameSummary {
         this.numMoves = numMoves;
         this.numTilesCleared = numTilesCleared;
         this.elapsedMillis = elapsedMillis;
+        this.difficulty = Difficulty.matchDifficulty(numRows, numColumns, initialDensity);
     }
 
     @Override
     public String toString() {
-        return String.format("%d,%d,%f,%d,%s,%d,%d,%d",
-            numRows, numColumns, initialDensity, numMines, status, numMoves, numTilesCleared, elapsedMillis
+        return String.format("%s,%d,%d,%f,%d,%s,%d,%d,%d",
+            difficulty.name(), numRows, numColumns, initialDensity, numMines, status, numMoves, numTilesCleared, elapsedMillis
         );
     }
 
@@ -69,22 +71,34 @@ public class GameSummary {
      */
     public static GameSummary parseLine(String line) {
         String[] items = line.strip().split(",");
-        int numRows = Integer.parseInt(items[0]);
-        int numColumns = Integer.parseInt(items[1]);
-        double initialDensity = Double.parseDouble(items[2]);
-        int numMines = Integer.parseInt(items[3]);
+        int numRows = Integer.parseInt(items[1]);
+        int numColumns = Integer.parseInt(items[2]);
+        double initialDensity = Double.parseDouble(items[3]);
+        int numMines = Integer.parseInt(items[4]);
         Status status;
-        if (items[4].equals("WIN")) {
+        if (items[5].equals("WIN")) {
             status = Status.WIN;
         } else {
             status = Status.LOSE;
         }
-        int numMoves = Integer.parseInt(items[5]);
-        int numTilesCleared = Integer.parseInt(items[6]);
-        long elapsedMillis = Long.parseLong(items[7]);
+        int numMoves = Integer.parseInt(items[6]);
+        int numTilesCleared = Integer.parseInt(items[7]);
+        long elapsedMillis = Long.parseLong(items[8]);
 
         return new GameSummary(
             numRows, numColumns, initialDensity, numMines, status, numMoves, numTilesCleared, elapsedMillis
         );
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public long getElapsedMillis() {
+        return elapsedMillis;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 }

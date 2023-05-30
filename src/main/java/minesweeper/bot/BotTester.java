@@ -141,7 +141,7 @@ public class BotTester {
             );
             if (newFile) {
                 writer.println(
-                    "numRows,numColumns,initialDensity,numMines,status,numMoves,numTilesCleared,elapsedMillis"
+                    "difficulty,numRows,numColumns,initialDensity,numMines,status,numMoves,numTilesCleared,elapsedMillis"
                 );
             }
             for (GameSummary summary : data) {

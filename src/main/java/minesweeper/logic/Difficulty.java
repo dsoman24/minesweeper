@@ -9,7 +9,7 @@ public enum Difficulty {
     MEDIUM(16, 16, (40.0)/(16*16)),
     HARD(16, 30, (99.0)/(16*30)),
     EXPERT(24, 30, (180.0)/(24*30)),
-    CUSTOM;
+    CUSTOM(1, 1, 10);
 
     private int rows;
     private int columns;
@@ -38,6 +38,28 @@ public enum Difficulty {
         difficulty.density = density;
         difficulty.updateNumMines();
         return difficulty;
+    }
+
+    /**
+     * @return which difficulty is characterized by this input
+     */
+    public static Difficulty matchDifficulty(int rows, int columns, double density) {
+        Difficulty difficulty = customDifficulty(rows, columns, density);
+        if (difficulty.equalDifficulties(EASY)) {
+            return EASY;
+        } else if (difficulty.equalDifficulties(MEDIUM)) {
+            return MEDIUM;
+        } else if (difficulty.equalDifficulties(HARD)) {
+            return HARD;
+        } else if (difficulty.equalDifficulties(EXPERT)) {
+            return EXPERT;
+        } else {
+            return difficulty;
+        }
+    }
+
+    public boolean equalDifficulties(Difficulty other) {
+        return numMines == other.numMines && rows == other.rows && columns == other.columns;
     }
 
     private void updateNumMines() {
@@ -75,5 +97,9 @@ public enum Difficulty {
      */
     public double getDensity() {
         return density;
+    }
+
+    public boolean equalDifficulty(Difficulty other) {
+        return rows == other.rows && columns == other.columns && numMines == other.numMines;
     }
 }

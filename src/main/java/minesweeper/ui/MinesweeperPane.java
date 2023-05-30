@@ -16,6 +16,7 @@ import src.main.java.minesweeper.logic.Difficulty;
 import src.main.java.minesweeper.logic.Minesweeper;
 import src.main.java.minesweeper.logic.Status;
 import src.main.java.minesweeper.logic.Tile;
+import src.main.java.minesweeper.ui.gamedata.GameDataIO;
 
 /**
  * Implement game functionality for minesweeper.
@@ -37,6 +38,7 @@ public class MinesweeperPane extends GridPane {
 
     private volatile boolean botActivated = false;
     private volatile boolean overlayAdded = false;
+    private boolean eligibleToBeSaved = true;
 
     private Thread botThread;
 
@@ -73,6 +75,7 @@ public class MinesweeperPane extends GridPane {
                     clearDecisionOverlay();
                     toggleBot.setText("Start Bot");
                 } else {
+                    eligibleToBeSaved = false;
                     toggleBot.setText("Stop Bot");
                     String delayValue = botDelayTextField.getText();
                     if (delayValue != null && !delayValue.isBlank()) {
@@ -171,6 +174,9 @@ public class MinesweeperPane extends GridPane {
      */
     private void winAction() {
         timer.stop();
+        if (eligibleToBeSaved) {
+            GameDataIO.write("data.csv", minesweeper.getSummary());
+        }
         WinStage winningStage = new WinStage(timer, gameStage, difficulty);
         winningStage.show();
     }
@@ -181,6 +187,9 @@ public class MinesweeperPane extends GridPane {
     private void loseAction(Tile badTile) {
         timer.stop();
         reveal(badTile);
+        if (eligibleToBeSaved) {
+            GameDataIO.write("data", minesweeper.getSummary());
+        }
         LoseStage losingStage = new LoseStage(gameStage);
         losingStage.show();
     }

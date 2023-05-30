@@ -1,4 +1,5 @@
 package src.main.java.minesweeper.ui;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import src.main.java.minesweeper.logic.Difficulty;
+import src.main.java.minesweeper.ui.gamedata.StatsStage;
 import src.main.java.minesweeper.ui.leaderboard.LeaderboardStage;
 import javafx.geometry.Insets;
 
@@ -61,7 +63,7 @@ public class GameApp extends Application {
             gameStage.setOnHidden(a -> primaryStage.show());
         });
 
-        Button showLeaderboard = new Button("Show Leaderboard");
+        Button showLeaderboard = new Button("Leaderboard");
         showLeaderboard.setPrefHeight(45);
 
         showLeaderboard.setOnAction(e -> {
@@ -70,11 +72,20 @@ public class GameApp extends Application {
             leaderboardStage.show();
         });
 
-        inputPane.getChildren().addAll(difficultyVBox, startButton, showLeaderboard);
+        Button showStats = new Button("Statistics");
+        showStats.setPrefHeight(45);
+        showStats.setOnAction(e -> {
+            Difficulty difficulty = difficultyInput.getValue();
+            StatsStage statsStage = new StatsStage(difficulty);
+            statsStage.show();
+        });
+
+        inputPane.getChildren().addAll(difficultyVBox, startButton, showLeaderboard, showStats);
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);
