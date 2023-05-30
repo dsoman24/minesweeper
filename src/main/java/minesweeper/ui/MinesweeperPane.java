@@ -188,7 +188,7 @@ public class MinesweeperPane extends GridPane {
         timer.stop();
         reveal(badTile);
         if (eligibleToBeSaved) {
-            GameDataIO.write("data", minesweeper.getSummary());
+            GameDataIO.write("data.csv", minesweeper.getSummary());
         }
         LoseStage losingStage = new LoseStage(gameStage);
         losingStage.show();
