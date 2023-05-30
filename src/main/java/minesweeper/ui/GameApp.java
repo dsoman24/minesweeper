@@ -80,7 +80,7 @@ public class GameApp extends Application {
             statsStage.show();
         });
 
-        inputPane.getChildren().addAll(difficultyVBox, startButton, showLeaderboard, showStats);
+        inputPane.getChildren().addAll(difficultyVBox, startButton, showStats, showLeaderboard);
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();

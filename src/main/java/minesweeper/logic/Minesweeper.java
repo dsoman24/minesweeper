@@ -70,7 +70,6 @@ public class Minesweeper {
         }
         this.random = random;
         this.elapsedMillis = 0;
-        this.startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -95,7 +94,7 @@ public class Minesweeper {
      */
     private void startGame(int startingRow, int startingColumn) {
         // Begin by randomly generating mines
-
+        this.startTime = System.currentTimeMillis();
         List<int[]> validPositions = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
