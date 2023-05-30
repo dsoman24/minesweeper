@@ -179,6 +179,27 @@ public class Minesweeper {
     }
 
     /**
+     * Clear a tile.
+     * @param tile the tile to clear
+     */
+    public void clear(Tile tile) {
+        clear(tile.getRow(), tile.getColumn());
+    }
+
+    /**
+     * Perform a multi-clear on a cleared and non-zero numbered tile.
+     * @param tile the tile to attempt to multi-clear
+     */
+    public void multiClear(Tile tile) {
+        if (tile.isCleared() && tile.getNumberOfNeighboringMines() > 0 && tile.getNumberOfNeighboringMines() == tilingState.getNumberOfFlaggedNeighbors(tile)){
+            Set<Tile> neighbors = tilingState.getNeighbors(tile);
+            for (Tile neighbor : neighbors) {
+                clear(neighbor);
+            }
+        }
+    }
+
+    /**
      * Recursive helper method to clear the tiles using DFS.
      * Clears all this tile and adjacent tiles if not visited, stops after it clears a non-zero or flagged tile.
      * @param curr the current tile we are clearing

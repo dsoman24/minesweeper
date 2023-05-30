@@ -5,6 +5,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -35,8 +36,10 @@ public class MinesweeperPane extends GridPane {
 
     private GameStage gameStage;
 
-    private boolean botActivated = false;
-    private boolean overlayAdded = false;
+    private volatile boolean botActivated = false;
+    private volatile boolean overlayAdded = false;
+
+    private Thread botThread;
 
     private int botDelay = 300; // 1000 is one second, delay in milliseconds
 
@@ -90,15 +93,24 @@ public class MinesweeperPane extends GridPane {
 
                     Bot<Tile> bot = new Bot<>(minesweeper.getTilingState(), strategyType.getStrategy());
                     BotRunner botRunner = new BotRunner(bot);
-                    Thread botThread = new Thread(botRunner);
+                    botThread = new Thread(botRunner);
                     botThread.start();
                 }
                 botActivated = !botActivated;
             }
         });
 
+        CheckBox displayBotDetailsCheckBox = new CheckBox();
+        displayBotDetailsCheckBox.setOnMouseClicked(e -> {
+            overlayAdded = displayBotDetailsCheckBox.isSelected();
+        });
+
+        Label displayBotDetailsLabel = new Label("Show Metrics");
+
         botInput = new HBox();
-        botInput.getChildren().addAll(botStrategySelector, botDelayTextField, toggleBot);
+        botInput.getChildren().addAll(botStrategySelector, botDelayTextField, toggleBot, displayBotDetailsCheckBox, displayBotDetailsLabel);
+        botInput.setSpacing(10);
+        botInput.setAlignment(Pos.CENTER);
 
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
             for (int j = 0; j < minesweeper.getNumberOfColumns(); j++) {
@@ -114,10 +126,15 @@ public class MinesweeperPane extends GridPane {
      */
     public void clear(int row, int column) {
         if (userCanInteract()) {
+            Tile tile = minesweeper.getTileAt(row, column);
             if (minesweeper.getNumberOfTilesCleared() == 0) {
                 timer.start();
             }
-            minesweeper.clear(row, column);
+            if (!tile.isCleared()) {
+                minesweeper.clear(tile);
+            } else if (tile.getNumberOfNeighboringMines() > 0) {
+                minesweeper.multiClear(tile);
+            }
             update();
             if (minesweeper.status() == Status.WIN) {
                 winAction();
@@ -143,7 +160,7 @@ public class MinesweeperPane extends GridPane {
     }
 
     private void updateFlagText() {
-        flagLabel.setText(String.format("Flags remaining:\n%d", minesweeper.getFlagsRemaining()));
+        flagLabel.setText(String.format("Flags: %d", minesweeper.getFlagsRemaining()));
     }
 
     /**
@@ -204,23 +221,21 @@ public class MinesweeperPane extends GridPane {
         return botInput;
     }
 
+    public boolean isBotActive() {
+        return botActivated;
+    }
+
     private void applyDecisionOverlay(Map<Tile, ? extends Number> decisionDetails) {
-        if (!overlayAdded) {
-            overlayAdded = true;
-            for (Tile tile : decisionDetails.keySet()) {
-                Number value = decisionDetails.get(tile);
-                tilePanes[tile.getRow()][tile.getColumn()].addNumericalOverlay(value);
-            }
+        for (Tile tile : decisionDetails.keySet()) {
+            Number value = decisionDetails.get(tile);
+            tilePanes[tile.getRow()][tile.getColumn()].addNumericalOverlay(value);
         }
     }
 
     private void clearDecisionOverlay() {
-        if (overlayAdded) {
-            overlayAdded = false;
-            for (TilePane[] row : tilePanes) {
-                for (TilePane tilePane : row) {
-                    tilePane.removeNumericalOverlay();
-                }
+        for (TilePane[] row : tilePanes) {
+            for (TilePane tilePane : row) {
+                tilePane.removeNumericalOverlay();
             }
         }
     }
@@ -251,7 +266,9 @@ public class MinesweeperPane extends GridPane {
                 Map<Tile, ? extends Number> decisionDetails = bot.decisionDetails();
 
                 // add decision overlay
-                Platform.runLater(() -> applyDecisionOverlay(decisionDetails));
+                if (overlayAdded) {
+                    Platform.runLater(() -> applyDecisionOverlay(decisionDetails));
+                }
 
                 // highlight the tile we are about to clear
                 Platform.runLater(() -> highlightTileToClear(tileToClear));
@@ -263,19 +280,17 @@ public class MinesweeperPane extends GridPane {
                     System.out.println(e.getMessage());
                 }
 
-                // add the decision details on the UI thread
-
                 // apply flags to the tiles that we want to flag
                 // List<Tile> tilesToFlag = bot.tilesToFlag();
                 // for (Tile tile : tilesToFlag) {
                 //     tile.setFlag(true);
                 // }
 
-                // clear the tile
-                minesweeper.clear(tileToClear.getRow(), tileToClear.getColumn());
-
+                // remove the decision overlay
                 Platform.runLater(() -> clearDecisionOverlay());
 
+                // clear the tile
+                minesweeper.clear(tileToClear);
                 // update UI
                 Platform.runLater(() -> update()); // Update the UI on the UI thread
 

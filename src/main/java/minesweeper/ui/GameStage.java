@@ -16,7 +16,7 @@ public class GameStage extends Stage {
         MinesweeperPane minesweeperPane = new MinesweeperPane(difficulty, this);
 
         setHeight(30 * difficulty.getNumberOfRows() + 120);
-        setWidth(30 * difficulty.getNumberOfColumns() + 300);
+        setWidth(30 * difficulty.getNumberOfColumns() + 600);
 
         gameDetails.setAlignment(Pos.CENTER);
         gameDetails.setSpacing(20);

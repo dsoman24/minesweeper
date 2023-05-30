@@ -27,7 +27,7 @@ public class TileSet<T extends MinesweeperTileable> implements Iterable<T>{
     public TileSet(T tile, TilingState<T> tilingState) {
         set = new HashSet<>();
         set.add(tile);
-        commonClearedNeighbors = tilingState.getInPlayNeighbors(tile);
+        commonClearedNeighbors = tilingState.getOutOfPlayNeighbors(tile);
         probability = tile.initialDensity(); // will have the same probability as the game density
         this.tilingState = tilingState;
     }
@@ -51,7 +51,7 @@ public class TileSet<T extends MinesweeperTileable> implements Iterable<T>{
      * @return true if the tile has common cleared neighbors, false otherwise.
      */
     private boolean equalClearedNeighbors(T other) {
-        Set<T> otherClearedNeighbors = tilingState.getInPlayNeighbors(other);
+        Set<T> otherClearedNeighbors = tilingState.getOutOfPlayNeighbors(other);
         if (commonClearedNeighbors.size() != otherClearedNeighbors.size()) {
             return false;
         }

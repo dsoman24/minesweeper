@@ -17,21 +17,20 @@ public class TilePane extends StackPane {
 
     // dimensions
     private static final int BACKGROUND_WIDTH = 30;
-    private static final int BORDER_WIDTH = 3;
+    private static final int BORDER_WIDTH = 2;
     private static final int FOREGROUND_WIDTH = BACKGROUND_WIDTH - BORDER_WIDTH;
 
     // colors
-    private static final Color BACKGROUND_COLOR = Color.DARKGRAY;
-    private static final Color COVERED_COLOR = Color.LIGHTGRAY;
-    private static final Color CLEARED_COLOR = Color.WHITE;
+    private static final Color BACKGROUND_COLOR = Color.GRAY;
+    private static final Color CLEARED_COLOR = Color.LIGHTGRAY;
+    private static final Color UNCLEARED_COLOR = Color.DARKGRAY;
     private static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
     private static final Color SELECTED_TILE_COLOR = Color.LIGHTBLUE;
-    private static final Color BAD_TILE_COLOR = Color.ORANGE;
     private static final Color MINE_COLOR = Color.YELLOW;
     private static final Color FLAG_COLOR = Color.LIGHTCORAL;
 
     private final Rectangle background = new Rectangle(BACKGROUND_WIDTH, BACKGROUND_WIDTH, BACKGROUND_COLOR);
-    private final Rectangle foreground = new Rectangle(FOREGROUND_WIDTH, FOREGROUND_WIDTH, COVERED_COLOR);
+    private final Rectangle foreground = new Rectangle(FOREGROUND_WIDTH, FOREGROUND_WIDTH, UNCLEARED_COLOR);
 
     private final Rectangle decisionLayer = new Rectangle(FOREGROUND_WIDTH, FOREGROUND_WIDTH, TRANSPARENT_COLOR);
     private final Label informationLabel;
@@ -57,6 +56,15 @@ public class TilePane extends StackPane {
         setOnMouseClicked(e -> {
             trigger(e);
         });
+
+        setOnMouseEntered(e -> {
+            enableHoverColor();
+        });
+
+        setOnMouseExited(e -> {
+            disableHoverColor();
+        });
+
     }
 
     /**
@@ -64,7 +72,7 @@ public class TilePane extends StackPane {
      * Secondary mouse button to flag
      * Primary mouse button to clear
      */
-    public void trigger(MouseEvent e) {
+    private void trigger(MouseEvent e) {
         if (minesweeper.isPlaying()) {
             if (e.getButton() == MouseButton.SECONDARY) {
                 minesweeperPane.flag(this.row, this.column);
@@ -74,13 +82,27 @@ public class TilePane extends StackPane {
         }
     }
 
+    private void enableHoverColor() {
+        if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()
+            && (minesweeper.getTilingState().isClearable(getCorrespondingTile()))) {
+            decisionLayer.setFill(SELECTED_TILE_COLOR);
+        }
+    }
+
+    private void disableHoverColor() {
+        if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()) {
+            decisionLayer.setFill(TRANSPARENT_COLOR);
+        }
+    }
+
     public void update() {
         Tile currentTile = getCorrespondingTile();
         if (!currentTile.isCleared()) {
             if (currentTile.isFlagged()) {
                 foreground.setFill(FLAG_COLOR);
+                decisionLayer.setFill(TRANSPARENT_COLOR);
             } else {
-                foreground.setFill(COVERED_COLOR);
+                foreground.setFill(UNCLEARED_COLOR);
             }
         } else {
             if (!minesweeper.hasMine(currentTile)) {
@@ -100,7 +122,7 @@ public class TilePane extends StackPane {
             foreground.setFill(MINE_COLOR);
             informationLabel.setText("M");
             if (row == badTile.getRow() && column == badTile.getColumn()) {
-                foreground.setFill(BAD_TILE_COLOR);
+                foreground.setFill(SELECTED_TILE_COLOR);
             }
         } else if (!minesweeper.hasMine(currentTile) && currentTile.isFlagged()) {
             informationLabel.setText("X");
@@ -121,7 +143,7 @@ public class TilePane extends StackPane {
 
     public void removeNumericalOverlay() {
         informationLabel.setText("");
-        decisionLayer.setFill(new Color(0, 0, 0, 0));
+        decisionLayer.setFill(TRANSPARENT_COLOR);
     }
 
     public void highlightTileToClear() {

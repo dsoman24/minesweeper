@@ -39,7 +39,7 @@ public class BotController {
             // for (Tile tile : tilesToFlag) {
             //     tile.setFlag(true);
             // }
-            minesweeper.clear(tileToClear.getRow(), tileToClear.getColumn());
+            minesweeper.clear(tileToClear);
         }
     }
 }

@@ -90,9 +90,9 @@ public class TilingState<T extends MinesweeperTileable> implements Iterable<T>{
     }
 
     /**
-     * Returns the in-play neighbors, which are neighbors that are flagged or are cleared.
+     * Returns the out-of-play neighbors, which are neighbors that are flagged or are cleared.
      */
-    public Set<T> getInPlayNeighbors(T tile) {
+    public Set<T> getOutOfPlayNeighbors(T tile) {
         Set<T> cleared = new HashSet<>();
         Set<T> neighbors = getNeighbors(tile);
         for (T neighbor : neighbors) {
@@ -101,6 +101,42 @@ public class TilingState<T extends MinesweeperTileable> implements Iterable<T>{
             }
         }
         return cleared;
+    }
+
+    public int getNumberOfUnclearedNeighbors(T tile) {
+        int count = 0;
+        Set<T> neighbors = getNeighbors(tile);
+        for (T neighbor : neighbors) {
+            if (!neighbor.isCleared()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getNumberOfFlaggedNeighbors(T tile) {
+        int count = 0;
+        Set<T> neighbors = getNeighbors(tile);
+        for (T neighbor : neighbors) {
+            if (neighbor.isFlagged()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns true if a given tile is eligible to be cleared by a regular clear or multiclear, false otherwise.
+     * @param tile the tile to check
+     */
+    public boolean isClearable(T tile) {
+        return (
+            (!tile.isFlagged() && !tile.isCleared())
+            || (tile.getNumberOfNeighboringMines() > 0
+                && tile.getNumberOfNeighboringMines() == getNumberOfFlaggedNeighbors(tile)
+                && getNumberOfFlaggedNeighbors(tile) != getNumberOfUnclearedNeighbors(tile)
+            )
+        );
     }
 
     public int getNumRows() {
