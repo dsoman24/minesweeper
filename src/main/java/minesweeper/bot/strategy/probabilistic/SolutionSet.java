@@ -75,7 +75,6 @@ public class SolutionSet<T extends MinesweeperTileable> {
             sb.append("\n");
             i++;
         }
-        sb.append("---");
         return sb.toString();
     }
 }

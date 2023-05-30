@@ -178,7 +178,7 @@ Other sources:
 - https://www.youtube.com/watch?v=G2kd745uYuo&ab_channel=CodingChannel
 
 ## To-do
-- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying.
+- [ ] Fix bug that largely affects larger games - 0 solutions are found and the bot crashes with a 0/0 error. This bug is likely in simplifying. Might occur when the "frontier" has all probability 0.
 - [ ] Complexity analysis of the algorithm.
 - [X] Visualize the bot in action
 - [X] Performance analysis.

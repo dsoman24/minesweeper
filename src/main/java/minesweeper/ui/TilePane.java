@@ -58,11 +58,15 @@ public class TilePane extends StackPane {
         });
 
         setOnMouseEntered(e -> {
-            enableHoverColor();
+            if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()) {
+                enableHoverColor();
+            }
         });
 
         setOnMouseExited(e -> {
-            disableHoverColor();
+            if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()) {
+                disableHoverColor();
+            }
         });
 
     }
@@ -82,17 +86,14 @@ public class TilePane extends StackPane {
         }
     }
 
-    private void enableHoverColor() {
-        if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()
-            && (minesweeper.getTilingState().isClearable(getCorrespondingTile()))) {
+    public void enableHoverColor() {
+        if (minesweeper.getTilingState().isClearable(getCorrespondingTile())) {
             decisionLayer.setFill(SELECTED_TILE_COLOR);
         }
     }
 
-    private void disableHoverColor() {
-        if (minesweeper.isPlaying() && !minesweeperPane.isBotActive()) {
-            decisionLayer.setFill(TRANSPARENT_COLOR);
-        }
+    public void disableHoverColor() {
+        decisionLayer.setFill(TRANSPARENT_COLOR);
     }
 
     public void update() {
@@ -142,8 +143,16 @@ public class TilePane extends StackPane {
     }
 
     public void removeNumericalOverlay() {
-        informationLabel.setText("");
+        if (!getCorrespondingTile().isCleared()) {
+            informationLabel.setText("");
+        }
         decisionLayer.setFill(TRANSPARENT_COLOR);
+    }
+
+    public void updateNumericalOverlayIfCleared() {
+        if (getCorrespondingTile().isCleared()) {
+            decisionLayer.setFill(TRANSPARENT_COLOR);
+        }
     }
 
     public void highlightTileToClear() {

@@ -14,7 +14,7 @@ import src.main.java.minesweeper.logic.MinesweeperTileable;
  */
 public class ResultNode<T extends MinesweeperTileable> {
 
-    private Map<TileSet<T>, Integer> tileSetResults; // data
+    private Map<TileSet<T>, Integer> tileSetResults; // tilesets and alphas
     private List<TileSetRule<T>> rules; // keeps track of all simplified rules
 
     /**

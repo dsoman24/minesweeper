@@ -1,5 +1,4 @@
 package src.main.java.minesweeper.ui;
-// import java.util.List;
 import java.util.Map;
 
 import javafx.application.Platform;
@@ -41,7 +40,7 @@ public class MinesweeperPane extends GridPane {
 
     private Thread botThread;
 
-    private int botDelay = 300; // 1000 is one second, delay in milliseconds
+    private int botDelay = 100; // 1000 is one second, delay in milliseconds
 
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
@@ -71,6 +70,7 @@ public class MinesweeperPane extends GridPane {
         toggleBot.setOnAction(e -> {
             if (minesweeper.isPlaying()) {
                 if (botActivated) {
+                    clearDecisionOverlay();
                     toggleBot.setText("Start Bot");
                 } else {
                     toggleBot.setText("Stop Bot");
@@ -103,6 +103,9 @@ public class MinesweeperPane extends GridPane {
         CheckBox displayBotDetailsCheckBox = new CheckBox();
         displayBotDetailsCheckBox.setOnMouseClicked(e -> {
             overlayAdded = displayBotDetailsCheckBox.isSelected();
+            if (!overlayAdded) {
+                clearDecisionOverlay();
+            }
         });
 
         Label displayBotDetailsLabel = new Label("Show Metrics");
@@ -240,8 +243,20 @@ public class MinesweeperPane extends GridPane {
         }
     }
 
-    private void highlightTileToClear(Tile tile) {
-        tilePanes[tile.getRow()][tile.getColumn()].highlightTileToClear();
+    private void updateDecisionOverlay() {
+        for (TilePane[] row : tilePanes) {
+            for (TilePane tilePane : row) {
+                tilePane.updateNumericalOverlayIfCleared();
+            }
+        }
+    }
+
+    private void enableHoverColor(Tile tile) {
+        tilePanes[tile.getRow()][tile.getColumn()].enableHoverColor();
+    }
+
+    private void disableHoverColor(Tile tile) {
+        tilePanes[tile.getRow()][tile.getColumn()].disableHoverColor();
     }
 
     private class BotRunner implements Runnable {
@@ -271,7 +286,7 @@ public class MinesweeperPane extends GridPane {
                 }
 
                 // highlight the tile we are about to clear
-                Platform.runLater(() -> highlightTileToClear(tileToClear));
+                Platform.runLater(() -> enableHoverColor(tileToClear));
 
                 // "thinking" delay time.
                 try {
@@ -286,8 +301,9 @@ public class MinesweeperPane extends GridPane {
                 //     tile.setFlag(true);
                 // }
 
-                // remove the decision overlay
-                Platform.runLater(() -> clearDecisionOverlay());
+                // remove the decision hover color
+                Platform.runLater(() -> disableHoverColor(tileToClear));
+                Platform.runLater(() -> updateDecisionOverlay());
 
                 // clear the tile
                 minesweeper.clear(tileToClear);
@@ -295,10 +311,13 @@ public class MinesweeperPane extends GridPane {
                 Platform.runLater(() -> update()); // Update the UI on the UI thread
 
                 // check win/lose condition
-                if (minesweeper.status() == Status.WIN) {
-                    Platform.runLater(() -> winAction()); // Run the win action on the UI thread
-                } else if (minesweeper.status() == Status.LOSE) {
-                    Platform.runLater(() -> loseAction(tileToClear)); // Run the lose action on the UI thread
+                if (!minesweeper.isPlaying()) {
+                    Platform.runLater(() -> clearDecisionOverlay());
+                    if (minesweeper.status() == Status.WIN) {
+                        Platform.runLater(() -> winAction()); // Run the win action on the UI thread
+                    } else if (minesweeper.status() == Status.LOSE) {
+                        Platform.runLater(() -> loseAction(tileToClear)); // Run the lose action on the UI thread
+                    }
                 }
             }
         }
