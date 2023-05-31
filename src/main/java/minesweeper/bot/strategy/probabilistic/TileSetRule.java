@@ -112,6 +112,7 @@ public class TileSetRule<T extends MinesweeperTileable> {
         if (numTileSets() == 0 && result == 0) {
             return SimplifyResult.NO_EFFECT;
         }
+
         Iterator<TileSet<T>> iterator = tileSets.iterator();
         // We only keep TileSets that have unknown values
         while (iterator.hasNext()) {
@@ -121,6 +122,7 @@ public class TileSetRule<T extends MinesweeperTileable> {
                 iterator.remove();
             }
         }
+
         // invalid simplifications
         if (result < 0) {
             return SimplifyResult.NEGATIVE;
@@ -128,6 +130,7 @@ public class TileSetRule<T extends MinesweeperTileable> {
         if (result > numTiles()) {
             return SimplifyResult.TOO_BIG;
         }
+
         // three simplification scenarios:
         // 1. something like [A] = X, clearly, TileSet [A] must have a value of X
         if (numTileSets() == 1) {
@@ -179,9 +182,28 @@ public class TileSetRule<T extends MinesweeperTileable> {
             hash += tileSet.hashCode();
         }
         hash += result;
-        if (resultTile != null) {
-            hash += resultTile.hashCode();
-        }
         return hash;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    // equal if they have the same tilesets and result
+    public boolean equals(Object obj) {
+        if (obj instanceof TileSetRule<?>) {
+            TileSetRule<T> other = (TileSetRule<T>) obj;
+            if (result != other.result) {
+                return false;
+            }
+            if (tileSets.size() != other.tileSets.size()) {
+                return false;
+            }
+            for (TileSet<T> tileSet : tileSets) {
+                if (!other.tileSets.contains(tileSet)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import src.main.java.minesweeper.logic.MinesweeperTileable;
 
@@ -59,9 +60,10 @@ public class ResultNode<T extends MinesweeperTileable> {
 
     /**
      * Simplifies all the rules of this resultNode.
-     * @return true if the simplificaiton was successful, false otherwise
+     * @return true if the simplification was successful, false otherwise
      */
     public boolean simplifyAllRules() {
+        rules = removeDuplicateRules(rules);
         for (TileSetRule<T> rule : rules) {
             SimplifyResult simplifyResult = rule.simplify(this);
             if (simplifyResult.isFailure()) {
@@ -72,8 +74,17 @@ public class ResultNode<T extends MinesweeperTileable> {
     }
 
     /**
+     * Removes duplicates rules from a given list of rules.
+     * @param rules the list of rules to remove duplicates from
+     * @return rules with duplicates removed
+     */
+    private List<TileSetRule<T>> removeDuplicateRules(List<TileSetRule<T>> rules) {
+        return rules.stream().distinct().collect(Collectors.toList());
+    }
+
+    /**
      * @return the total number of combinations that can be done with this resultNode.
-    */
+     */
     public BigInteger numCombinations() {
         BigInteger product = BigInteger.ONE;
         for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {

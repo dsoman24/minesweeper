@@ -135,7 +135,7 @@ public class Solver<T extends MinesweeperTileable> {
     }
 
     /**
-     * Assings probabilities to all TileSets
+     * Assings probabilities to all TileSets.
      */
     private void calculateAndAssignProbabilities() {
         List<BigInteger> numCombinationsPerSolution = solutionSet.numCombinationsPerSolution();
@@ -206,8 +206,10 @@ public class Solver<T extends MinesweeperTileable> {
         createTileSets();
         // 2. Create rules based on cleared and non-zero numbered tiles.
         createRules();
+
         // 3. Create all possible solutions
         buildSolutionSet();
+
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();
         // 5. Choose the least-likely tile
