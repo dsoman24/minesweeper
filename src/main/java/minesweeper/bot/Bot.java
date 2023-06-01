@@ -25,6 +25,7 @@ public class Bot<T extends MinesweeperTileable> {
      * @param strategy the strategy to use.
      */
     public Bot(TilingState<T> tilingState, BotStrategy<T> strategy) {
+        System.out.println("New Bot");
         this.strategy = strategy;
         this.strategy.setTilingState(tilingState);
     }

@@ -34,15 +34,14 @@ public class ResultNode<T extends MinesweeperTileable> {
      * @param other the ResultNode to deep copy.
      */
     public ResultNode(ResultNode<T> other) {
-        Map<TileSet<T>, Integer> newTileSetResults = new HashMap<>();
+        tileSetResults = new HashMap<>();
         for (Map.Entry<TileSet<T>, Integer> entry : other.tileSetResults.entrySet()) {
-            newTileSetResults.put(entry.getKey(), entry.getValue());
+            tileSetResults.put(entry.getKey(), entry.getValue());
         }
         rules = new ArrayList<>();
         for (TileSetRule<T> rule : other.rules) {
             rules.add(new TileSetRule<>(rule));
         }
-        this.tileSetResults = newTileSetResults;
     }
 
     /**
@@ -50,8 +49,8 @@ public class ResultNode<T extends MinesweeperTileable> {
      * @return true if the resultNode is complete, false otherwise.
      */
     public boolean isComplete() {
-        for (Map.Entry<TileSet<T>, Integer> entry : tileSetResults.entrySet()) {
-            if (entry.getValue() == null) {
+        for (Integer alpha : tileSetResults.values()) {
+            if (alpha == null) {
                 return false;
             }
         }
@@ -63,7 +62,7 @@ public class ResultNode<T extends MinesweeperTileable> {
      * @return true if the simplification was successful, false otherwise
      */
     public boolean simplifyAllRules() {
-        rules = removeDuplicateRules(rules);
+        removeDuplicateRules();
         for (TileSetRule<T> rule : rules) {
             SimplifyResult simplifyResult = rule.simplify(this);
             if (simplifyResult.isFailure()) {
@@ -74,12 +73,10 @@ public class ResultNode<T extends MinesweeperTileable> {
     }
 
     /**
-     * Removes duplicates rules from a given list of rules.
-     * @param rules the list of rules to remove duplicates from
-     * @return rules with duplicates removed
+     * Removes duplicates rules from a this result node's rules.
      */
-    private List<TileSetRule<T>> removeDuplicateRules(List<TileSetRule<T>> rules) {
-        return rules.stream().distinct().collect(Collectors.toList());
+    private void removeDuplicateRules() {
+        rules = rules.stream().distinct().collect(Collectors.toList());
     }
 
     /**

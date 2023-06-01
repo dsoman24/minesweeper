@@ -10,7 +10,6 @@ import java.util.Set;
  * Uses a TilingState of Tile objects.
  * Logic only, no UI elements.
  * @author Daniel Öman
- * @date 12/31/2022
  * @version 1.0
  */
 public class Minesweeper {

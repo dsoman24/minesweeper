@@ -37,7 +37,7 @@ public class SolutionSet<T extends MinesweeperTileable> {
     /**
      * @return the number of result nodes within this solution set i.e. the size of the solution set.
      */
-    public int getNumberOfResultNodes() {
+    public int size() {
         return resultNodes.size();
     }
 

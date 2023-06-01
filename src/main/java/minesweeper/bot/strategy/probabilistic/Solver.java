@@ -121,14 +121,15 @@ public class Solver<T extends MinesweeperTileable> {
         }
         // find smallest "unknown" node
         TileSet<T> smallest = current.findSmallestUnknownTileSet();
+        System.out.println(smallest);
         // iterate over the possibilities e.g. a set with 2 tiles could have 0, 1, or 2 mines in it
         for (int i = 0; i <= Math.min(smallest.size(), tilingState.getTotalNumberOfMines()); i++) {
             // child is a new node that is a deep copy of current
             ResultNode<T> child = new ResultNode<>(current);
             // attempt to solve the rules supposing that alpha for smallest = i
             child.put(smallest, i);
-            boolean validSimplification = child.simplifyAllRules();
-            if (validSimplification) {
+            // simplify, and only proceed if simplifications were successful
+            if (child.simplifyAllRules()) {
                 buildSolutionSet(child);
             }
         }
@@ -143,10 +144,10 @@ public class Solver<T extends MinesweeperTileable> {
         for (TileSet<T> tileSet : tileSets) {
             BigDecimal probability = BigDecimal.ZERO;
             // BUG HERE, REMOVE CONDITIONAL CHECK FOR 0. IDEALLY IT DOESN'T NEED IT
-            if (solutionSet.getNumberOfResultNodes() == 0) {
+            if (solutionSet.size() == 0) {
                 probability = BigDecimal.valueOf(tilingState.density());
             } else {
-                for (int i = 0; i < solutionSet.getNumberOfResultNodes(); i++) {
+                for (int i = 0; i < solutionSet.size(); i++) {
                     int numMines = solutionSet.getNumMinesAtSpecificResultNode(i, tileSet);
                     BigDecimal decimal = new BigDecimal(numCombinationsPerSolution.get(i));
                     probability = probability.add(decimal.multiply(BigDecimal.valueOf((double) numMines / tileSet.size())));
@@ -202,13 +203,19 @@ public class Solver<T extends MinesweeperTileable> {
      * @return the tile to clear according to this strategy.
      */
     public T tileToClear(Random random) {
+        System.out.println("********************************");
         // 1. Group tiles into TileSets.
         createTileSets();
         // 2. Create rules based on cleared and non-zero numbered tiles.
         createRules();
+        System.out.println("Number of rules: " + rules.size());
+        // for (TileSetRule<T> rule : rules) {
+        //     System.out.println(rule);
+        // }
 
         // 3. Create all possible solutions
         buildSolutionSet();
+        System.out.println("Size of result set: " + solutionSet.size());
 
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();

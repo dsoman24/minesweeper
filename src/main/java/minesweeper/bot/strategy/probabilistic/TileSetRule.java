@@ -116,7 +116,8 @@ public class TileSetRule<T extends MinesweeperTileable> {
         Iterator<TileSet<T>> iterator = tileSets.iterator();
         // We only keep TileSets that have unknown values
         while (iterator.hasNext()) {
-            Integer numMines = resultNode.get(iterator.next());
+            TileSet<T> tileSet = iterator.next();
+            Integer numMines = resultNode.get(tileSet);
             if (numMines != null) {
                 result -= numMines; // remove known TileSets from this rule
                 iterator.remove();
