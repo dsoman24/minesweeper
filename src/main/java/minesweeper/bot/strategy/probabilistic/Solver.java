@@ -121,7 +121,6 @@ public class Solver<T extends MinesweeperTileable> {
         }
         // find smallest "unknown" node
         TileSet<T> smallest = current.findSmallestUnknownTileSet();
-        System.out.println(smallest);
         // iterate over the possibilities e.g. a set with 2 tiles could have 0, 1, or 2 mines in it
         for (int i = 0; i <= Math.min(smallest.size(), tilingState.getTotalNumberOfMines()); i++) {
             // child is a new node that is a deep copy of current
@@ -203,19 +202,13 @@ public class Solver<T extends MinesweeperTileable> {
      * @return the tile to clear according to this strategy.
      */
     public T tileToClear(Random random) {
-        System.out.println("********************************");
         // 1. Group tiles into TileSets.
         createTileSets();
         // 2. Create rules based on cleared and non-zero numbered tiles.
         createRules();
-        System.out.println("Number of rules: " + rules.size());
-        // for (TileSetRule<T> rule : rules) {
-        //     System.out.println(rule);
-        // }
 
         // 3. Create all possible solutions
         buildSolutionSet();
-        System.out.println("Size of result set: " + solutionSet.size());
 
         // 4. Calculate the probabilities of each TileSet
         calculateAndAssignProbabilities();

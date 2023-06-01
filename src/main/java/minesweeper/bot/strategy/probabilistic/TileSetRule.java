@@ -156,6 +156,8 @@ public class TileSetRule<T extends MinesweeperTileable> {
             for (TileSet<T> tileSet : tileSets) {
                 resultNode.put(tileSet, tileSet.size() * result / numTileSets());
             }
+            tileSets.clear();
+            result = 0;
             return SimplifyResult.SIMPLIFIED;
         }
         return SimplifyResult.NO_EFFECT;
