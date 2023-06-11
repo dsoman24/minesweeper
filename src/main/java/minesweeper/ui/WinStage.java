@@ -13,17 +13,19 @@ import src.main.java.minesweeper.ui.leaderboard.LeaderboardIO;
 
 public class WinStage extends Stage {
 
-    public WinStage(Timer timer, Stage gameStage, Difficulty difficulty) {
+    public WinStage(Timer timer, Stage gameStage, Difficulty difficulty, boolean eligibleToBeSaved) {
         setTitle("You Win!");
 
         VBox root = new VBox();
 
         Label winLabel = new Label(
-            String.format("[%d.%d s] Enter your name to enter the leaderboard",
+            String.format("[%d.%d s]",
             timer.getElapsedSeconds(), timer.getElapsedMilliseconds())
         );
+
+        Label promptLabel = new Label("Enter your name to enter the leaderboard");
+
         TextField nameField = new TextField();
-        nameField.setPromptText("Enter your name");
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(a -> {
@@ -46,7 +48,12 @@ public class WinStage extends Stage {
             gameStage.close();
         });
 
-        root.getChildren().addAll(winLabel, nameField, saveToLeaderboard, exitButton);
+        root.getChildren().add(winLabel);
+        if (eligibleToBeSaved) {
+            root.getChildren().addAll(promptLabel, nameField, saveToLeaderboard);
+        }
+        root.getChildren().add(exitButton);
+
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(10));
         root.setSpacing(10);

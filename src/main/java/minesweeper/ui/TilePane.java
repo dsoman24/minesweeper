@@ -15,43 +15,33 @@ public class TilePane extends StackPane {
     private Minesweeper minesweeper;
     private MinesweeperPane minesweeperPane;
 
-    // dimensions
-    private static final int BACKGROUND_WIDTH = 30;
-    private static final int BORDER_WIDTH = 2;
-    private static final int FOREGROUND_WIDTH = BACKGROUND_WIDTH - BORDER_WIDTH;
+    // sprite layer
+    private final Rectangle spriteLayer;
 
     // colors
-    private static final Color BACKGROUND_COLOR = Color.GRAY;
-    private static final Color CLEARED_COLOR = Color.LIGHTGRAY;
-    private static final Color UNCLEARED_COLOR = Color.DARKGRAY;
+    private static final double DECISION_OPACITY = 0.3;
     private static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
-    private static final Color SELECTED_TILE_COLOR = Color.LIGHTBLUE;
-    private static final Color MINE_COLOR = Color.YELLOW;
-    private static final Color FLAG_COLOR = Color.LIGHTCORAL;
+    private static final Color SELECTED_TILE_COLOR = new Color(0, 0, 0.5, DECISION_OPACITY);
 
-    private final Rectangle background = new Rectangle(BACKGROUND_WIDTH, BACKGROUND_WIDTH, BACKGROUND_COLOR);
-    private final Rectangle foreground = new Rectangle(FOREGROUND_WIDTH, FOREGROUND_WIDTH, UNCLEARED_COLOR);
-
-    private final Rectangle decisionLayer = new Rectangle(FOREGROUND_WIDTH, FOREGROUND_WIDTH, TRANSPARENT_COLOR);
+    private final Rectangle decisionLayer = new Rectangle(TileSprite.SIZE, TileSprite.SIZE, TRANSPARENT_COLOR);
     private final Label informationLabel;
 
-    private final Color[] numberLabelColors = new Color[]{
-        Color.BLUE, Color.GREEN, Color.RED, Color.PURPLE, Color.MAROON, Color.TEAL, Color.BLACK, Color.GRAY
-    };
 
     public TilePane(int row, int column, MinesweeperPane minesweeperPane) {
+
+        spriteLayer = new Rectangle(TileSprite.SIZE, TileSprite.SIZE);
+        updateSprite(TileSprite.UNCLEARED);
 
         this.row = row;
         this.column = column;
         this.minesweeperPane = minesweeperPane;
         this.minesweeper = minesweeperPane.getMinesweeper();
         informationLabel = new Label();
+        informationLabel.setFont(Font.font(9));
 
-        getChildren().add(background);
-        getChildren().add(foreground);
+        getChildren().add(spriteLayer);
         getChildren().add(decisionLayer);
         getChildren().add(informationLabel);
-        informationLabel.setFont(Font.font(9));
 
         setOnMouseClicked(e -> {
             trigger(e);
@@ -69,6 +59,10 @@ public class TilePane extends StackPane {
             }
         });
 
+    }
+
+    private void updateSprite(TileSprite sprite) {
+        spriteLayer.setFill(sprite.getImagePattern());
     }
 
     /**
@@ -100,19 +94,15 @@ public class TilePane extends StackPane {
         Tile currentTile = getCorrespondingTile();
         if (!currentTile.isCleared()) {
             if (currentTile.isFlagged()) {
-                foreground.setFill(FLAG_COLOR);
                 decisionLayer.setFill(TRANSPARENT_COLOR);
+                updateSprite(TileSprite.FLAG);
             } else {
-                foreground.setFill(UNCLEARED_COLOR);
+                updateSprite(TileSprite.UNCLEARED);
             }
         } else {
             if (!minesweeper.hasMine(currentTile)) {
-                foreground.setFill(CLEARED_COLOR);
                 int number = currentTile.getNumberOfNeighboringMines();
-                informationLabel.setText(String.format("%s", number == 0 ? "" : number));
-                if (number > 0) {
-                    informationLabel.setTextFill(numberLabelColors[number - 1]);
-                }
+                updateSprite(TileSprite.getClearedNumberedSprite(number));
             }
         }
     }
@@ -120,13 +110,13 @@ public class TilePane extends StackPane {
     public void reveal(Tile badTile) {
         Tile currentTile = getCorrespondingTile();
         if (minesweeper.hasMine(currentTile) && !currentTile.isFlagged()) {
-            foreground.setFill(MINE_COLOR);
-            informationLabel.setText("M");
+            updateSprite(TileSprite.MINE);
             if (row == badTile.getRow() && column == badTile.getColumn()) {
-                foreground.setFill(SELECTED_TILE_COLOR);
+                updateSprite(TileSprite.MINE_TRIGGERED);
+
             }
         } else if (!minesweeper.hasMine(currentTile) && currentTile.isFlagged()) {
-            informationLabel.setText("X");
+            updateSprite(TileSprite.FLAG_INCORRECT);
         }
     }
 
@@ -152,6 +142,7 @@ public class TilePane extends StackPane {
     public void updateNumericalOverlayIfCleared() {
         if (getCorrespondingTile().isCleared()) {
             decisionLayer.setFill(TRANSPARENT_COLOR);
+            informationLabel.setText("");
         }
     }
 
@@ -167,6 +158,6 @@ public class TilePane extends StackPane {
         double green = redColor.getGreen() * value + greenColor.getGreen() * (1 - value);
         double blue = redColor.getBlue() * value + greenColor.getBlue() * (1 - value);
 
-        return new Color(red, green, blue, 1.0);
+        return new Color(red, green, blue, DECISION_OPACITY);
     }
 }

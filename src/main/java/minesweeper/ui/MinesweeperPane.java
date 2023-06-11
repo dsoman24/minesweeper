@@ -63,7 +63,8 @@ public class MinesweeperPane extends GridPane {
         for (StrategyTypeOnTile strategyType : StrategyTypeOnTile.values()) {
             botStrategySelector.getItems().add(strategyType);
         }
-        botStrategySelector.setPromptText("Bot Strategy");
+        botStrategySelector.getSelectionModel().select(StrategyTypeOnTile.PROBABILISTIC.ordinal());
+
         TextField botDelayTextField = new TextField();
         botDelayTextField.setPromptText("Delay (ms)");
 
@@ -90,9 +91,6 @@ public class MinesweeperPane extends GridPane {
                     }
 
                     StrategyTypeOnTile strategyType = botStrategySelector.getValue();
-                    if (strategyType == null) {
-                        strategyType = StrategyTypeOnTile.PROBABILISTIC;
-                    }
 
                     Bot<Tile> bot = new Bot<>(minesweeper.getTilingState(), strategyType.getStrategy());
                     BotRunner botRunner = new BotRunner(bot);
@@ -177,7 +175,7 @@ public class MinesweeperPane extends GridPane {
         if (eligibleToBeSaved) {
             GameDataIO.write("data.csv", minesweeper.getSummary());
         }
-        WinStage winningStage = new WinStage(timer, gameStage, difficulty);
+        WinStage winningStage = new WinStage(timer, gameStage, difficulty, eligibleToBeSaved);
         winningStage.show();
     }
 

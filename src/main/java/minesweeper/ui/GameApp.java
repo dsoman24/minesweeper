@@ -42,6 +42,8 @@ public class GameApp extends Application {
                 difficultyInput.getItems().add(difficulty);
             }
         }
+        difficultyInput.getSelectionModel().selectFirst();
+
         Button startButton = new Button("Start");
         startButton.setPrefHeight(45);
 
@@ -52,9 +54,6 @@ public class GameApp extends Application {
         startButton.setOnAction(e -> {
 
             Difficulty difficulty = difficultyInput.getValue();
-            if (difficulty == null) {
-                difficulty = Difficulty.EASY;
-            }
 
             GameStage gameStage = new GameStage(difficulty);
 
