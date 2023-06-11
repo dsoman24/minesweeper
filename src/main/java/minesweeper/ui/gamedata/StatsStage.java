@@ -24,8 +24,8 @@ public class StatsStage extends Stage {
         int gamesPlayed = gamesPlayed(data);
         double winRate = winRate(data) * 100;
         double bestTime = bestTime(data);
-        double meanTimeWin = meanTimeWin(data);
-        double meanTimeLose = meanTimeLose(data);
+        double meanTimeWin = meanTimeStatus(data, Status.WIN);
+        double meanTimeLose = meanTimeStatus(data, Status.LOSE);
 
         Label gamesPlayedLabel = new Label("Games played: " + gamesPlayed);
         Label winRateLabel = new Label(String.format("Win Rate: %.2f%%", winRate));
@@ -48,9 +48,9 @@ public class StatsStage extends Stage {
     }
 
     private double bestTime(List<GameSummary> data) {
-        long min = gamesPlayed(data) == 0 ? 0 : data.get(0).getElapsedMillis();
+        long min = 0;
         for (GameSummary gameSummary : data) {
-            if (gameSummary.getStatus() == Status.WIN && gameSummary.getElapsedMillis() < min) {
+            if (gameSummary.getStatus() == Status.WIN && (gameSummary.getElapsedMillis() < min || min == 0)) {
                 min = gameSummary.getElapsedMillis();
             }
         }
@@ -80,32 +80,14 @@ public class StatsStage extends Stage {
         }
     }
 
-    private double meanTimeWin(List<GameSummary> data) {
+    private double meanTimeStatus(List<GameSummary> data, Status status) {
         if (gamesPlayed(data) == 0) {
             return 0;
         }
         long total = 0;
         int count = 0;
         for (GameSummary gameSummary : data) {
-            if (gameSummary.getStatus() == Status.WIN) {
-                total += gameSummary.getElapsedMillis();
-                count++;
-            }
-        }
-        if (count == 0) {
-            return 0;
-        }
-        return (double) total / (1000 * count);
-    }
-
-    private double meanTimeLose(List<GameSummary> data) {
-        if (gamesPlayed(data) == 0) {
-            return 0;
-        }
-        long total = 0;
-        int count = 0;
-        for (GameSummary gameSummary : data) {
-            if (gameSummary.getStatus() == Status.LOSE) {
+            if (gameSummary.getStatus() == status) {
                 total += gameSummary.getElapsedMillis();
                 count++;
             }
