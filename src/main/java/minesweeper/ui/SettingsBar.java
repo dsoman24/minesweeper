@@ -6,9 +6,11 @@ import javafx.scene.control.MenuItem;
 public class SettingsBar extends MenuBar {
 
     private MinesweeperPane minesweeperPane;
+    private GameStage stage;
 
-    public SettingsBar(MinesweeperPane minesweeperPane) {
+    public SettingsBar(GameStage stage, MinesweeperPane minesweeperPane) {
         this.minesweeperPane = minesweeperPane;
+        this.stage = stage;
 
         Menu settingsMenu = new Menu("Style");
         for (SpriteStyle style : SpriteStyle.values()) {
@@ -25,7 +27,6 @@ public class SettingsBar extends MenuBar {
         public StyleItem(SpriteStyle style) {
             super(style.name());
             this.style = style;
-
             setOnAction(e -> {
                 changeStyle();
             });
@@ -34,6 +35,7 @@ public class SettingsBar extends MenuBar {
         public void changeStyle() {
             minesweeperPane.setSpriteStyle(style);
             minesweeperPane.update();
+            stage.setStyle(style);
         }
     }
 }

@@ -27,8 +27,8 @@ public class MinesweeperPane extends GridPane {
     private TilePane[][] tilePanes;
 
     private Timer timer;
-    private Label secondsLabel;
-    private Label flagLabel;
+    private NumberDisplay timerDisplay;
+    private NumberDisplay flagDisplay;
 
     private HBox botInput;
 
@@ -46,20 +46,20 @@ public class MinesweeperPane extends GridPane {
 
     private SpriteSet spriteSet;
 
+
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
         setAlignment(Pos.CENTER);
         this.difficulty = difficulty;
-        this.spriteSet = SpriteStyle.CLASSIC.getSpriteSet(); // default to classic
+        this.spriteSet = SpriteStyle.DEFAULT_STYLE.getSpriteSet(); // default to classic
 
         this.minesweeper = new Minesweeper(difficulty);
-        flagLabel = new Label();
-        updateFlagText();
-        flagLabel.setAlignment(Pos.CENTER);
-        secondsLabel = new Label("0 s");
-        secondsLabel.setAlignment(Pos.CENTER);
-        secondsLabel.setMinWidth(70);
-        timer = new Timer(secondsLabel);
+
+        timerDisplay = new NumberDisplay(2, 0);
+        timer = new Timer(timerDisplay);
+
+        flagDisplay = new NumberDisplay(3, minesweeper.getFlagsRemaining());
+
         tilePanes = new TilePane[minesweeper.getNumRows()][minesweeper.getNumberOfColumns()];
 
         ComboBox<StrategyTypeOnTile> botStrategySelector = new ComboBox<>();
@@ -165,7 +165,7 @@ public class MinesweeperPane extends GridPane {
     public void flag(int row, int column) {
         if (userCanInteract()) { // can only flag if we are playing
             minesweeper.flag(row, column);
-            updateFlagText();
+            updateFlagDisplay();
             tilePanes[row][column].update(); // only need to update individual tile
         }
     }
@@ -174,8 +174,8 @@ public class MinesweeperPane extends GridPane {
         return minesweeper.isPlaying() && !botActivated;
     }
 
-    private void updateFlagText() {
-        flagLabel.setText(String.format("Flags: %d", minesweeper.getFlagsRemaining()));
+    private void updateFlagDisplay() {
+        flagDisplay.update(minesweeper.getFlagsRemaining());
     }
 
     /**
@@ -213,7 +213,7 @@ public class MinesweeperPane extends GridPane {
                 tilePanes[i][j].update();
             }
         }
-        updateFlagText();
+        updateFlagDisplay();
     }
 
     /**
@@ -231,12 +231,12 @@ public class MinesweeperPane extends GridPane {
         return minesweeper;
     }
 
-    public Label getFlagLabel() {
-        return flagLabel;
+    public NumberDisplay getTimerDisplay() {
+        return timerDisplay;
     }
 
-    public Label getSecondsLabel() {
-        return secondsLabel;
+    public NumberDisplay getFlagDisplay() {
+        return flagDisplay;
     }
 
     public HBox getBotInput() {

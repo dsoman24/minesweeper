@@ -6,30 +6,31 @@ import javafx.scene.paint.ImagePattern;
 
 public class SpriteSet {
 
-    private static final String BASE_PATH = "img/sprites";
+    private static final String BASE_PATH = "img/sprites/tiles";
+    private static final String PREFIX = "sprite_";
     public static final int SIZE = 30;
     private final String path;
 
     private static enum Type {
-        ZERO("sprite_00"),
-        ONE("sprite_01"),
-        TWO("sprite_02"),
-        THREE("sprite_03"),
-        FOUR("sprite_04"),
-        FIVE("sprite_05"),
-        SIX("sprite_06"),
-        SEVEN("sprite_07"),
-        EIGHT("sprite_08"),
-        UNCLEARED("sprite_09"),
-        FLAG("sprite_10"),
-        FLAG_INCORRECT("sprite_11"),
-        MINE("sprite_12"),
-        MINE_TRIGGERED("sprite_13");
+        ZERO("00"),
+        ONE("01"),
+        TWO("02"),
+        THREE("03"),
+        FOUR("04"),
+        FIVE("05"),
+        SIX("06"),
+        SEVEN("07"),
+        EIGHT("08"),
+        UNCLEARED("09"),
+        FLAG("10"),
+        FLAG_INCORRECT("11"),
+        MINE("12"),
+        MINE_TRIGGERED("13");
 
         private String fileName;
 
-        private Type(String fileName) {
-            this.fileName = fileName;
+        private Type(String spriteId) {
+            this.fileName = PREFIX + spriteId;
         }
     }
 

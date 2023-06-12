@@ -19,10 +19,10 @@ public class TilePane extends StackPane {
     // sprite layer
     private final Rectangle spriteLayer;
 
-    // color details
+    // color details ADD8E6
     private static final double DECISION_OPACITY = 0.7;
     private static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
-    private static final Color SELECTED_TILE_COLOR = Color.web("#ADD8E6", DECISION_OPACITY);
+    private static final Color SELECTED_TILE_COLOR = Color.web("#FFFFFF", DECISION_OPACITY);
 
     private final Rectangle decisionLayer = new Rectangle(SpriteSet.SIZE, SpriteSet.SIZE, TRANSPARENT_COLOR);
     private final Label informationLabel;

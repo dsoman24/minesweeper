@@ -1,16 +1,15 @@
 package src.main.java.minesweeper.ui;
 import javafx.animation.AnimationTimer;
-import javafx.scene.control.Label;
 
 public class Timer extends AnimationTimer {
     private long startTime;
     private long elapsedNanos;
     private long elapsedSeconds;
     private long elapsedMilliseconds;
-    private Label secondsLabel;
+    private NumberDisplay numberDisplay;
 
-    public Timer(Label secondsLabel) {
-        this.secondsLabel = secondsLabel;
+    public Timer(NumberDisplay numberDisplay) {
+        this.numberDisplay = numberDisplay;
     }
 
     @Override
@@ -24,7 +23,11 @@ public class Timer extends AnimationTimer {
         elapsedNanos = now - startTime;
         elapsedSeconds = elapsedNanos / 1000000000;
         elapsedMilliseconds = (elapsedNanos / 1000000) % 1000;
-        secondsLabel.setText(String.format("%d s", elapsedSeconds));
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
+        numberDisplay.update((int) elapsedSeconds);
     }
 
     public long getElapsedNanos() {
