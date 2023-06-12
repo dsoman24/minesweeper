@@ -44,10 +44,13 @@ public class MinesweeperPane extends GridPane {
 
     private int botDelay = 100; // 1000 is one second, delay in milliseconds
 
+    private SpriteSet spriteSet;
+
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
         setAlignment(Pos.CENTER);
         this.difficulty = difficulty;
+        this.spriteSet = SpriteStyle.CLASSIC.getSpriteSet(); // default to classic
 
         this.minesweeper = new Minesweeper(difficulty);
         flagLabel = new Label();
@@ -125,6 +128,14 @@ public class MinesweeperPane extends GridPane {
         }
     }
 
+    public SpriteSet getSpriteSet() {
+        return spriteSet;
+    }
+
+    public void setSpriteStyle(SpriteStyle style) {
+        spriteSet = style.getSpriteSet();
+    }
+
     /**
      * Clear a tile, human player input only.
      */
@@ -185,6 +196,7 @@ public class MinesweeperPane extends GridPane {
     private void loseAction(Tile badTile) {
         timer.stop();
         reveal(badTile);
+        disableHoverColor(badTile);
         if (eligibleToBeSaved) {
             GameDataIO.write("data.csv", minesweeper.getSummary());
         }
@@ -195,7 +207,7 @@ public class MinesweeperPane extends GridPane {
     /**
      * Updates all tiles in the stage, done after activating a tile.
      */
-    private void update() {
+    public void update() {
         for (int i = 0; i < minesweeper.getNumRows(); i++) {
             for (int j = 0; j < minesweeper.getNumberOfColumns(); j++) {
                 tilePanes[i][j].update();

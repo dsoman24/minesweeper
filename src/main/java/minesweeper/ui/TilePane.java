@@ -4,6 +4,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import src.main.java.minesweeper.logic.Minesweeper;
@@ -18,26 +19,25 @@ public class TilePane extends StackPane {
     // sprite layer
     private final Rectangle spriteLayer;
 
-    // colors
-    private static final double DECISION_OPACITY = 0.3;
+    // color details
+    private static final double DECISION_OPACITY = 0.7;
     private static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
-    private static final Color SELECTED_TILE_COLOR = new Color(0, 0, 0.5, DECISION_OPACITY);
+    private static final Color SELECTED_TILE_COLOR = Color.web("#ADD8E6", DECISION_OPACITY);
 
-    private final Rectangle decisionLayer = new Rectangle(TileSprite.SIZE, TileSprite.SIZE, TRANSPARENT_COLOR);
+    private final Rectangle decisionLayer = new Rectangle(SpriteSet.SIZE, SpriteSet.SIZE, TRANSPARENT_COLOR);
     private final Label informationLabel;
 
-
     public TilePane(int row, int column, MinesweeperPane minesweeperPane) {
-
-        spriteLayer = new Rectangle(TileSprite.SIZE, TileSprite.SIZE);
-        updateSprite(TileSprite.UNCLEARED);
-
         this.row = row;
         this.column = column;
         this.minesweeperPane = minesweeperPane;
         this.minesweeper = minesweeperPane.getMinesweeper();
         informationLabel = new Label();
         informationLabel.setFont(Font.font(9));
+
+        spriteLayer = new Rectangle(SpriteSet.SIZE, SpriteSet.SIZE);
+
+        updateSprite(minesweeperPane.getSpriteSet().getUnclearedSprite());
 
         getChildren().add(spriteLayer);
         getChildren().add(decisionLayer);
@@ -61,8 +61,8 @@ public class TilePane extends StackPane {
 
     }
 
-    private void updateSprite(TileSprite sprite) {
-        spriteLayer.setFill(sprite.getImagePattern());
+    private void updateSprite(ImagePattern pattern) {
+        spriteLayer.setFill(pattern);
     }
 
     /**
@@ -95,14 +95,14 @@ public class TilePane extends StackPane {
         if (!currentTile.isCleared()) {
             if (currentTile.isFlagged()) {
                 decisionLayer.setFill(TRANSPARENT_COLOR);
-                updateSprite(TileSprite.FLAG);
+                updateSprite(minesweeperPane.getSpriteSet().getFlagSprite());
             } else {
-                updateSprite(TileSprite.UNCLEARED);
+                updateSprite(minesweeperPane.getSpriteSet().getUnclearedSprite());
             }
         } else {
             if (!minesweeper.hasMine(currentTile)) {
                 int number = currentTile.getNumberOfNeighboringMines();
-                updateSprite(TileSprite.getClearedNumberedSprite(number));
+                updateSprite(minesweeperPane.getSpriteSet().getNumberSprite(number));
             }
         }
     }
@@ -110,13 +110,13 @@ public class TilePane extends StackPane {
     public void reveal(Tile badTile) {
         Tile currentTile = getCorrespondingTile();
         if (minesweeper.hasMine(currentTile) && !currentTile.isFlagged()) {
-            updateSprite(TileSprite.MINE);
+            updateSprite(minesweeperPane.getSpriteSet().getMineSprite());
             if (row == badTile.getRow() && column == badTile.getColumn()) {
-                updateSprite(TileSprite.MINE_TRIGGERED);
+                updateSprite(minesweeperPane.getSpriteSet().getMineTriggeredSprite());
 
             }
         } else if (!minesweeper.hasMine(currentTile) && currentTile.isFlagged()) {
-            updateSprite(TileSprite.FLAG_INCORRECT);
+            updateSprite(minesweeperPane.getSpriteSet().getFlagIncorrectSprite());
         }
     }
 

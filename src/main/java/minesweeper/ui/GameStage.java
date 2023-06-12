@@ -12,11 +12,12 @@ import src.main.java.minesweeper.logic.Difficulty;
 public class GameStage extends Stage {
 
     public GameStage(Difficulty difficulty) {
-        VBox subroot = new VBox();
+        MinesweeperPane minesweeperPane = new MinesweeperPane(difficulty, this);
+
+        VBox subroot = new VBox(new SettingsBar(minesweeperPane));
         HBox gameDetails = new HBox();
         HBox botDetails = new HBox();
 
-        MinesweeperPane minesweeperPane = new MinesweeperPane(difficulty, this);
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
