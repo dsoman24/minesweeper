@@ -37,7 +37,7 @@ https://github.com/dsoman24/minesweeper/assets/94134732/88b5a983-03a3-48bc-96e3-
 - A minesweeper board configuration will have a **density**, which is the probability that a given unopened tile $t_k \in U$ has a mine for all $k = 0, 1, \dots, hw - 1$. This density is $\rho = |M|/|U|$.
     - For instance, an *easy* difficulty game has 10 mines, 9 rows, and 9 columns. So, an initial state without any cleared tiles will have $|M|$ = 10 and $|U| = 9 \cdot 9 = 81$, so it has a density of $\rho = 10/(9 \cdot 9) \approx 0.12346$.
 - A minesweeper board configuration $B$ can be separated into $n$ disjoint **TileSets**, notated by $S_i$, where $i = 0, \dots, n - 1$. So, $$B = \bigcup_{i = 0}^{n - 1} S_i$$ where $S_i \cap S_j = \emptyset$ for $i, j = 0, 1, \dots, n - 1$, $i \not = j$.
-    - A TileSet is a set of tiles $t_k$ such that each tile within the set share the same common neighboring cleared tiles. This is best illustrated in the following image:
+    - A TileSet is a set of $k$ tiles $t_k$ such that each tile within the set share the same common neighboring cleared tiles. This is best illustrated in the following image:
 
     <div style="text-align:center;">
         <img src="./img/readme/tileset_def.png" alt="TileSet Definition" width="150"/>
