@@ -46,7 +46,6 @@ public class MinesweeperPane extends GridPane {
 
     private SpriteSet spriteSet;
 
-
     public MinesweeperPane(Difficulty difficulty, GameStage gameStage) {
         this.gameStage = gameStage;
         setAlignment(Pos.CENTER);
@@ -55,7 +54,7 @@ public class MinesweeperPane extends GridPane {
 
         this.minesweeper = new Minesweeper(difficulty);
 
-        timerDisplay = new NumberDisplay(2, 0);
+        timerDisplay = new NumberDisplay(3, 0);
         timer = new Timer(timerDisplay);
 
         flagDisplay = new NumberDisplay(3, minesweeper.getFlagsRemaining());
@@ -196,7 +195,6 @@ public class MinesweeperPane extends GridPane {
     private void loseAction(Tile badTile) {
         timer.stop();
         reveal(badTile);
-        disableHoverColor(badTile);
         if (eligibleToBeSaved) {
             GameDataIO.write("data.csv", minesweeper.getSummary());
         }

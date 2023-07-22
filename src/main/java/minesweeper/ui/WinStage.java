@@ -15,7 +15,7 @@ public class WinStage extends Stage {
 
     public WinStage(Timer timer, Stage gameStage, Difficulty difficulty, boolean eligibleToBeSaved) {
         setTitle("You Win!");
-        setWidth(200);
+        setMinWidth(200);
 
         VBox root = new VBox();
 
